@@ -1,87 +1,90 @@
 import { Toaster } from "sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "next-themes";
-import { SettingsProvider } from "@/contexts/SettingsContext";
-import { DeadManSwitchProvider } from "@/contexts/DeadManSwitchContext";
-import { StudentSessionProvider } from "@/contexts/StudentSessionContext";
-import { AdminAuthProvider } from "@/contexts/AdminAuthContext";
-import { OnboardingProvider } from "@/contexts/OnboardingContext";
-
-import LandingPage from "./pages/LandingPage";
-import PortalSelection from "./pages/PortalSelection";
-import Index from "./pages/Index";
-import StudentDashboard from "./pages/StudentDashboard";
-import PublicLedger from "./pages/PublicLedger";
-import ResolutionLedger from "./pages/ResolutionLedger";
-import EvidenceRepository from "./pages/EvidenceRepository";
-import GovernanceMatrix from "./pages/GovernanceMatrix";
-import AnonymousCredentialing from "./pages/AnonymousCredentialing";
-import GDPRCompliance from "./pages/GDPRCompliance";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import HelpDocumentation from "./pages/HelpDocumentation";
-import NotFound from "./pages/NotFound";
-
-import AdminLogin from "./pages/admin/AdminLogin";
-import AdminSetup from "./pages/admin/AdminSetup";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminResolutions from "./pages/admin/AdminResolutions";
-import AdminResolutionDetail from "./pages/admin/AdminResolutionDetail";
-import AcceptInvite from "./pages/admin/AcceptInvite";
-import AdminPasswordReset from "./pages/admin/AdminPasswordReset";
-import AdminUpdatePassword from "./pages/admin/AdminUpdatePassword";
-
-import { ProtectedRoute } from "./components/auth/ProtectedRoute";
-import { AdminProtectedRoute } from "./components/admin/AdminProtectedRoute";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
 const queryClient = new QueryClient();
 
+// Inline Landing Page
+const LandingPage = () => (
+  <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background text-foreground">
+    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 bg-emerald-500/10 border border-emerald-500/20">
+      <span className="flex h-2 w-2 rounded-full animate-pulse bg-emerald-500" />
+      <span className="text-xs font-medium tracking-wide uppercase text-emerald-500">System Operational</span>
+    </div>
+    <h1 className="text-6xl md:text-8xl font-semibold mb-6 tracking-wider text-primary">VANI</h1>
+    <p className="text-xl md:text-2xl mb-4 text-primary/80">Governance without bias</p>
+    <p className="text-lg md:text-xl max-w-2xl text-center mb-10 text-muted-foreground">
+      Verifiable Anonymous Network Intelligence.<br />Advanced governance for institutional transparency.
+    </p>
+    <div className="flex flex-col sm:flex-row gap-4">
+      <Link 
+        to="/portal" 
+        className="px-8 py-4 rounded-lg font-medium text-lg transition-all hover:scale-105 bg-primary text-primary-foreground text-center"
+      >
+        Enter System →
+      </Link>
+      <Link 
+        to="/admin/login" 
+        className="px-8 py-4 rounded-lg font-medium text-lg transition-all hover:scale-105 border border-primary/50 text-primary hover:bg-primary/10 text-center"
+      >
+        Admin Login
+      </Link>
+    </div>
+    <p className="mt-12 text-sm text-muted-foreground">Central University of Jammu • Team CYNOX</p>
+  </div>
+);
+
+// Inline Portal Selection
+const PortalSelection = () => (
+  <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background text-foreground">
+    <h1 className="text-4xl font-bold mb-8">Select Your Portal</h1>
+    <div className="flex gap-6">
+      <Link to="/dashboard" className="px-8 py-6 bg-primary text-primary-foreground rounded-xl text-center">
+        <div className="text-2xl mb-2">👤</div>
+        Student Portal
+      </Link>
+      <Link to="/admin/login" className="px-8 py-6 bg-secondary text-secondary-foreground rounded-xl text-center">
+        <div className="text-2xl mb-2">🛡️</div>
+        Admin Portal
+      </Link>
+    </div>
+    <Link to="/" className="mt-8 text-muted-foreground hover:text-foreground">← Back to Home</Link>
+  </div>
+);
+
+const NotFoundPage = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+    <div className="text-center">
+      <h1 className="text-4xl font-bold mb-4">404</h1>
+      <p className="opacity-70 mb-4">Page not found</p>
+      <Link to="/" className="text-primary hover:underline">Return home</Link>
+    </div>
+  </div>
+);
+
+const AdminLoginPage = () => (
+  <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background text-foreground">
+    <h1 className="text-3xl font-bold mb-8">Admin Login</h1>
+    <div className="w-full max-w-sm space-y-4">
+      <input type="email" placeholder="Email" className="w-full px-4 py-3 rounded-lg bg-card border border-border" />
+      <input type="password" placeholder="Password" className="w-full px-4 py-3 rounded-lg bg-card border border-border" />
+      <button className="w-full py-3 bg-primary text-primary-foreground rounded-lg font-medium">Sign In</button>
+    </div>
+    <Link to="/" className="mt-8 text-muted-foreground hover:text-foreground">← Back to Home</Link>
+  </div>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-      <TooltipProvider>
-        <SettingsProvider>
-          <DeadManSwitchProvider>
-            <StudentSessionProvider>
-              <AdminAuthProvider>
-                <OnboardingProvider>
-                  <Toaster position="top-right" richColors theme="dark" />
-                  <BrowserRouter>
-                    <Routes>
-                      <Route path="/" element={<LandingPage />} />
-                      <Route path="/portal" element={<PortalSelection />} />
-                      <Route path="/submit" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-                      <Route path="/dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
-                      <Route path="/ledger" element={<PublicLedger />} />
-                      <Route path="/resolutions" element={<ResolutionLedger />} />
-                      <Route path="/evidence" element={<ProtectedRoute><EvidenceRepository /></ProtectedRoute>} />
-                      <Route path="/governance" element={<GovernanceMatrix />} />
-                      <Route path="/credentials" element={<ProtectedRoute><AnonymousCredentialing /></ProtectedRoute>} />
-                      <Route path="/gdpr-compliance" element={<GDPRCompliance />} />
-                      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                      <Route path="/help" element={<HelpDocumentation />} />
-                      
-                      {/* Admin Routes */}
-                      <Route path="/admin/login" element={<AdminLogin />} />
-                      <Route path="/admin/setup" element={<AdminSetup />} />
-                      <Route path="/admin/accept-invite" element={<AcceptInvite />} />
-                      <Route path="/admin/password-reset" element={<AdminPasswordReset />} />
-                      <Route path="/admin/update-password" element={<AdminUpdatePassword />} />
-                      <Route path="/admin" element={<AdminProtectedRoute><AdminDashboard /></AdminProtectedRoute>} />
-                      <Route path="/admin/resolutions" element={<AdminProtectedRoute><AdminResolutions /></AdminProtectedRoute>} />
-                      <Route path="/admin/resolutions/:id" element={<AdminProtectedRoute><AdminResolutionDetail /></AdminProtectedRoute>} />
-                      
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </BrowserRouter>
-                </OnboardingProvider>
-              </AdminAuthProvider>
-            </StudentSessionProvider>
-          </DeadManSwitchProvider>
-        </SettingsProvider>
-      </TooltipProvider>
-    </ThemeProvider>
+    <Toaster position="top-right" richColors theme="dark" />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/portal" element={<PortalSelection />} />
+        <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 
