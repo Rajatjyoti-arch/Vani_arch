@@ -1,65 +1,88 @@
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "next-themes";
+import { SettingsProvider } from "@/contexts/SettingsContext";
+import { DeadManSwitchProvider } from "@/contexts/DeadManSwitchContext";
+import { StudentSessionProvider } from "@/contexts/StudentSessionContext";
+import { AdminAuthProvider } from "@/contexts/AdminAuthContext";
+import { OnboardingProvider } from "@/contexts/OnboardingContext";
+
+import LandingPage from "./pages/LandingPage";
+import PortalSelection from "./pages/PortalSelection";
+import Index from "./pages/Index";
+import StudentDashboard from "./pages/StudentDashboard";
+import PublicLedger from "./pages/PublicLedger";
+import ResolutionLedger from "./pages/ResolutionLedger";
+import EvidenceRepository from "./pages/EvidenceRepository";
+import GovernanceMatrix from "./pages/GovernanceMatrix";
+import AnonymousCredentialing from "./pages/AnonymousCredentialing";
+import GDPRCompliance from "./pages/GDPRCompliance";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import HelpDocumentation from "./pages/HelpDocumentation";
+import NotFound from "./pages/NotFound";
+
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminSetup from "./pages/admin/AdminSetup";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminResolutions from "./pages/admin/AdminResolutions";
+import AdminResolutionDetail from "./pages/admin/AdminResolutionDetail";
+import AcceptInvite from "./pages/admin/AcceptInvite";
+import AdminPasswordReset from "./pages/admin/AdminPasswordReset";
+import AdminUpdatePassword from "./pages/admin/AdminUpdatePassword";
+
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { AdminProtectedRoute } from "./components/admin/AdminProtectedRoute";
 
 const queryClient = new QueryClient();
 
-// Working landing page
-const LandingPage = () => {
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6" style={{ backgroundColor: 'hsl(210 100% 8%)' }}>
-      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-        <span className="flex h-2 w-2 rounded-full animate-pulse" style={{ backgroundColor: '#10b981' }} />
-        <span className="text-xs font-medium tracking-wide uppercase" style={{ color: '#10b981' }}>System Operational</span>
-      </div>
-      <h1 className="text-6xl md:text-8xl font-semibold mb-6 tracking-wider" style={{ color: 'hsl(160 84% 45%)' }}>VANI</h1>
-      <p className="text-xl md:text-2xl mb-4" style={{ color: 'hsl(160 84% 45% / 0.8)' }}>Anonymous, yet accountable</p>
-      <p className="text-lg md:text-xl max-w-2xl text-center mb-10" style={{ color: 'hsl(0 0% 98% / 0.6)' }}>
-        Verifiable Anonymous Network Intelligence.<br />Advanced governance for institutional transparency.
-      </p>
-      <div className="flex flex-col sm:flex-row gap-4">
-        <a 
-          href="/portal" 
-          className="px-8 py-4 rounded-lg font-medium text-lg transition-all hover:scale-105"
-          style={{ backgroundColor: 'hsl(160 84% 45%)', color: 'hsl(210 100% 8%)' }}
-        >
-          Enter System →
-        </a>
-        <a 
-          href="/admin/login" 
-          className="px-8 py-4 rounded-lg font-medium text-lg transition-all hover:scale-105"
-          style={{ backgroundColor: 'hsl(160 84% 45%)', color: 'hsl(210 100% 8%)' }}
-        >
-          Admin Login
-        </a>
-      </div>
-      <p className="mt-12 text-sm" style={{ color: 'hsl(0 0% 98% / 0.4)' }}>Central University of Jammu • Team CYNOX</p>
-    </div>
-  );
-};
-
-const NotFoundPage = () => (
-  <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'hsl(210 100% 8%)', color: 'white' }}>
-    <div className="text-center">
-      <h1 className="text-4xl font-bold mb-4">404</h1>
-      <p className="opacity-70 mb-4">Page not found</p>
-      <a href="/" className="text-emerald-400 hover:underline">Return home</a>
-    </div>
-  </div>
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+      <TooltipProvider>
+        <SettingsProvider>
+          <DeadManSwitchProvider>
+            <StudentSessionProvider>
+              <AdminAuthProvider>
+                <OnboardingProvider>
+                  <Toaster position="top-right" richColors theme="dark" />
+                  <BrowserRouter>
+                    <Routes>
+                      <Route path="/" element={<LandingPage />} />
+                      <Route path="/portal" element={<PortalSelection />} />
+                      <Route path="/submit" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+                      <Route path="/dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
+                      <Route path="/ledger" element={<PublicLedger />} />
+                      <Route path="/resolutions" element={<ResolutionLedger />} />
+                      <Route path="/evidence" element={<ProtectedRoute><EvidenceRepository /></ProtectedRoute>} />
+                      <Route path="/governance" element={<GovernanceMatrix />} />
+                      <Route path="/credentials" element={<ProtectedRoute><AnonymousCredentialing /></ProtectedRoute>} />
+                      <Route path="/gdpr-compliance" element={<GDPRCompliance />} />
+                      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                      <Route path="/help" element={<HelpDocumentation />} />
+                      
+                      {/* Admin Routes */}
+                      <Route path="/admin/login" element={<AdminLogin />} />
+                      <Route path="/admin/setup" element={<AdminSetup />} />
+                      <Route path="/admin/accept-invite" element={<AcceptInvite />} />
+                      <Route path="/admin/password-reset" element={<AdminPasswordReset />} />
+                      <Route path="/admin/update-password" element={<AdminUpdatePassword />} />
+                      <Route path="/admin" element={<AdminProtectedRoute><AdminDashboard /></AdminProtectedRoute>} />
+                      <Route path="/admin/resolutions" element={<AdminProtectedRoute><AdminResolutions /></AdminProtectedRoute>} />
+                      <Route path="/admin/resolutions/:id" element={<AdminProtectedRoute><AdminResolutionDetail /></AdminProtectedRoute>} />
+                      
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </BrowserRouter>
+                </OnboardingProvider>
+              </AdminAuthProvider>
+            </StudentSessionProvider>
+          </DeadManSwitchProvider>
+        </SettingsProvider>
+      </TooltipProvider>
+    </ThemeProvider>
+  </QueryClientProvider>
 );
-
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Toaster theme="dark" position="top-right" richColors />
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </BrowserRouter>
-    </QueryClientProvider>
-  );
-}
 
 export default App;
