@@ -1,0 +1,274 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* VANI - Institutional Professional Design System */
+
+@layer base {
+  :root {
+    /* Enforced Dark Mode Variables */
+    --background: 210 100% 8%;
+    --foreground: 0 0% 98%;
+    --card: 210 100% 10%;
+    --card-foreground: 0 0% 98%;
+    --popover: 210 100% 10%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 160 84% 45%;
+    --primary-foreground: 210 100% 8%;
+    --secondary: 210 50% 18%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 210 50% 15%;
+    --muted-foreground: 220 15% 60%;
+    --accent: 160 84% 45%;
+    --accent-foreground: 210 100% 8%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 210 50% 20%;
+    --input: 210 50% 20%;
+    --ring: 160 84% 45%;
+    --radius: 0.5rem;
+
+    /* Sidebar - Professional (Dark) */
+    --sidebar-background: 210 100% 6%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 160 84% 45%;
+    --sidebar-primary-foreground: 210 100% 8%;
+    --sidebar-accent: 210 50% 15%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 210 50% 15%;
+    --sidebar-ring: 160 84% 45%;
+
+    /* Institutional colors */
+    --navy-dark: 210 100% 12%;
+    --navy-medium: 210 100% 25%;
+    --navy-light: 210 50% 40%;
+    --slate-dark: 220 15% 25%;
+    --slate-medium: 220 15% 45%;
+    --slate-light: 220 15% 75%;
+
+    /* Status colors */
+    --status-safe: 160 84% 35%;
+    --status-warning: 45 93% 47%;
+    --status-critical: 0 84% 60%;
+    --status-info: 210 100% 50%;
+
+    /* VANI Brand Colors - Enforced Dark Mode */
+    --vani-blue-dark: 210 85% 15%;
+    --vani-blue: 220 90% 55%;
+    --vani-blue-light: 210 90% 75%;
+    --vani-slate: 215 20% 85%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@layer components {
+
+  /* Professional subtle effects */
+  .professional-shadow {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08),
+      0 4px 12px rgba(0, 0, 0, 0.04);
+  }
+
+  .professional-shadow-lg {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05),
+      0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Professional alert styling */
+  .doomsday-mode {
+    border-color: hsl(var(--destructive) / 0.5) !important;
+    background: linear-gradient(135deg, hsl(var(--destructive) / 0.05), transparent);
+  }
+
+  .doomsday-mode::before {
+    display: none;
+  }
+
+  /* Professional button interactions */
+  .professional-button {
+    @apply relative overflow-hidden transition-all duration-200;
+  }
+
+  .professional-button:hover {
+    @apply scale-[1.01];
+    box-shadow: 0 2px 8px rgba(0, 31, 63, 0.15);
+  }
+
+  .professional-button:active {
+    @apply scale-[0.99];
+  }
+
+  /* Clean grid pattern */
+  .institutional-grid {
+    background-image:
+      linear-gradient(hsl(var(--border) / 0.3) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.3) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Status indicators */
+  .status-safe {
+    @apply text-[hsl(var(--status-safe))];
+  }
+
+  .status-warning {
+    @apply text-[hsl(var(--status-warning))];
+  }
+
+  .status-critical {
+    @apply text-[hsl(var(--status-critical))];
+  }
+
+  /* Smooth professional animations */
+  .animate-pulse-subtle {
+    animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-subtle {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  /* Smooth spark animation */
+  .animate-spark {
+    animation: spark 0.6s ease-out forwards;
+  }
+
+  @keyframes spark {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    50% {
+      transform: translateY(-10px) scale(1.1);
+      opacity: 0.8;
+    }
+
+    100% {
+      transform: translateY(-20px) scale(0.8);
+      opacity: 0;
+    }
+  }
+
+  /* Smooth pulse */
+  .animate-pulse-slow {
+    animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-slow {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.8;
+    }
+  }
+
+  /* Professional glow animation for buttons */
+  .animate-pulse-glow {
+    animation: pulse-glow-pro 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-glow-pro {
+
+    0%,
+    100% {
+      box-shadow: 0 2px 8px hsl(var(--primary) / 0.2);
+    }
+
+    50% {
+      box-shadow: 0 4px 16px hsl(var(--primary) / 0.3);
+    }
+  }
+
+  /* New Landing Page Animations */
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  @keyframes fade-in-up {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-grid-flow {
+    animation: grid-flow 20s linear infinite;
+  }
+
+  @keyframes grid-flow {
+    0% {
+      background-position: 0 0;
+    }
+
+    100% {
+      background-position: 40px 40px;
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-pulse-glow-green {
+    animation: pulse-glow-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-glow-green {
+
+    0%,
+    100% {
+      opacity: 1;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    }
+
+    50% {
+      opacity: 0.8;
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+    }
+  }
+}
+
+@layer utilities {
+  .font-mono-data {
+    font-family: "Roboto", "Inter", sans-serif;
+    font-weight: 500;
+  }
+}
