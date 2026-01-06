@@ -28,7 +28,7 @@ import { StudentLogin } from "@/components/auth/StudentLogin";
 import { toast } from "@/hooks/use-toast";
 
 const StudentDashboard = () => {
-  const { isAuthenticated, studentProfile, logout } = useStudentSession();
+  const { isAuthenticated, studentProfile, logout, isLoading } = useStudentSession();
   const navigate = useNavigate();
   const location = useLocation();
   const { demoMode } = useSettings();
@@ -71,13 +71,22 @@ const StudentDashboard = () => {
     fetchReportCounts();
   }, [studentProfile, demoMode]);
 
+  // If loading, show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   // If not authenticated, show the Student Login
   if (!isAuthenticated) {
     return <StudentLogin />;
   }
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     toast({
       title: "Session Ended",
       description: "Your session has been securely terminated.",
