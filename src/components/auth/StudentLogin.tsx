@@ -75,20 +75,22 @@ export function StudentLogin() {
     setIsLoading(true);
 
     try {
-      // Use Supabase Auth's built-in OTP
-      const { error } = await supabase.auth.signInWithOtp({
-        email: email.trim().toLowerCase(),
-        options: {
-          data: {
-            enrollment_no: enrollmentNo.trim().toUpperCase(),
-          },
-          emailRedirectTo: `${window.location.origin}/student-dashboard`,
+      // Use custom OTP edge function
+      const { data, error } = await supabase.functions.invoke('send-student-otp', {
+        body: {
+          enrollment_no: enrollmentNo.trim().toUpperCase(),
+          email: email.trim().toLowerCase(),
         },
       });
 
       if (error) {
         console.error('OTP error:', error);
-        toast.error(error.message || 'Failed to send verification code');
+        toast.error('Failed to send verification code');
+        return;
+      }
+
+      if (data?.error) {
+        toast.error(data.error);
         return;
       }
 
@@ -112,23 +114,36 @@ export function StudentLogin() {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.verifyOtp({
-        email: email.trim().toLowerCase(),
-        token: otpCode,
-        type: 'email',
+      // Use custom verify OTP edge function
+      const { data, error } = await supabase.functions.invoke('verify-student-otp', {
+        body: {
+          enrollment_no: enrollmentNo.trim().toUpperCase(),
+          email: email.trim().toLowerCase(),
+          otp_code: otpCode,
+        },
       });
 
       if (error) {
         console.error('Verify OTP error:', error);
-        toast.error(error.message || 'Invalid verification code');
+        toast.error('Verification failed. Please try again.');
         setOtpCode('');
         return;
       }
 
-      if (data.session) {
+      if (data?.error) {
+        toast.error(data.error);
+        setOtpCode('');
+        return;
+      }
+
+      if (data?.success && data?.profile) {
+        // Store profile in localStorage for session management
+        localStorage.setItem('student_profile', JSON.stringify(data.profile));
         toast.success('Welcome! Logging you in...');
         const returnUrl = (location.state as { from?: string })?.from || '/student-dashboard';
         navigate(returnUrl, { replace: true });
+        // Force page reload to update session context
+        window.location.href = returnUrl;
       }
     } catch (error) {
       console.error('Verify OTP error:', error);

@@ -54,19 +54,10 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
   const checkAdminRole = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userId)
-        .eq("role", "admin")
-        .maybeSingle();
-
-      if (error) {
-        console.error("Error checking admin role:", error);
-        setIsAdmin(false);
-      } else {
-        setIsAdmin(!!data);
-      }
+      // Mock admin check - user_roles table doesn't exist yet
+      // In production, this would query the user_roles table
+      console.log("Checking admin role for user:", userId);
+      setIsAdmin(false); // Default to non-admin
     } catch (err) {
       console.error("Error checking admin role:", err);
       setIsAdmin(false);

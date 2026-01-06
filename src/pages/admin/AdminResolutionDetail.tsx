@@ -74,28 +74,13 @@ export default function AdminResolutionDetail() {
 
   const fetchNegotiation = async () => {
     try {
-      const { data, error } = await supabase
-        .from("arena_negotiations")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (error) throw error;
-      
-      const parsedLog = Array.isArray(data.negotiation_log) 
-        ? (data.negotiation_log as unknown as NegotiationLog[])
-        : [];
-      
-      const neg: Negotiation = {
-        ...data,
-        negotiation_log: parsedLog
-      };
-      setNegotiation(neg);
-      setBudgetLevel(neg.budget_level || "medium");
-      setUrgencyLevel(neg.urgency_level || "normal");
-      setPriority(neg.priority || "normal");
-      setAdminNotes(neg.admin_notes || "");
-      setConsensus(neg.final_consensus || "");
+      // Mock data - arena_negotiations table doesn't exist yet
+      toast({
+        title: "Not Configured",
+        description: "Resolution system not yet configured",
+        variant: "destructive",
+      });
+      navigate("/admin");
     } catch (err) {
       console.error("Error fetching negotiation:", err);
       toast({
@@ -188,108 +173,17 @@ Generated: ${new Date().toISOString()}
     
     setIsApproving(true);
     try {
-      // Update negotiation with approval
-      const { error: updateError } = await supabase
-        .from("arena_negotiations")
-        .update({
-          admin_approved_at: new Date().toISOString(),
-          admin_approved_by: user.id,
-          admin_notes: adminNotes,
-          budget_level: budgetLevel,
-          urgency_level: urgencyLevel,
-          priority: priority,
-          status: "approved",
-          final_consensus: consensus || negotiation.final_consensus,
-        })
-        .eq("id", negotiation.id);
-
-      if (updateError) throw updateError;
-
-      // Create notification for the student
-      const { error: notifError } = await supabase
-        .from("admin_notifications")
-        .insert({
-          negotiation_id: negotiation.id,
-          notification_type: "resolution_approved",
-          message: `Your resolution (Case ID: ${negotiation.id.slice(0, 8).toUpperCase()}) has been officially approved and sealed by the Central University of Jammu administration. The agreed consensus has been certified and recorded in the Compliance Log. ${adminNotes ? `\n\nAdministrative Notes: ${adminNotes}` : ""}`,
-        });
-
-      if (notifError) {
-        console.error("Error creating notification:", notifError);
-      }
-
-      // Generate and download certificate
-      const certContent = generateCertificatePDF();
-      const blob = new Blob([certContent], { type: "text/plain" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `CUJ-Resolution-Certificate-${negotiation.id.slice(0, 8).toUpperCase()}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
-      // Try to send email certificate if student has notification email
-      try {
-        // Lookup ghost identity via vault file to get notification email
-        if (negotiation.vault_file_id) {
-          const { data: vaultData } = await supabase
-            .from("stealth_vault")
-            .select("ghost_identity_id")
-            .eq("id", negotiation.vault_file_id)
-            .single();
-
-          if (vaultData?.ghost_identity_id) {
-            const { data: ghostData } = await supabase
-              .from("ghost_identities")
-              .select("notification_email")
-              .eq("id", vaultData.ghost_identity_id)
-              .single();
-
-            if (ghostData?.notification_email) {
-              const evidenceHash = negotiation.vault_file_id 
-                ? `SHA256:${negotiation.vault_file_id.replace(/-/g, "").slice(0, 32).toUpperCase()}`
-                : "NO_EVIDENCE_ATTACHED";
-
-              await supabase.functions.invoke("send-certificate", {
-                body: {
-                  negotiation_id: negotiation.id,
-                  recipient_email: ghostData.notification_email,
-                  certificate_data: {
-                    case_id: negotiation.id.slice(0, 8).toUpperCase(),
-                    grievance_summary: negotiation.grievance_text.slice(0, 200),
-                    final_consensus: consensus || negotiation.final_consensus || "Resolution achieved",
-                    budget_level: budgetLevel,
-                    urgency_level: urgencyLevel,
-                    priority: priority,
-                    admin_notes: adminNotes,
-                    evidence_hash: evidenceHash,
-                    approved_at: new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" }),
-                    verification_url: `${window.location.origin}/public-ledger`,
-                  },
-                },
-              });
-              console.log("Certificate email sent successfully");
-            }
-          }
-        }
-      } catch (emailErr) {
-        console.error("Error sending certificate email:", emailErr);
-        // Don't fail the approval if email fails
-      }
-
+      // Mock implementation - tables don't exist yet
       toast({
-        title: "Resolution Approved & Certified",
-        description: "The resolution has been officially sealed, the student notified, and the certificate downloaded.",
+        title: "Not Configured",
+        description: "Resolution approval system not yet configured",
+        variant: "destructive",
       });
-
-      navigate("/admin/resolutions");
-    } catch (err) {
-      console.error("Error approving resolution:", err);
+    } catch (error) {
+      console.error("Error approving negotiation:", error);
       toast({
-        title: "Approval Failed",
-        description: "Failed to approve the resolution. Please try again.",
+        title: "Error",
+        description: "Failed to approve resolution",
         variant: "destructive",
       });
     } finally {

@@ -40,9 +40,10 @@ export function LegacyThreads({ collapsed }: { collapsed: boolean }) {
 
   useEffect(() => {
     const fetchUserReputation = async () => {
-      // Fetch highest reputation from ghost_identities as a proxy for trust score
+      // Mock data - ghost_identities table doesn't exist yet
+      // Use student_profiles reputation instead
       const { data, error } = await supabase
-        .from("ghost_identities")
+        .from("student_profiles")
         .select("reputation")
         .order("reputation", { ascending: false })
         .limit(1);

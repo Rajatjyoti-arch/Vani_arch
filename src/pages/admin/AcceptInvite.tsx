@@ -49,33 +49,8 @@ export default function AcceptInvite() {
 
   const validateInvite = async () => {
     try {
-      const { data, error } = await supabase
-        .from("admin_invites")
-        .select("*")
-        .eq("invite_token", token)
-        .single();
-
-      if (error) throw error;
-
-      if (!data) {
-        setError("Invalid invite link");
-        return;
-      }
-
-      // Check if already accepted
-      if (data.accepted_at) {
-        setError("This invite has already been used");
-        return;
-      }
-
-      // Check if expired
-      if (new Date(data.expires_at) < new Date()) {
-        setError("This invite has expired");
-        return;
-      }
-
-      setInvite(data);
-      setEmail(data.email);
+      // Mock validation - admin_invites table doesn't exist yet
+      setError("Admin invite system not yet configured. Please set up the database first.");
     } catch (err: any) {
       console.error("Error validating invite:", err);
       setError("Invalid or expired invite link");
@@ -108,47 +83,12 @@ export default function AcceptInvite() {
 
     setIsLoading(true);
     try {
-      // Sign up the new admin user
-      const { data: authData, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/admin`,
-        },
-      });
-
-      if (signUpError) throw signUpError;
-
-      if (!authData.user) {
-        throw new Error("Failed to create user account");
-      }
-
-      // Assign admin role
-      const { error: roleError } = await supabase
-        .from("user_roles")
-        .insert({
-          user_id: authData.user.id,
-          role: invite.role as "admin" | "moderator" | "user",
-        });
-
-      if (roleError) throw roleError;
-
-      // Mark invite as accepted
-      const { error: updateError } = await supabase
-        .from("admin_invites")
-        .update({ accepted_at: new Date().toISOString() })
-        .eq("id", invite.id);
-
-      if (updateError) {
-        console.error("Error marking invite as accepted:", updateError);
-      }
-
+      // Mock implementation - admin tables don't exist yet
       toast({
-        title: "Account Created",
-        description: "Your admin account has been created. Please sign in.",
+        title: "Setup Required",
+        description: "Admin system not yet configured. Please set up the database first.",
+        variant: "destructive",
       });
-
-      navigate("/admin/login");
     } catch (err: any) {
       console.error("Error accepting invite:", err);
       toast({

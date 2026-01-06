@@ -42,29 +42,19 @@ const StudentDashboard = () => {
     const fetchReportCounts = async () => {
       if (!studentProfile) return;
 
-      const { data, error } = await supabase
-        .from("reports")
-        .select("status")
-        .eq("ghost_identity_id", studentProfile.id);
-
-      if (error) {
-        console.error("Error fetching report counts:", error);
-        return;
-      }
-
-      if (demoMode && (!data || data.length === 0)) {
+      // Mock data - reports table doesn't exist yet
+      if (demoMode) {
         setReportCounts({
           resolved: 3,
           pending: 1,
           underReview: 2
         });
       } else {
-        const counts = {
-          resolved: data?.filter(r => r.status === "resolved").length || 0,
-          pending: data?.filter(r => r.status === "open").length || 0,
-          underReview: data?.filter(r => r.status === "in_review").length || 0
-        };
-        setReportCounts(counts);
+        setReportCounts({
+          resolved: 0,
+          pending: 0,
+          underReview: 0
+        });
       }
     };
 

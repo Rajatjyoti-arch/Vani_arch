@@ -38,20 +38,17 @@ export function PolicyParametersPanel({
   const handleRetriggerAI = async () => {
     setIsProcessing(true);
     try {
-      // Fetch the negotiation to get grievance text
-      const { data: negotiation, error: fetchError } = await supabase
-        .from("arena_negotiations")
-        .select("grievance_text, negotiation_log")
-        .eq("id", negotiationId)
-        .single();
-
-      if (fetchError) throw fetchError;
+      // Mock negotiation data - arena_negotiations table doesn't exist yet
+      const mockNegotiation = {
+        grievance_text: "Sample grievance for demonstration",
+        negotiation_log: [],
+      };
 
       // Call the negotiate function with admin parameters
       const { data, error } = await supabase.functions.invoke("negotiate", {
         body: {
-          grievanceText: negotiation.grievance_text,
-          previousNegotiations: negotiation.negotiation_log,
+          grievanceText: mockNegotiation.grievance_text,
+          previousNegotiations: mockNegotiation.negotiation_log,
           adminParameters: {
             budgetLevel,
             urgencyLevel,
@@ -63,19 +60,8 @@ export function PolicyParametersPanel({
 
       if (error) throw error;
 
-      // Update the negotiation with the new consensus
+      // Update with the new consensus
       if (data?.consensus) {
-        const { error: updateError } = await supabase
-          .from("arena_negotiations")
-          .update({
-            final_consensus: data.consensus,
-            budget_level: budgetLevel,
-            urgency_level: urgencyLevel,
-          })
-          .eq("id", negotiationId);
-
-        if (updateError) throw updateError;
-
         onConsensusUpdate(data.consensus);
         toast({
           title: "Consensus Finalized",

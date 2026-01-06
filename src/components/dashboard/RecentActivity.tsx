@@ -31,62 +31,25 @@ export function RecentActivity() {
 
   const fetchActivity = async () => {
     try {
-      // Fetch recent ghost identities
-      const { data: identities } = await supabase
-        .from("ghost_identities")
+      // Fetch recent student profiles as activity
+      const { data: profiles } = await supabase
+        .from("student_profiles")
         .select("id, ghost_name, created_at")
         .order("created_at", { ascending: false })
-        .limit(3);
-
-      // Fetch recent vault uploads
-      const { data: uploads } = await supabase
-        .from("stealth_vault")
-        .select("id, file_name, created_at")
-        .order("created_at", { ascending: false })
-        .limit(3);
-
-      // Fetch recent reports
-      const { data: reports } = await supabase
-        .from("reports")
-        .select("id, title, zone, status, created_at")
-        .order("created_at", { ascending: false })
-        .limit(3);
+        .limit(6);
 
       const activityItems: ActivityItem[] = [];
 
-      identities?.forEach((i) => {
+      profiles?.forEach((p) => {
         activityItems.push({
-          id: `identity-${i.id}`,
+          id: `identity-${p.id}`,
           type: "identity",
-          message: `Ghost identity '${i.ghost_name}' created`,
-          time: formatRelativeTime(i.created_at),
+          message: `Ghost identity '${p.ghost_name}' created`,
+          time: formatRelativeTime(p.created_at),
         });
       });
 
-      uploads?.forEach((u) => {
-        activityItems.push({
-          id: `upload-${u.id}`,
-          type: "upload",
-          message: `Evidence file '${u.file_name}' uploaded`,
-          time: formatRelativeTime(u.created_at),
-        });
-      });
-
-      reports?.forEach((r) => {
-        const type = r.status === "resolved" ? "resolution" : "report";
-        activityItems.push({
-          id: `report-${r.id}`,
-          type,
-          message: r.status === "resolved"
-            ? `Issue "${r.title}" marked as resolved`
-            : `New report: "${r.title}"`,
-          time: formatRelativeTime(r.created_at),
-          zone: r.zone,
-        });
-      });
-
-      // Sort by most recent
-      setActivities(activityItems.sort((a, b) => 0).slice(0, 6));
+      setActivities(activityItems);
     } catch (error) {
       console.error("Error fetching activity:", error);
     } finally {
@@ -97,12 +60,10 @@ export function RecentActivity() {
   useEffect(() => {
     fetchActivity();
 
-    // Subscribe to real-time updates for all relevant tables
+    // Subscribe to real-time updates for student_profiles
     const channel = supabase
       .channel('db-activity')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'ghost_identities' }, fetchActivity)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'stealth_vault' }, fetchActivity)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'reports' }, fetchActivity)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'student_profiles' }, fetchActivity)
       .subscribe();
 
     return () => {

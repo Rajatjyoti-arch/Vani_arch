@@ -53,16 +53,19 @@ export function AnalyticsCharts() {
 
   const fetchAnalyticsData = async () => {
     try {
-      // Fetch negotiations for trends and department data
-      const { data: negotiations } = await supabase
-        .from("arena_negotiations")
-        .select("*")
-        .order("created_at", { ascending: true });
-
-      // Fetch sentiment logs
-      const { data: sentimentLogs } = await supabase
-        .from("sentiment_logs")
-        .select("*");
+      // Generate mock data since the required tables don't exist yet
+      const mockNegotiations: Array<{
+        created_at: string;
+        admin_approved_at: string | null;
+        department: string;
+        status: string;
+      }> = [];
+      
+      const mockSentimentLogs: Array<{
+        zone_name: string;
+        concern_level: string;
+        reports_count: number;
+      }> = [];
 
       // Process resolution trends (last 7 days)
       const last7Days = Array.from({ length: 7 }, (_, i) => {
@@ -72,9 +75,9 @@ export function AnalyticsCharts() {
       });
 
       const trends = last7Days.map(date => {
-        const dayNegotiations = negotiations?.filter(n => 
+        const dayNegotiations = mockNegotiations.filter(n => 
           n.created_at.startsWith(date)
-        ) || [];
+        );
         const resolved = dayNegotiations.filter(n => n.admin_approved_at).length;
         return {
           date: new Date(date).toLocaleDateString("en-US", { weekday: "short" }),
@@ -86,7 +89,7 @@ export function AnalyticsCharts() {
 
       // Process department performance
       const departments: Record<string, DepartmentPerformance> = {};
-      negotiations?.forEach(n => {
+      mockNegotiations.forEach(n => {
         const dept = n.department || "General";
         if (!departments[dept]) {
           departments[dept] = { department: dept, total: 0, resolved: 0, pending: 0 };
@@ -101,11 +104,11 @@ export function AnalyticsCharts() {
       setDepartmentData(Object.values(departments).slice(0, 6));
 
       // Process sentiment data
-      const sentiment = sentimentLogs?.map(log => ({
+      const sentiment = mockSentimentLogs.map(log => ({
         zone: log.zone_name,
         score: log.concern_level === "low" ? 80 : log.concern_level === "moderate" ? 50 : 20,
         reports: log.reports_count,
-      })) || [];
+      }));
       setSentimentData(sentiment.slice(0, 8));
 
     } catch (error) {

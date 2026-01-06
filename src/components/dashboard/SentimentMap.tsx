@@ -42,24 +42,9 @@ export function SentimentMap() {
 
   const fetchZones = async () => {
     try {
-      const { data, error } = await supabase
-        .from("sentiment_logs")
-        .select("*")
-        .order("zone_name");
-
-      if (error) throw error;
-
-      // Map sentiment_logs data to Zone interface
-      const mappedZones: Zone[] = (data || []).map((log) => ({
-        id: log.id,
-        zone_id: log.zone_id,
-        zone_name: log.zone_name,
-        concern_level: log.concern_level as "safe" | "warning" | "critical",
-        reports_count: log.reports_count,
-        last_report_at: log.last_report_at,
-      }));
-
-      setZones(mappedZones);
+      // Mock data - sentiment_logs table doesn't exist yet
+      // Return empty to show the "No zone data" state
+      setZones([]);
     } catch (error) {
       console.error("Error fetching zones:", error);
       setZones([]);
@@ -70,16 +55,6 @@ export function SentimentMap() {
 
   useEffect(() => {
     fetchZones();
-
-    // Subscribe to real-time updates
-    const channel = supabase
-      .channel('sentiment-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'sentiment_logs' }, fetchZones)
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
   }, []);
 
   return (

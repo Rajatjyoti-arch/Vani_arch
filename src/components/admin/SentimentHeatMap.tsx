@@ -25,13 +25,9 @@ export function SentimentHeatMap() {
 
   const fetchSentimentData = async () => {
     try {
-      const { data, error } = await supabase
-        .from("sentiment_logs")
-        .select("*")
-        .order("reports_count", { ascending: false });
-
-      if (error) throw error;
-      setSentimentData(data || []);
+      // Mock data - sentiment_logs table doesn't exist yet
+      // Return empty array to show placeholder zones
+      setSentimentData([]);
     } catch (err) {
       console.error("Error fetching sentiment data:", err);
     } finally {

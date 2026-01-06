@@ -92,18 +92,8 @@ const TheArena = () => {
   // Fetch vault files with grievances
   useEffect(() => {
     const fetchVaultFiles = async () => {
-      const { data, error } = await supabase
-        .from('stealth_vault')
-        .select('id, file_name, file_path, secret_metadata, created_at')
-        .not('secret_metadata', 'is', null)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching vault files:', error);
-        return;
-      }
-
-      setVaultFiles(data || []);
+      // Mock data - stealth_vault table doesn't exist yet
+      setVaultFiles([]);
     };
 
     fetchVaultFiles();
@@ -121,172 +111,15 @@ const TheArena = () => {
       return;
     }
 
-    setIsNegotiating(true);
-    setSentinelScore(50);
-    setGovernorScore(50);
-    setCurrentRound(1);
-    setEthicalViolationDetected(false);
-    setShowViolationAlert(false);
-
-    // Create negotiation record
-    const { data: newNegotiation, error } = await supabase
-      .from('arena_negotiations')
-      .insert({
-        vault_file_id: selectedFileId,
-        grievance_text: selectedFile.secret_metadata,
-        negotiation_log: [],
-        sentinel_score: 50,
-        governor_score: 50,
-        status: 'in_progress',
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error creating negotiation:', error);
-      toast.error("Failed to initiate resolution process");
-      setIsNegotiating(false);
-      return;
-    }
-
-    setNegotiation({
-      ...newNegotiation,
-      negotiation_log: (newNegotiation.negotiation_log as unknown) as NegotiationRound[],
-    });
-
-    // Start the negotiation rounds
-    await runNegotiationRounds(newNegotiation.id, selectedFile.secret_metadata, []);
+    // Mock negotiation - arena_negotiations table doesn't exist yet
+    toast.error("Resolution system not yet configured. Please set up the database first.");
+    setIsNegotiating(false);
   };
 
   const runNegotiationRounds = async (negotiationId: string, grievanceText: string, existingLog: NegotiationRound[]) => {
-    let log = [...existingLog];
-    let round = 1;
-    let sentScore = 50;
-    let govScore = 50;
-    const maxRounds = 4;
-
-    for (let i = 0; i < maxRounds * 2; i++) {
-      const isArbiterNeeded = round > 3 && log.length >= 6;
-      
-      if (isArbiterNeeded) {
-        // Arbiter intervention
-        round = 4;
-        setCurrentRound(4);
-      }
-
-      try {
-        // Check if we need ethics override
-        const lastEntry = log[log.length - 1];
-        const needsEthicsOverride = lastEntry?.ethicalViolation && lastEntry.agent === 'Governor';
-        
-        if (needsEthicsOverride) {
-          setEthicalViolationDetected(true);
-          setShowViolationAlert(true);
-          // Wait for user to acknowledge the alert
-          await new Promise(resolve => setTimeout(resolve, 3000));
-        }
-        
-        const response = await supabase.functions.invoke('negotiate', {
-          body: {
-            grievanceText,
-            currentRound: round,
-            negotiationLog: log,
-            ethicalViolationDetected: needsEthicsOverride,
-          },
-        });
-
-        if (response.error) {
-          console.error('Resolution error:', response.error);
-          toast.error("Resolution session interrupted");
-          break;
-        }
-
-        const roundResult: NegotiationRound = response.data;
-        log = [...log, roundResult];
-
-        // Update scores based on agent
-        if (roundResult.agent === 'Sentinel') {
-          sentScore = Math.max(0, Math.min(100, sentScore + roundResult.sentimentShift));
-        } else if (roundResult.agent === 'Governor') {
-          govScore = Math.max(0, Math.min(100, govScore + roundResult.sentimentShift));
-        }
-
-        setSentinelScore(sentScore);
-        setGovernorScore(govScore);
-        setNegotiation(prev => prev ? { ...prev, negotiation_log: log } : null);
-
-        // Update database
-        await supabase
-          .from('arena_negotiations')
-          .update({
-            negotiation_log: log as unknown as string,
-            sentinel_score: sentScore,
-            governor_score: govScore,
-          })
-          .eq('id', negotiationId);
-
-        // Check if we've reached the arbiter's final say
-        if (roundResult.agent === 'Arbiter') {
-          // Save final consensus
-          await supabase
-            .from('arena_negotiations')
-            .update({
-              final_consensus: roundResult.message,
-              status: 'completed',
-            })
-            .eq('id', negotiationId);
-
-          setNegotiation(prev => prev ? { 
-            ...prev, 
-            final_consensus: roundResult.message,
-            status: 'completed' 
-          } : null);
-
-          toast.success("Resolution Complete", {
-            description: "Case concluded. Resolution recorded.",
-          });
-
-          setTimeout(() => {
-            navigate('/resolution-ledger');
-          }, 2000);
-          break;
-        }
-
-        // Increment round after both agents speak
-        if (roundResult.agent === 'Governor') {
-          round++;
-          setCurrentRound(round);
-        }
-
-        // Small delay between rounds for visual effect
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-      } catch (error) {
-        console.error('Session error:', error);
-        toast.error("Resolution session interrupted");
-        break;
-      }
-    }
-
-    // If no arbiter was triggered, complete normally after 4 sessions
-    if (log.length >= 8 && !log.some(l => l.agent === 'Arbiter')) {
-      await supabase
-        .from('arena_negotiations')
-        .update({
-          final_consensus: "Resolution concluded after 4 sessions. Review the discussion above.",
-          status: 'completed',
-        })
-        .eq('id', negotiationId);
-
-      toast.success("Resolution Complete", {
-        description: "Case resolved. Redirecting to compliance log...",
-      });
-
-      setTimeout(() => {
-        navigate('/resolution-ledger');
-      }, 2000);
-    }
-
+    // Mock negotiation rounds - arena_negotiations table doesn't exist yet
+    console.log("Would run negotiation rounds for:", negotiationId, grievanceText);
+    toast.error("Resolution system not yet configured");
     setIsNegotiating(false);
   };
 
