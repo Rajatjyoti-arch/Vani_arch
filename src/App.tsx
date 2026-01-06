@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import { StudentSessionProvider } from "@/contexts/StudentSessionContext";
 import { AdminAuthProvider } from "@/contexts/AdminAuthContext";
+import { DeadManSwitchProvider } from "@/contexts/DeadManSwitchContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AdminProtectedRoute } from "@/components/admin/AdminProtectedRoute";
 
@@ -40,8 +41,9 @@ const App = () => (
     <SettingsProvider>
       <StudentSessionProvider>
         <AdminAuthProvider>
-          <TooltipProvider>
-            <Toaster position="top-right" richColors theme="dark" />
+          <DeadManSwitchProvider>
+            <TooltipProvider>
+              <Toaster position="top-right" richColors theme="dark" />
             <BrowserRouter>
               <Routes>
                 {/* Public Routes */}
@@ -117,6 +119,7 @@ const App = () => (
               </Routes>
             </BrowserRouter>
           </TooltipProvider>
+        </DeadManSwitchProvider>
         </AdminAuthProvider>
       </StudentSessionProvider>
     </SettingsProvider>
