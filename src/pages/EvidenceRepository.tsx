@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Shield, Upload, File, Image, FileText, Lock, Clock, Trash2, Loader2, Binary, Database, Info, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Shield, Upload, File, Image, FileText, Lock, Clock, Trash2, Loader2, Binary, Info, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { formatRelativeTime } from "@/lib/crypto";
@@ -32,9 +33,11 @@ const typeIcons: Record<string, React.ElementType> = {
 const StealthVault = () => {
   const navigate = useNavigate();
   const [files, setFiles] = useState<VaultFile[]>([]);
+  const [fileThumbnails, setFileThumbnails] = useState<Record<string, string>>({});
   const [dragOver, setDragOver] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [grievanceText, setGrievanceText] = useState("");
 
@@ -50,6 +53,22 @@ const StealthVault = () => {
       console.error("Error fetching files:", error);
     } else {
       setFiles(data || []);
+      
+      // Fetch thumbnails for image files
+      const imageFiles = (data || []).filter(f => f.file_type === "image");
+      const thumbnails: Record<string, string> = {};
+      
+      for (const file of imageFiles) {
+        const { data: urlData } = supabase.storage
+          .from("decoy-images")
+          .getPublicUrl(file.file_path);
+        
+        if (urlData?.publicUrl) {
+          thumbnails[file.id] = urlData.publicUrl;
+        }
+      }
+      
+      setFileThumbnails(thumbnails);
     }
     setIsLoading(false);
   }, []);
@@ -75,6 +94,11 @@ const StealthVault = () => {
     if (!selectedFiles || selectedFiles.length === 0) return;
 
     setIsUploading(true);
+    setUploadProgress(0);
+    
+    const totalFiles = selectedFiles.length;
+    let completedFiles = 0;
+    
     try {
       for (const file of Array.from(selectedFiles)) {
         // Generate unique file path
@@ -122,6 +146,10 @@ const StealthVault = () => {
         });
 
         if (dbError) throw dbError;
+        
+        // Update progress
+        completedFiles++;
+        setUploadProgress(Math.round((completedFiles / totalFiles) * 100));
       }
 
       // Show success animation
@@ -150,6 +178,7 @@ const StealthVault = () => {
       });
     } finally {
       setIsUploading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -247,15 +276,19 @@ const StealthVault = () => {
         >
           <CardContent className="py-12 flex flex-col items-center justify-center">
             {isUploading ? (
-              <>
-                <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-                <h3 className="text-lg font-medium text-foreground mb-2">
+              <div className="w-full max-w-md">
+                <Loader2 className="w-12 h-12 text-primary animate-spin mb-4 mx-auto" />
+                <h3 className="text-lg font-medium text-foreground mb-2 text-center">
                   Encrypting & Uploading...
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground text-center mb-4">
                   Securing your evidence in the repository
                 </p>
-              </>
+                <Progress value={uploadProgress} className="h-2" />
+                <p className="text-xs text-muted-foreground text-center mt-2">
+                  {uploadProgress}% complete
+                </p>
+              </div>
             ) : uploadSuccess ? (
               <div className="animate-scale-in">
                 <div className="p-4 rounded-full bg-green-500/20 mb-4 animate-[pulse_1s_ease-in-out_2]">
@@ -382,14 +415,31 @@ const StealthVault = () => {
               <div className="space-y-2">
                 {files.map((file) => {
                   const Icon = typeIcons[file.file_type] || File;
+                  const thumbnail = fileThumbnails[file.id];
+                  
                   return (
                     <div
                       key={file.id}
                       className="flex items-center gap-4 p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors group"
                     >
-                      <div className="p-2 rounded-lg bg-background">
-                        <Icon className="w-5 h-5 text-muted-foreground" />
-                      </div>
+                      {/* Thumbnail or Icon */}
+                      {file.file_type === "image" && thumbnail ? (
+                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-background shrink-0">
+                          <img 
+                            src={thumbnail} 
+                            alt={file.file_name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              // Fallback to icon if image fails to load
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-12 h-12 rounded-lg bg-background flex items-center justify-center shrink-0">
+                          <Icon className="w-5 h-5 text-muted-foreground" />
+                        </div>
+                      )}
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-foreground truncate">{file.file_name}</p>
                         <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
