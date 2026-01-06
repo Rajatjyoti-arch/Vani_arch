@@ -14,7 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      student_otp_codes: {
+        Row: {
+          created_at: string | null
+          email: string
+          enrollment_no: string
+          expires_at: string
+          id: string
+          is_used: boolean | null
+          otp_code: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          enrollment_no: string
+          expires_at: string
+          id?: string
+          is_used?: boolean | null
+          otp_code: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          enrollment_no?: string
+          expires_at?: string
+          id?: string
+          is_used?: boolean | null
+          otp_code?: string
+        }
+        Relationships: []
+      }
+      student_profiles: {
+        Row: {
+          avatar: string
+          created_at: string | null
+          email: string
+          enrollment_no: string
+          ghost_name: string
+          id: string
+          is_verified: boolean | null
+          reports_submitted: number | null
+          reputation: number | null
+        }
+        Insert: {
+          avatar: string
+          created_at?: string | null
+          email: string
+          enrollment_no: string
+          ghost_name: string
+          id?: string
+          is_verified?: boolean | null
+          reports_submitted?: number | null
+          reputation?: number | null
+        }
+        Update: {
+          avatar?: string
+          created_at?: string | null
+          email?: string
+          enrollment_no?: string
+          ghost_name?: string
+          id?: string
+          is_verified?: boolean | null
+          reports_submitted?: number | null
+          reputation?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

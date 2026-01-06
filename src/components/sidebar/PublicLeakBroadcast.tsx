@@ -18,17 +18,8 @@ export function PublicLeakBroadcast() {
   const triggerLeak = async () => {
     setIsLeaking(true);
     
-    // Fetch grievances from repository
-    const { data: vaultFiles } = await supabase
-      .from("stealth_vault")
-      .select("secret_metadata, file_name, created_at")
-      .limit(5);
-
-    // Simulate webhook POST to public ledger
-    const leakPayload = vaultFiles?.map((file) => {
-      const metadata = file.secret_metadata as unknown as Record<string, unknown> | null;
-      return (metadata?.grievance_text as string) || `Encrypted evidence: ${file.file_name}`;
-    }) || ["No evidence found - system integrity maintained"];
+    // Mock data - stealth_vault table doesn't exist yet
+    const leakPayload = ["No evidence found - system integrity maintained"];
 
     // Simulate delay for processing
     await new Promise((resolve) => setTimeout(resolve, 2000));

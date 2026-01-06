@@ -42,12 +42,11 @@ export function NotificationPreferences({
 
     setIsSaving(true);
     try {
-      const { error } = await supabase
-        .from("ghost_identities")
-        .update({ notification_email: isEnabled ? email : null })
-        .eq("id", ghostIdentityId);
-
-      if (error) throw error;
+      // Mock save - ghost_identities table doesn't exist yet
+      console.log("Saving notification preferences:", { ghostIdentityId, email: isEnabled ? email : null });
+      
+      // Simulate success
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       setIsSaved(true);
       setTimeout(() => setIsSaved(false), 3000);

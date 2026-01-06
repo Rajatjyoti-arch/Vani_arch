@@ -44,32 +44,9 @@ const StealthVault = () => {
   // Fetch vault files
   const fetchFiles = useCallback(async () => {
     setIsLoading(true);
-    const { data, error } = await supabase
-      .from("stealth_vault")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching files:", error);
-    } else {
-      setFiles(data || []);
-      
-      // Fetch thumbnails for image files
-      const imageFiles = (data || []).filter(f => f.file_type === "image");
-      const thumbnails: Record<string, string> = {};
-      
-      for (const file of imageFiles) {
-        const { data: urlData } = supabase.storage
-          .from("decoy-images")
-          .getPublicUrl(file.file_path);
-        
-        if (urlData?.publicUrl) {
-          thumbnails[file.id] = urlData.publicUrl;
-        }
-      }
-      
-      setFileThumbnails(thumbnails);
-    }
+    // Mock data - stealth_vault table doesn't exist yet
+    setFiles([]);
+    setFileThumbnails({});
     setIsLoading(false);
   }, []);
 
@@ -96,74 +73,22 @@ const StealthVault = () => {
     setIsUploading(true);
     setUploadProgress(0);
     
-    const totalFiles = selectedFiles.length;
-    let completedFiles = 0;
-    
     try {
-      for (const file of Array.from(selectedFiles)) {
-        // Generate unique file path
-        const timestamp = Date.now();
-        const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-        
-        let fileToUpload: File | Blob = file;
-        let finalFileName = file.name;
-        let filePath = `${timestamp}_${sanitizedName}`;
-
-        // If it's a valid image and there's grievance text, encode it using steganography
-        if (grievanceText && isValidImageForSteganography(file)) {
-          try {
-            const encodedBlob = await encodeTextInImage(file, grievanceText);
-            // Convert to PNG for lossless storage of encoded data
-            const pngName = file.name.replace(/\.[^/.]+$/, "") + "_secured.png";
-            finalFileName = pngName;
-            filePath = `${timestamp}_${pngName.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
-            fileToUpload = encodedBlob;
-            
-            toast({
-              title: "Evidence Secured",
-              description: "Data embedded into image using LSB encoding.",
-            });
-          } catch (encodeError) {
-            console.error("Steganography encoding failed:", encodeError);
-            // Continue with regular upload if encoding fails
-          }
-        }
-
-        // Upload to Supabase Storage
-        const { error: uploadError } = await supabase.storage
-          .from("decoy-images")
-          .upload(filePath, fileToUpload);
-
-        if (uploadError) throw uploadError;
-
-        // Save metadata to stealth_vault table
-        const { error: dbError } = await supabase.from("stealth_vault").insert({
-          file_name: finalFileName,
-          file_path: filePath,
-          file_type: getFileType(file),
-          file_size: formatFileSize(file.size),
-          secret_metadata: grievanceText || null,
-        });
-
-        if (dbError) throw dbError;
-        
-        // Update progress
-        completedFiles++;
-        setUploadProgress(Math.round((completedFiles / totalFiles) * 100));
-      }
+      // Mock upload - stealth_vault table doesn't exist yet
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      setUploadProgress(100);
 
       // Show success animation
       setUploadSuccess(true);
       
       // Show success notification
       toast({
-        title: "Upload Complete",
-        description: "Evidence securely stored in encrypted repository.",
+        title: "Upload Simulated",
+        description: "Storage table not yet configured. Please set up the database first.",
       });
 
-      // Clear form and refresh
+      // Clear form
       setGrievanceText("");
-      fetchFiles();
       
       // Reset success state after animation
       setTimeout(() => {
@@ -194,12 +119,8 @@ const StealthVault = () => {
 
   const deleteFile = async (id: string, filePath: string) => {
     try {
-      // Delete from storage
-      await supabase.storage.from("decoy-images").remove([filePath]);
-
-      // Delete from database
-      await supabase.from("stealth_vault").delete().eq("id", id);
-
+      // Mock delete - stealth_vault table doesn't exist yet
+      console.log("Would delete file:", id, filePath);
       setFiles(files.filter((f) => f.id !== id));
       toast({
         title: "File Deleted",

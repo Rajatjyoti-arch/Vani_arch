@@ -32,22 +32,8 @@ export function NegotiationContracts() {
 
   useEffect(() => {
     const fetchNegotiations = async () => {
-      const { data, error } = await supabase
-        .from("arena_negotiations")
-        .select("*")
-        .eq("status", "completed")
-        .order("updated_at", { ascending: false });
-
-      if (error) {
-        console.error("Error fetching negotiations:", error);
-      } else {
-        setNegotiations(
-          (data || []).map((n) => ({
-            ...n,
-            negotiation_log: (n.negotiation_log as unknown) as NegotiationRound[],
-          }))
-        );
-      }
+      // Mock data - arena_negotiations table doesn't exist yet
+      setNegotiations([]);
       setIsLoading(false);
     };
 

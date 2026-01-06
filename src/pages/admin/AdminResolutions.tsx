@@ -53,13 +53,8 @@ export default function AdminResolutions() {
 
   const fetchNegotiations = async () => {
     try {
-      const { data, error } = await supabase
-        .from("arena_negotiations")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setNegotiations(data as Negotiation[]);
+      // Mock data - arena_negotiations table doesn't exist yet
+      setNegotiations([]);
     } catch (err) {
       console.error("Error fetching negotiations:", err);
     } finally {

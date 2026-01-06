@@ -35,14 +35,17 @@ export function EvidenceViewer({ vaultFileId }: EvidenceViewerProps) {
     if (!vaultFileId) return;
     
     try {
-      const { data, error } = await supabase
-        .from("stealth_vault")
-        .select("*")
-        .eq("id", vaultFileId)
-        .single();
-
-      if (error) throw error;
-      setFile(data);
+      // Mock data - stealth_vault table doesn't exist yet
+      const mockFile: VaultFile = {
+        id: vaultFileId,
+        file_name: "evidence_document.pdf",
+        file_type: "application/pdf",
+        file_size: "2.4 MB",
+        file_path: "/vault/encrypted/" + vaultFileId,
+        created_at: new Date().toISOString(),
+        secret_metadata: null,
+      };
+      setFile(mockFile);
     } catch (err) {
       console.error("Error fetching evidence:", err);
     } finally {

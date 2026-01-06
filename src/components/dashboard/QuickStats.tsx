@@ -90,16 +90,14 @@ export function QuickStats() {
   useEffect(() => {
     const fetchRealStats = async () => {
       try {
-        // Fetch counts from DB for Identities and Vault Files
-        const [identitiesRes, vaultRes] = await Promise.all([
-          supabase.from("ghost_identities").select("id", { count: "exact" }),
-          supabase.from("stealth_vault").select("id", { count: "exact" }),
-        ]);
+        // Fetch student profile count
+        const { count: profileCount } = await supabase
+          .from("student_profiles")
+          .select("id", { count: "exact" });
 
         setStats(prev => ({
           ...prev,
-          identities: identitiesRes.count || 0,
-          vaultFiles: vaultRes.count || 0,
+          identities: profileCount || 0,
         }));
       } catch (error) {
         console.error("Error fetching real stats:", error);
@@ -110,20 +108,14 @@ export function QuickStats() {
 
     fetchRealStats();
 
-    // Set up real-time listeners for identities and vault
-    const identityChannel = supabase
-      .channel('public:ghost_identities')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'ghost_identities' }, fetchRealStats)
-      .subscribe();
-
-    const vaultChannel = supabase
-      .channel('public:stealth_vault')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'stealth_vault' }, fetchRealStats)
+    // Set up real-time listeners for student_profiles
+    const profileChannel = supabase
+      .channel('public:student_profiles')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'student_profiles' }, fetchRealStats)
       .subscribe();
 
     return () => {
-      supabase.removeChannel(identityChannel);
-      supabase.removeChannel(vaultChannel);
+      supabase.removeChannel(profileChannel);
     };
   }, []);
 

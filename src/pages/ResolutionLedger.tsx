@@ -48,20 +48,11 @@ const ResolutionLedger = () => {
 
   const fetchReports = useCallback(async () => {
     setIsLoading(true);
-    const { data, error } = await supabase
-      .from("reports")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching reports:", error);
-    }
-    
-    const realData = (data as Report[]) || [];
-    if (demoMode && realData.length === 0) {
+    // Mock data - reports table doesn't exist yet
+    if (demoMode) {
       setReports(mockReports as Report[]);
     } else {
-      setReports(realData);
+      setReports([]);
     }
     setIsLoading(false);
   }, [demoMode]);

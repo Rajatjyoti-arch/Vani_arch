@@ -80,27 +80,15 @@ export default function AdminDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const { data: negotiations, error } = await supabase
-        .from("arena_negotiations")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-
-      const pending = negotiations?.filter(n => 
-        n.status === "completed" && !n.admin_approved_at
-      ) || [];
-      const approved = negotiations?.filter(n => n.admin_approved_at) || [];
-      const inProgress = negotiations?.filter(n => n.status === "in_progress") || [];
-
+      // Mock data - arena_negotiations table doesn't exist yet
       setStats({
-        total: negotiations?.length || 0,
-        pending: pending.length,
-        approved: approved.length,
-        inProgress: inProgress.length,
+        total: 0,
+        pending: 0,
+        approved: 0,
+        inProgress: 0,
       });
 
-      setPendingQueue(pending.slice(0, 5) as Negotiation[]);
+      setPendingQueue([]);
     } catch (err) {
       console.error("Error fetching dashboard data:", err);
     } finally {
