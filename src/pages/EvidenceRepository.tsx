@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Shield, Upload, File, Image, FileText, Lock, Clock, Trash2, Loader2, Binary, Database, Info, ArrowLeft } from "lucide-react";
+import { Shield, Upload, File, Image, FileText, Lock, Clock, Trash2, Loader2, Binary, Database, Info, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { formatRelativeTime } from "@/lib/crypto";
@@ -35,6 +35,7 @@ const StealthVault = () => {
   const [dragOver, setDragOver] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
   const [grievanceText, setGrievanceText] = useState("");
 
   // Fetch vault files
@@ -123,6 +124,9 @@ const StealthVault = () => {
         if (dbError) throw dbError;
       }
 
+      // Show success animation
+      setUploadSuccess(true);
+      
       // Show success notification
       toast({
         title: "Upload Complete",
@@ -132,6 +136,11 @@ const StealthVault = () => {
       // Clear form and refresh
       setGrievanceText("");
       fetchFiles();
+      
+      // Reset success state after animation
+      setTimeout(() => {
+        setUploadSuccess(false);
+      }, 3000);
     } catch (error) {
       console.error("Upload error:", error);
       toast({
@@ -247,6 +256,18 @@ const StealthVault = () => {
                   Securing your evidence in the repository
                 </p>
               </>
+            ) : uploadSuccess ? (
+              <div className="animate-scale-in">
+                <div className="p-4 rounded-full bg-green-500/20 mb-4 animate-[pulse_1s_ease-in-out_2]">
+                  <CheckCircle2 className="w-12 h-12 text-green-500" />
+                </div>
+                <h3 className="text-lg font-medium text-foreground mb-2 text-center">
+                  Evidence Secured Successfully
+                </h3>
+                <p className="text-sm text-muted-foreground text-center">
+                  Your files have been encrypted and stored
+                </p>
+              </div>
             ) : (
               <>
                 <div className="p-4 rounded-full bg-primary/10 mb-4">
