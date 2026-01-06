@@ -16,7 +16,7 @@ type LoginStep = 'credentials' | 'otp';
 export function StudentLogin() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated, login } = useStudentSession();
+  const { isAuthenticated, isLoading: sessionLoading } = useStudentSession();
   
   const [step, setStep] = useState<LoginStep>('credentials');
   const [enrollmentNo, setEnrollmentNo] = useState('');
@@ -27,11 +27,11 @@ export function StudentLogin() {
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated) {
+    if (!sessionLoading && isAuthenticated) {
       const returnUrl = (location.state as { from?: string })?.from || '/student-dashboard';
       navigate(returnUrl, { replace: true });
     }
-  }, [isAuthenticated, navigate, location]);
+  }, [isAuthenticated, sessionLoading, navigate, location]);
 
   // Resend cooldown timer
   useEffect(() => {
@@ -75,17 +75,20 @@ export function StudentLogin() {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('send-student-otp', {
-        body: {
-          enrollment_no: enrollmentNo.trim(),
-          email: email.trim().toLowerCase(),
+      // Use Supabase Auth's built-in OTP
+      const { error } = await supabase.auth.signInWithOtp({
+        email: email.trim().toLowerCase(),
+        options: {
+          data: {
+            enrollment_no: enrollmentNo.trim().toUpperCase(),
+          },
+          emailRedirectTo: `${window.location.origin}/student-dashboard`,
         },
       });
 
-      if (error) throw error;
-
-      if (data.error) {
-        toast.error(data.error);
+      if (error) {
+        console.error('OTP error:', error);
+        toast.error(error.message || 'Failed to send verification code');
         return;
       }
 
@@ -109,25 +112,21 @@ export function StudentLogin() {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('verify-student-otp', {
-        body: {
-          enrollment_no: enrollmentNo.trim(),
-          email: email.trim().toLowerCase(),
-          otp_code: otpCode,
-        },
+      const { data, error } = await supabase.auth.verifyOtp({
+        email: email.trim().toLowerCase(),
+        token: otpCode,
+        type: 'email',
       });
 
-      if (error) throw error;
-
-      if (data.error) {
-        toast.error(data.error);
+      if (error) {
+        console.error('Verify OTP error:', error);
+        toast.error(error.message || 'Invalid verification code');
         setOtpCode('');
         return;
       }
 
-      if (data.success && data.profile) {
-        login(data.profile);
-        toast.success(`Welcome, ${data.profile.ghost_name}!`);
+      if (data.session) {
+        toast.success('Welcome! Logging you in...');
         const returnUrl = (location.state as { from?: string })?.from || '/student-dashboard';
         navigate(returnUrl, { replace: true });
       }
@@ -149,6 +148,15 @@ export function StudentLogin() {
     setStep('credentials');
     setOtpCode('');
   };
+
+  // Show loading while checking session
+  if (sessionLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
