@@ -132,11 +132,6 @@ const StealthVault = () => {
       // Clear form and refresh
       setGrievanceText("");
       fetchFiles();
-
-      // Redirect to Compliance Log
-      setTimeout(() => {
-        navigate("/ledger");
-      }, 2000);
     } catch (error) {
       console.error("Upload error:", error);
       toast({
