@@ -74,18 +74,27 @@ export default function AdminDashboard() {
   const [pendingQueue, setPendingQueue] = useState<Negotiation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
   const fetchDashboardData = async () => {
     try {
-      // Mock data - arena_negotiations table doesn't exist yet
+      // Fetch zone report stats from zone_reports table
+      const { data: reportsData, error: reportsError } = await supabase
+        .from('zone_reports')
+        .select('status');
+
+      if (reportsError) {
+        console.error("Error fetching reports:", reportsError);
+      }
+
+      const reports = reportsData || [];
+      const pending = reports.filter(r => r.status === 'pending').length;
+      const reviewed = reports.filter(r => r.status === 'reviewed').length;
+      const resolved = reports.filter(r => r.status === 'resolved').length;
+
       setStats({
-        total: 0,
-        pending: 0,
-        approved: 0,
-        inProgress: 0,
+        total: reports.length,
+        pending: pending,
+        approved: resolved,
+        inProgress: reviewed,
       });
 
       setPendingQueue([]);
@@ -96,14 +105,38 @@ export default function AdminDashboard() {
     }
   };
 
+  useEffect(() => {
+    fetchDashboardData();
+
+    // Subscribe to real-time updates for zone_reports
+    const channel = supabase
+      .channel('admin_zone_reports_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'zone_reports'
+        },
+        () => {
+          fetchDashboardData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   const chartData = [
-    { name: "Mon", resolutions: 4 },
-    { name: "Tue", resolutions: 7 },
-    { name: "Wed", resolutions: 5 },
-    { name: "Thu", resolutions: 8 },
-    { name: "Fri", resolutions: 6 },
-    { name: "Sat", resolutions: 3 },
-    { name: "Sun", resolutions: 2 },
+    { name: "Mon", resolutions: 0 },
+    { name: "Tue", resolutions: 0 },
+    { name: "Wed", resolutions: 0 },
+    { name: "Thu", resolutions: 0 },
+    { name: "Fri", resolutions: 0 },
+    { name: "Sat", resolutions: 0 },
+    { name: "Sun", resolutions: 0 },
   ];
 
   const pieData = [
