@@ -25,10 +25,10 @@ serve(async (req) => {
 
   try {
     const { messages, currentRoute } = await req.json();
-    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
-    if (!GEMINI_API_KEY) {
-      throw new Error("GEMINI_API_KEY is not configured");
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY is not configured");
     }
 
     const contextInstructions = getContextInstructions(currentRoute);
@@ -62,32 +62,27 @@ GUIDELINES:
 - Maintain focus on data integrity and institutional transparency
 - Be supportive while remaining objective`;
 
-    console.log("Sending request to Google Gemini API");
+    console.log("Sending request to Lovable AI Gateway");
     
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?alt=sse&key=${GEMINI_API_KEY}`, {
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        contents: [
-          { role: "user", parts: [{ text: systemPrompt }] },
-          { role: "model", parts: [{ text: "Understood. I am Irene, ready to assist." }] },
-          ...messages.map((m: { role: string; content: string }) => ({
-            role: m.role === "assistant" ? "model" : "user",
-            parts: [{ text: m.content }],
-          })),
+        model: "google/gemini-3-flash-preview",
+        messages: [
+          { role: "system", content: systemPrompt },
+          ...messages,
         ],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 1024,
-        },
+        stream: true,
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Gemini API error:", response.status, errorText);
+      console.error("AI gateway error:", response.status, errorText);
       
       if (response.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limit exceeded. Please wait before trying again." }), {
@@ -95,52 +90,22 @@ GUIDELINES:
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      if (response.status === 400) {
-        return new Response(JSON.stringify({ error: "Invalid API key or request." }), {
-          status: 400,
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: "Credits exhausted. Please add funds to continue." }), {
+          status: 402,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
       
-      return new Response(JSON.stringify({ error: "Gemini API error" }), {
+      return new Response(JSON.stringify({ error: "AI gateway error" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    console.log("Streaming response from Gemini API");
+    console.log("Streaming response from Lovable AI");
     
-    // Transform Gemini SSE format to OpenAI-compatible format for the frontend
-    const transformStream = new TransformStream({
-      transform(chunk, controller) {
-        const text = new TextDecoder().decode(chunk);
-        const lines = text.split('\n');
-        
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            try {
-              const jsonStr = line.slice(6);
-              if (jsonStr.trim() === '[DONE]') {
-                controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'));
-                continue;
-              }
-              const data = JSON.parse(jsonStr);
-              const content = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-              if (content) {
-                const openAIFormat = {
-                  choices: [{ delta: { content } }]
-                };
-                controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(openAIFormat)}\n\n`));
-              }
-            } catch (e) {
-              // Skip malformed JSON
-            }
-          }
-        }
-      }
-    });
-    
-    return new Response(response.body?.pipeThrough(transformStream), {
+    return new Response(response.body, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (error) {
