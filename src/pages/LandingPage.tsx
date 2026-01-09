@@ -70,7 +70,7 @@ const LandingPage = () => {
     
     const interval = setInterval(() => {
       setActiveSection((prev) => (prev + 1) % totalSections);
-    }, 6000);
+    }, 4500);
     return () => clearInterval(interval);
   }, [isPaused]);
 
