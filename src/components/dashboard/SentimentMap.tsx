@@ -42,22 +42,21 @@ export function SentimentMap() {
 
   const fetchZones = async () => {
     try {
-      // Campus areas with mock sentiment data
-      const campusAreas: Zone[] = [
-        { id: "1", zone_id: "library", zone_name: "Chanakya Bhawan", concern_level: "safe", reports_count: 0, last_report_at: null },
-        { id: "2", zone_id: "hostel-boys", zone_name: "BRS", concern_level: "safe", reports_count: 0, last_report_at: null },
-        { id: "3", zone_id: "hostel-girls", zone_name: "Shailputri", concern_level: "safe", reports_count: 0, last_report_at: null },
-        { id: "4", zone_id: "cafeteria", zone_name: "DD Canteen", concern_level: "safe", reports_count: 0, last_report_at: null },
-        { id: "5", zone_id: "academic-block", zone_name: "DDE Building", concern_level: "safe", reports_count: 0, last_report_at: null },
-        { id: "6", zone_id: "sports-complex", zone_name: "Campus Ground", concern_level: "safe", reports_count: 0, last_report_at: null },
-        { id: "7", zone_id: "admin-block", zone_name: "SPM Hostel", concern_level: "safe", reports_count: 0, last_report_at: null },
-        { id: "8", zone_id: "parking", zone_name: "Parking Area", concern_level: "safe", reports_count: 0, last_report_at: null },
-        { id: "9", zone_id: "lab-block", zone_name: "ISRO Building", concern_level: "safe", reports_count: 0, last_report_at: null },
-        { id: "10", zone_id: "auditorium", zone_name: "Aryabhatta Building", concern_level: "safe", reports_count: 0, last_report_at: null },
-        { id: "11", zone_id: "medical-center", zone_name: "Health Center", concern_level: "safe", reports_count: 0, last_report_at: null },
-        { id: "12", zone_id: "canteen", zone_name: "Fabricated", concern_level: "safe", reports_count: 0, last_report_at: null },
-      ];
-      setZones(campusAreas);
+      const { data, error } = await supabase
+        .from('campus_zones')
+        .select('*')
+        .order('zone_name');
+
+      if (error) {
+        console.error("Error fetching zones:", error);
+        setZones([]);
+        return;
+      }
+
+      setZones(data?.map(z => ({
+        ...z,
+        concern_level: z.concern_level as "safe" | "warning" | "critical"
+      })) || []);
     } catch (error) {
       console.error("Error fetching zones:", error);
       setZones([]);
@@ -68,6 +67,27 @@ export function SentimentMap() {
 
   useEffect(() => {
     fetchZones();
+
+    // Subscribe to real-time updates
+    const channel = supabase
+      .channel('campus_zones_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'campus_zones'
+        },
+        (payload) => {
+          console.log('Zone update:', payload);
+          fetchZones();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   return (
