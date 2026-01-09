@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Shield,
   Lock,
@@ -44,20 +44,77 @@ const LandingPage = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const totalSections = 5;
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+
+  const goToSection = useCallback((index: number) => {
+    setActiveSection(index);
+  }, []);
+
+  const goToNextSection = useCallback(() => {
+    setActiveSection((prev) => (prev + 1) % totalSections);
+  }, []);
+
+  const goToPrevSection = useCallback(() => {
+    setActiveSection((prev) => (prev - 1 + totalSections) % totalSections);
+  }, []);
+
   // Auto-cycle sections
   useEffect(() => {
     const interval = setInterval(() => {
-      setActiveSection((prev) => (prev + 1) % 5);
+      setActiveSection((prev) => (prev + 1) % totalSections);
     }, 6000);
     return () => clearInterval(interval);
   }, []);
 
-  const handleEnterSystem = () => {
-    navigate("/portal");
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        goToNextSection();
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        goToPrevSection();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [goToNextSection, goToPrevSection]);
+
+  // Touch/Swipe handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
   };
 
-  const goToSection = (index: number) => {
-    setActiveSection(index);
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX.current === null || touchEndX.current === null) return;
+    
+    const swipeDistance = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 50;
+
+    if (Math.abs(swipeDistance) > minSwipeDistance) {
+      if (swipeDistance > 0) {
+        // Swiped left - go to next
+        goToNextSection();
+      } else {
+        // Swiped right - go to previous
+        goToPrevSection();
+      }
+    }
+
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
+
+  const handleEnterSystem = () => {
+    navigate("/portal");
   };
 
   // Section 1: The Problem
@@ -377,8 +434,13 @@ const LandingPage = () => {
         </div>
       </header>
 
-      {/* Slideshow Container - Full Screen */}
-      <div className="absolute inset-0 z-0 pt-16">
+      {/* Slideshow Container - Full Screen with Touch Support */}
+      <div 
+        className="absolute inset-0 z-0 pt-16"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
         {sections.map((Section, index) => (
           <div
             key={index}
