@@ -142,11 +142,11 @@ export default function AdminSetup() {
 
       toast({
         title: "Admin Account Created",
-        description: "Please check your email to confirm your account.",
+        description: "You can now login with your credentials.",
       });
 
-      // Show success step with email confirmation message
-      setStep("success");
+      // Redirect to login page directly since email is auto-confirmed
+      navigate("/admin/login");
     } catch (err: any) {
       console.error("Error creating admin:", err);
       toast({
