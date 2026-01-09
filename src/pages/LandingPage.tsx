@@ -432,11 +432,11 @@ const LandingPage = () => {
           <div className="flex items-center gap-3">
             <Button
               onClick={() => setShowHowItWorks(true)}
-              variant="ghost"
               size="sm"
-              className="hidden md:inline-flex text-muted-foreground hover:text-foreground"
+              className="hidden md:inline-flex group/btn shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 bg-primary hover:bg-primary/90"
             >
               Learn How It Works
+              <ArrowRight className="ml-1.5 w-3.5 h-3.5 transition-transform duration-300 group-hover/btn:translate-x-0.5" />
             </Button>
             <Button
               onClick={handleEnterSystem}
