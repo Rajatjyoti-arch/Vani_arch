@@ -209,7 +209,7 @@ const handler = async (req: Request): Promise<Response> => {
     if (action === "login") {
       if (!existingProfile) {
         return new Response(
-          JSON.stringify({ error: "Account not found. Please register first." }),
+          JSON.stringify({ error: "Invalid credentials. Please check your enrollment number and email." }),
           { status: 401, headers: { "Content-Type": "application/json", ...corsHeaders } }
         );
       }
