@@ -378,9 +378,16 @@ const LandingPage = () => {
 
         {/* Team CYNOX */}
         <div className="pt-8 border-t border-border/30">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <img src={cynoxLogo} alt="Team CYNOX Logo" className="w-10 h-10 object-contain" />
-            <p className="text-sm text-muted-foreground uppercase tracking-widest">Built by Team CYNOX</p>
+          <div className="flex flex-col items-center gap-4 mb-8">
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-150" />
+              <img 
+                src={cynoxLogo} 
+                alt="Team CYNOX Logo" 
+                className="relative w-24 h-24 md:w-32 md:h-32 object-contain drop-shadow-2xl" 
+              />
+            </div>
+            <p className="text-base font-semibold text-foreground uppercase tracking-widest">Team CYNOX</p>
           </div>
           <div className="flex flex-wrap justify-center gap-8 md:gap-12">
             {["Rajatjyoti Biswas", "Priyanshu Gupta", "Sakshi", "Mantavya Kumar"].map((member) => (
