@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef } from "react";
+import cynoxLogo from "@/assets/cynox-logo.png";
 import {
   Shield,
   Lock,
@@ -377,7 +378,10 @@ const LandingPage = () => {
 
         {/* Team CYNOX */}
         <div className="pt-8 border-t border-border/30">
-          <p className="text-xs text-muted-foreground uppercase tracking-widest mb-6">Built by Team CYNOX</p>
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <img src={cynoxLogo} alt="Team CYNOX Logo" className="w-10 h-10 object-contain" />
+            <p className="text-sm text-muted-foreground uppercase tracking-widest">Built by Team CYNOX</p>
+          </div>
           <div className="flex flex-wrap justify-center gap-8 md:gap-12">
             {["Rajatjyoti Biswas", "Priyanshu Gupta", "Sakshi", "Mantavya Kumar"].map((member) => (
               <div key={member} className="flex flex-col items-center gap-3 group cursor-default">
