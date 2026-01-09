@@ -96,8 +96,7 @@ const PortalSelection = () => {
                   committees. Manage cases and institutional analytics.
                 </p>
                 <Button
-                  variant="outline"
-                  className="w-full border-accent/50 text-accent hover:bg-accent hover:text-accent-foreground shadow-lg shadow-accent/10 group-hover:shadow-xl group-hover:shadow-accent/20 transition-all duration-300"
+                  className="w-full bg-accent hover:bg-accent/90 text-accent-foreground shadow-lg shadow-accent/20 group-hover:shadow-xl group-hover:shadow-accent/30 transition-all duration-300"
                   size="lg"
                 >
                   Institutional Personnel Login
