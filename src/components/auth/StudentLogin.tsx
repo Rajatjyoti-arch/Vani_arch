@@ -67,7 +67,7 @@ export function StudentLogin() {
 
   // Validate enrollment number format
   const validateEnrollmentNo = (value: string): boolean => {
-    const enrollmentRegex = /^(22|23|24|25)BE(CSE|MNC|CCS)[A-Z]?\d{1,3}$/i;
+    const enrollmentRegex = /^(22|23|24|25)BE(CSE|MNC|CCS|ECE|ECA)[A-Z]?\d{1,3}$/i;
     return enrollmentRegex.test(value);
   };
 
