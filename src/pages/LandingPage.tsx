@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef } from "react";
+import { HowItWorksModal } from "@/components/landing/HowItWorksModal";
 import cynoxLogo from "@/assets/cynox-logo.png";
 import {
   Shield,
@@ -30,7 +31,7 @@ const LandingPage = () => {
   const [activeSection, setActiveSection] = useState(0);
   const [taglineIndex, setTaglineIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
   const taglines = [
     "Anonymous, yet accountable",
     "Truth without fear",
@@ -430,7 +431,7 @@ const LandingPage = () => {
           {/* CTA Buttons in Header */}
           <div className="flex items-center gap-3">
             <Button
-              onClick={() => goToSection(2)}
+              onClick={() => setShowHowItWorks(true)}
               variant="ghost"
               size="sm"
               className="hidden md:inline-flex text-muted-foreground hover:text-foreground"
@@ -534,6 +535,9 @@ const LandingPage = () => {
       <div className="fixed bottom-2 left-1/2 -translate-x-1/2 z-40 text-[10px] text-muted-foreground/50">
         © {new Date().getFullYear()} Team CYNOX • Central University of Jammu
       </div>
+
+      {/* How It Works Modal */}
+      <HowItWorksModal open={showHowItWorks} onOpenChange={setShowHowItWorks} />
     </div>
   );
 };
