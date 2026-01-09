@@ -15,6 +15,7 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { InviteAdminModal } from "@/components/admin/InviteAdminModal";
 import { SentimentHeatMap } from "@/components/admin/SentimentHeatMap";
 import { AnalyticsCharts } from "@/components/admin/AnalyticsCharts";
+import { ReportManagement } from "@/components/admin/ReportManagement";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -386,6 +387,9 @@ export default function AdminDashboard() {
             )}
           </CardContent>
         </Card>
+
+        {/* Report Management */}
+        <ReportManagement />
 
         {/* Detailed Analytics */}
         <AnalyticsCharts />

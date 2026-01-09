@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSettings } from "@/contexts/SettingsContext";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { SentimentMap } from "@/components/dashboard/SentimentMap";
+import { ReportSubmissionForm } from "@/components/dashboard/ReportSubmissionForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -143,6 +144,7 @@ const StudentDashboard = () => {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <ReportSubmissionForm />
             <Badge
               variant="outline"
               className="bg-accent/10 text-accent border-accent/30 px-3 py-1.5"
