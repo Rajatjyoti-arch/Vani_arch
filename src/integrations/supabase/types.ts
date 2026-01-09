@@ -44,6 +44,50 @@ export type Database = {
         }
         Relationships: []
       }
+      stealth_vault: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          file_name: string
+          file_path: string
+          file_size: string | null
+          file_type: string
+          id: string
+          secret_metadata: string | null
+          student_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          file_name: string
+          file_path: string
+          file_size?: string | null
+          file_type?: string
+          id?: string
+          secret_metadata?: string | null
+          student_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          file_name?: string
+          file_path?: string
+          file_size?: string | null
+          file_type?: string
+          id?: string
+          secret_metadata?: string | null
+          student_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stealth_vault_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "student_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       student_profiles: {
         Row: {
           avatar: string
