@@ -116,20 +116,170 @@ const TheArena = () => {
 
     const selectedFile = vaultFiles.find(f => f.id === selectedFileId);
     if (!selectedFile?.secret_metadata) {
-      toast.error("No case data found in selected file");
+      toast.error("No case data found in selected file. Please add report details when uploading evidence.");
       return;
     }
 
-    // Mock negotiation - arena_negotiations table doesn't exist yet
-    toast.error("Resolution system not yet configured. Please set up the database first.");
-    setIsNegotiating(false);
+    setIsNegotiating(true);
+    setCurrentRound(1);
+    setSentinelScore(50);
+    setGovernorScore(50);
+    setEthicalViolationDetected(false);
+
+    try {
+      // Create negotiation record
+      const { data: newNegotiation, error } = await supabase
+        .from('arena_negotiations')
+        .insert({
+          vault_file_id: selectedFileId,
+          grievance_text: selectedFile.secret_metadata,
+          negotiation_log: [],
+          sentinel_score: 50,
+          governor_score: 50,
+          status: 'in_progress',
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating negotiation:', error);
+        toast.error("Failed to start resolution process");
+        setIsNegotiating(false);
+        return;
+      }
+
+      setNegotiation({
+        id: newNegotiation.id,
+        grievance_text: newNegotiation.grievance_text,
+        negotiation_log: [],
+        final_consensus: null,
+        sentinel_score: 50,
+        governor_score: 50,
+        status: 'in_progress',
+      });
+
+      toast.success("Resolution process initiated");
+      
+      // Start the negotiation rounds
+      await runNegotiationRounds(newNegotiation.id, selectedFile.secret_metadata, []);
+    } catch (error) {
+      console.error('Error starting negotiation:', error);
+      toast.error("Failed to start resolution process");
+      setIsNegotiating(false);
+    }
   };
 
   const runNegotiationRounds = async (negotiationId: string, grievanceText: string, existingLog: NegotiationRound[]) => {
-    // Mock negotiation rounds - arena_negotiations table doesn't exist yet
-    console.log("Would run negotiation rounds for:", negotiationId, grievanceText);
-    toast.error("Resolution system not yet configured");
+    const agents = ['Sentinel', 'Governor', 'Arbiter'];
+    let currentLog = [...existingLog];
+    let sentinel = sentinelScore;
+    let governor = governorScore;
+
+    for (let round = 1; round <= 4; round++) {
+      setCurrentRound(round);
+      
+      for (const agent of agents) {
+        // Simulate AI response delay
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        // Generate mock response based on agent type
+        const sentimentShift = agent === 'Sentinel' 
+          ? Math.floor(Math.random() * 10) + 5 
+          : agent === 'Governor' 
+            ? -(Math.floor(Math.random() * 8) + 3)
+            : Math.floor(Math.random() * 6) - 3;
+
+        const isEscalation = agent === 'Sentinel' && round >= 3 && Math.random() > 0.7;
+        const isEthicsReview = agent === 'Arbiter' && round >= 2 && Math.random() > 0.8;
+
+        if (isEthicsReview) {
+          setEthicalViolationDetected(true);
+          setShowViolationAlert(true);
+        }
+
+        const messages: Record<string, string[]> = {
+          Sentinel: [
+            "The student's concerns regarding institutional transparency are valid and require immediate attention.",
+            "Evidence presented supports the claim of procedural irregularities.",
+            "Recommending formal review of the matter by the ethics committee.",
+            "The pattern of incidents suggests systemic issues that need addressing.",
+          ],
+          Governor: [
+            "The administration acknowledges the concerns and is reviewing internal processes.",
+            "We are committed to fair resolution while maintaining institutional standards.",
+            "Additional context is needed before making definitive conclusions.",
+            "The institution proposes a mediated resolution pathway.",
+          ],
+          Arbiter: [
+            "Both parties have presented valid perspectives. Seeking common ground.",
+            "The evidence suggests a balanced approach is warranted.",
+            "Recommending structured dialogue to address core grievances.",
+            "Final assessment pending additional documentation review.",
+          ],
+        };
+
+        const newEntry: NegotiationRound = {
+          round,
+          agent,
+          message: messages[agent][round - 1] || messages[agent][0],
+          sentimentShift,
+          timestamp: new Date().toISOString(),
+          ethicalViolation: isEthicsReview,
+          berserkerMode: isEscalation,
+        };
+
+        currentLog.push(newEntry);
+
+        // Update scores
+        if (agent === 'Sentinel') {
+          sentinel = Math.min(100, sentinel + sentimentShift);
+        } else if (agent === 'Governor') {
+          governor = Math.min(100, governor - sentimentShift);
+        }
+
+        setSentinelScore(sentinel);
+        setGovernorScore(governor);
+
+        setNegotiation(prev => prev ? {
+          ...prev,
+          negotiation_log: currentLog,
+          sentinel_score: sentinel,
+          governor_score: governor,
+        } : null);
+
+        // Update database
+        await supabase
+          .from('arena_negotiations')
+          .update({
+            negotiation_log: JSON.parse(JSON.stringify(currentLog)),
+            sentinel_score: sentinel,
+            governor_score: governor,
+          })
+          .eq('id', negotiationId);
+      }
+    }
+
+    // Complete negotiation
+    const finalConsensus = sentinel > governor 
+      ? "Resolution favors student position. Formal review recommended."
+      : "Resolution suggests institutional response adequate. Case closed with recommendations.";
+
+    await supabase
+      .from('arena_negotiations')
+      .update({
+        status: 'completed',
+        final_consensus: finalConsensus,
+      })
+      .eq('id', negotiationId);
+
+    setNegotiation(prev => prev ? {
+      ...prev,
+      status: 'completed',
+      final_consensus: finalConsensus,
+    } : null);
+
     setIsNegotiating(false);
+    toast.success("Resolution process completed");
   };
 
   const victoryProbability = () => {
