@@ -230,7 +230,7 @@ const StealthVault = () => {
             <Button 
               variant="ghost" 
               size="icon" 
-              onClick={() => navigate(-1)}
+              onClick={() => navigate('/student-dashboard')}
               className="shrink-0"
             >
               <ArrowLeft className="w-5 h-5" />
