@@ -375,8 +375,8 @@ const LandingPage = () => {
 
         {/* University Branding */}
         <div className="flex items-center justify-center gap-3 mb-10">
-          <Building2 className="w-5 h-5 text-primary/60" />
-          <span className="text-sm font-medium text-foreground/80">Central University of Jammu</span>
+          <Building2 className="w-6 h-6 text-primary/60" />
+          <span className="text-lg font-semibold text-foreground/90">Central University of Jammu</span>
         </div>
 
         {/* Team CYNOX */}
