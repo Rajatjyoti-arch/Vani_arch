@@ -22,11 +22,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useStudentSession } from "@/contexts/StudentSessionContext";
+import { SectionPreview } from "@/components/landing/SectionPreview";
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useStudentSession();
   const [taglineIndex, setTaglineIndex] = useState(0);
+  const [previewIndex, setPreviewIndex] = useState(0);
   const taglines = [
     "Anonymous, yet accountable",
     "Truth without fear",
@@ -37,6 +39,14 @@ const LandingPage = () => {
     const interval = setInterval(() => {
       setTaglineIndex((prev) => (prev + 1) % taglines.length);
     }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Auto-cycle through section previews
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPreviewIndex((prev) => (prev + 1) % 5);
+    }, 4000);
     return () => clearInterval(interval);
   }, []);
 
@@ -129,23 +139,37 @@ const LandingPage = () => {
             Advanced governance for institutional transparency.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
-            <Button
-              onClick={handleEnterSystem}
-              size="lg"
-              className="group/btn w-full sm:w-auto text-lg px-8 py-6 h-auto shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300 ease-out bg-primary hover:bg-primary/90 hover:-translate-y-1"
-            >
-              Enter System
-              <ArrowRight className="ml-2 w-5 h-5 transition-transform duration-300 group-hover/btn:translate-x-1" />
-            </Button>
-            <Button
-              onClick={scrollToHowItWorks}
-              variant="outline"
-              size="lg"
-              className="w-full sm:w-auto text-lg px-8 py-6 h-auto bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300 ease-out hover:-translate-y-1"
-            >
-              Learn How It Works
-            </Button>
+          {/* CTA Buttons with Section Preview Behind */}
+          <div className="relative animate-fade-in-up" style={{ animationDelay: "0.4s" }}>
+            {/* Section Preview Container - Behind buttons */}
+            <div className="absolute inset-0 -top-8 -bottom-8 -left-12 -right-12 -z-10 opacity-50 blur-[1px]">
+              <div className="w-full h-full rounded-2xl overflow-hidden border border-border/20">
+                <SectionPreview activeIndex={previewIndex} />
+              </div>
+            </div>
+            
+            {/* Gradient overlay for better button visibility */}
+            <div className="absolute inset-0 -top-8 -bottom-8 -left-12 -right-12 -z-5 bg-gradient-to-t from-background via-background/60 to-background/40 rounded-2xl" />
+            
+            {/* Buttons on top */}
+            <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center gap-4 py-4">
+              <Button
+                onClick={handleEnterSystem}
+                size="lg"
+                className="group/btn w-full sm:w-auto text-lg px-8 py-6 h-auto shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300 ease-out bg-primary hover:bg-primary/90 hover:-translate-y-1"
+              >
+                Enter System
+                <ArrowRight className="ml-2 w-5 h-5 transition-transform duration-300 group-hover/btn:translate-x-1" />
+              </Button>
+              <Button
+                onClick={scrollToHowItWorks}
+                variant="outline"
+                size="lg"
+                className="w-full sm:w-auto text-lg px-8 py-6 h-auto bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300 ease-out hover:-translate-y-1"
+              >
+                Learn How It Works
+              </Button>
+            </div>
           </div>
         </div>
 
