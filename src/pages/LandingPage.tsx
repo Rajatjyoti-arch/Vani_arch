@@ -28,6 +28,7 @@ const LandingPage = () => {
   const { isAuthenticated } = useStudentSession();
   const [activeSection, setActiveSection] = useState(0);
   const [taglineIndex, setTaglineIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   
   const taglines = [
     "Anonymous, yet accountable",
@@ -61,13 +62,15 @@ const LandingPage = () => {
     setActiveSection((prev) => (prev - 1 + totalSections) % totalSections);
   }, []);
 
-  // Auto-cycle sections
+  // Auto-cycle sections (pauses on hover)
   useEffect(() => {
+    if (isPaused) return;
+    
     const interval = setInterval(() => {
       setActiveSection((prev) => (prev + 1) % totalSections);
     }, 6000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isPaused]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -448,6 +451,8 @@ const LandingPage = () => {
       {/* Slideshow Container - Full Screen with Touch Support */}
       <div 
         className="absolute inset-0 z-0 pt-16"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
