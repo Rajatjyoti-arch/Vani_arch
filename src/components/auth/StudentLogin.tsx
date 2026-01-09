@@ -1,16 +1,48 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { Loader2, Mail, GraduationCap, Shield, Lock, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Mail, GraduationCap, Shield, Lock, Eye, EyeOff, Check, X } from 'lucide-react';
 import { VaniLogo } from '@/components/ui/VaniLogo';
 import { useStudentSession } from '@/contexts/StudentSessionContext';
 import { supabase } from '@/integrations/supabase/client';
 
 type LoginStep = 'credentials' | 'password';
+
+interface PasswordStrength {
+  score: number;
+  label: string;
+  color: string;
+  checks: {
+    minLength: boolean;
+    hasUppercase: boolean;
+    hasLowercase: boolean;
+    hasNumber: boolean;
+    hasSpecial: boolean;
+  };
+}
+
+function getPasswordStrength(password: string): PasswordStrength {
+  const checks = {
+    minLength: password.length >= 6,
+    hasUppercase: /[A-Z]/.test(password),
+    hasLowercase: /[a-z]/.test(password),
+    hasNumber: /[0-9]/.test(password),
+    hasSpecial: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+  };
+
+  const passedChecks = Object.values(checks).filter(Boolean).length;
+  
+  if (passedChecks <= 1) return { score: 20, label: 'Very Weak', color: 'bg-red-500', checks };
+  if (passedChecks === 2) return { score: 40, label: 'Weak', color: 'bg-orange-500', checks };
+  if (passedChecks === 3) return { score: 60, label: 'Fair', color: 'bg-yellow-500', checks };
+  if (passedChecks === 4) return { score: 80, label: 'Good', color: 'bg-lime-500', checks };
+  return { score: 100, label: 'Strong', color: 'bg-green-500', checks };
+}
 
 export function StudentLogin() {
   const navigate = useNavigate();
@@ -25,6 +57,8 @@ export function StudentLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [isNewUser, setIsNewUser] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const passwordStrength = useMemo(() => getPasswordStrength(password), [password]);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -277,10 +311,46 @@ export function StudentLogin() {
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
-                    {isNewUser && (
-                      <p className="text-xs text-muted-foreground">
-                        Minimum 6 characters
-                      </p>
+                    {isNewUser && password && (
+                      <div className="space-y-2 mt-2">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="text-muted-foreground">Password strength</span>
+                          <span className={`font-medium ${
+                            passwordStrength.score <= 40 ? 'text-red-500' : 
+                            passwordStrength.score <= 60 ? 'text-yellow-500' : 
+                            'text-green-500'
+                          }`}>
+                            {passwordStrength.label}
+                          </span>
+                        </div>
+                        <Progress 
+                          value={passwordStrength.score} 
+                          className="h-1.5"
+                          indicatorClassName={passwordStrength.color}
+                        />
+                        <div className="grid grid-cols-2 gap-1 text-xs">
+                          <div className={`flex items-center gap-1 ${passwordStrength.checks.minLength ? 'text-green-500' : 'text-muted-foreground'}`}>
+                            {passwordStrength.checks.minLength ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                            6+ characters
+                          </div>
+                          <div className={`flex items-center gap-1 ${passwordStrength.checks.hasUppercase ? 'text-green-500' : 'text-muted-foreground'}`}>
+                            {passwordStrength.checks.hasUppercase ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                            Uppercase
+                          </div>
+                          <div className={`flex items-center gap-1 ${passwordStrength.checks.hasLowercase ? 'text-green-500' : 'text-muted-foreground'}`}>
+                            {passwordStrength.checks.hasLowercase ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                            Lowercase
+                          </div>
+                          <div className={`flex items-center gap-1 ${passwordStrength.checks.hasNumber ? 'text-green-500' : 'text-muted-foreground'}`}>
+                            {passwordStrength.checks.hasNumber ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                            Number
+                          </div>
+                          <div className={`flex items-center gap-1 col-span-2 ${passwordStrength.checks.hasSpecial ? 'text-green-500' : 'text-muted-foreground'}`}>
+                            {passwordStrength.checks.hasSpecial ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                            Special character (!@#$%...)
+                          </div>
+                        </div>
+                      </div>
                     )}
                   </div>
 
