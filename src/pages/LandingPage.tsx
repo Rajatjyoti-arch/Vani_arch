@@ -380,11 +380,11 @@ const LandingPage = () => {
         <div className="pt-8 border-t border-border/30">
           <div className="flex flex-col items-center gap-4 mb-8">
             <div className="relative">
-              <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-150" />
+              <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full scale-125" />
               <img 
                 src={cynoxLogo} 
                 alt="Team CYNOX Logo" 
-                className="relative w-24 h-24 md:w-32 md:h-32 object-contain drop-shadow-2xl" 
+                className="relative w-14 h-14 md:w-16 md:h-16 object-contain drop-shadow-lg" 
               />
             </div>
             <p className="text-base font-semibold text-foreground uppercase tracking-widest">Team CYNOX</p>
