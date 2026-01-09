@@ -92,8 +92,17 @@ const TheArena = () => {
   // Fetch vault files with grievances
   useEffect(() => {
     const fetchVaultFiles = async () => {
-      // Mock data - stealth_vault table doesn't exist yet
-      setVaultFiles([]);
+      const { data, error } = await supabase
+        .from('stealth_vault')
+        .select('id, file_name, file_path, secret_metadata, created_at')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching vault files:', error);
+        return;
+      }
+
+      setVaultFiles(data || []);
     };
 
     fetchVaultFiles();

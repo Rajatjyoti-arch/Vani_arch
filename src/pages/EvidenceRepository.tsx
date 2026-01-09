@@ -44,10 +44,42 @@ const StealthVault = () => {
   // Fetch vault files
   const fetchFiles = useCallback(async () => {
     setIsLoading(true);
-    // Mock data - stealth_vault table doesn't exist yet
-    setFiles([]);
-    setFileThumbnails({});
-    setIsLoading(false);
+    try {
+      const { data, error } = await supabase
+        .from('stealth_vault')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching files:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load evidence files.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setFiles(data || []);
+
+      // Generate thumbnails for images
+      const thumbnails: Record<string, string> = {};
+      for (const file of data || []) {
+        if (file.file_type === 'image') {
+          const { data: urlData } = supabase.storage
+            .from('evidence-vault')
+            .getPublicUrl(file.file_path);
+          if (urlData?.publicUrl) {
+            thumbnails[file.id] = urlData.publicUrl;
+          }
+        }
+      }
+      setFileThumbnails(thumbnails);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -74,17 +106,52 @@ const StealthVault = () => {
     setUploadProgress(0);
     
     try {
-      // Mock upload - stealth_vault table doesn't exist yet
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setUploadProgress(100);
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        const fileType = getFileType(file);
+        const filePath = `${Date.now()}-${file.name}`;
+        
+        setUploadProgress(Math.round(((i + 0.5) / selectedFiles.length) * 100));
+
+        // Upload to storage
+        const { error: uploadError } = await supabase.storage
+          .from('evidence-vault')
+          .upload(filePath, file);
+
+        if (uploadError) {
+          console.error('Storage upload error:', uploadError);
+          throw uploadError;
+        }
+
+        // Insert record into stealth_vault
+        const { error: dbError } = await supabase
+          .from('stealth_vault')
+          .insert({
+            file_name: file.name,
+            file_path: filePath,
+            file_type: fileType,
+            file_size: formatFileSize(file.size),
+            secret_metadata: grievanceText || null,
+          });
+
+        if (dbError) {
+          console.error('Database insert error:', dbError);
+          throw dbError;
+        }
+
+        setUploadProgress(Math.round(((i + 1) / selectedFiles.length) * 100));
+      }
 
       // Show success animation
       setUploadSuccess(true);
       
+      // Refresh files list
+      fetchFiles();
+      
       // Show success notification
       toast({
-        title: "Upload Simulated",
-        description: "Storage table not yet configured. Please set up the database first.",
+        title: "Evidence Secured",
+        description: `${selectedFiles.length} file(s) encrypted and stored successfully.`,
       });
 
       // Clear form
@@ -119,8 +186,25 @@ const StealthVault = () => {
 
   const deleteFile = async (id: string, filePath: string) => {
     try {
-      // Mock delete - stealth_vault table doesn't exist yet
-      console.log("Would delete file:", id, filePath);
+      // Delete from storage
+      const { error: storageError } = await supabase.storage
+        .from('evidence-vault')
+        .remove([filePath]);
+
+      if (storageError) {
+        console.error('Storage delete error:', storageError);
+      }
+
+      // Delete from database
+      const { error: dbError } = await supabase
+        .from('stealth_vault')
+        .delete()
+        .eq('id', id);
+
+      if (dbError) {
+        throw dbError;
+      }
+
       setFiles(files.filter((f) => f.id !== id));
       toast({
         title: "File Deleted",
