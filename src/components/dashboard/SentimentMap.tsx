@@ -44,18 +44,18 @@ export function SentimentMap() {
     try {
       // Campus areas with mock sentiment data
       const campusAreas: Zone[] = [
-        { id: "1", zone_id: "library", zone_name: "Central Library", concern_level: "safe", reports_count: 2, last_report_at: new Date(Date.now() - 86400000 * 3).toISOString() },
-        { id: "2", zone_id: "hostel-boys", zone_name: "Boys Hostel", concern_level: "warning", reports_count: 8, last_report_at: new Date(Date.now() - 3600000 * 5).toISOString() },
-        { id: "3", zone_id: "hostel-girls", zone_name: "Girls Hostel", concern_level: "safe", reports_count: 3, last_report_at: new Date(Date.now() - 86400000 * 2).toISOString() },
-        { id: "4", zone_id: "cafeteria", zone_name: "Main Cafeteria", concern_level: "safe", reports_count: 1, last_report_at: new Date(Date.now() - 86400000 * 7).toISOString() },
-        { id: "5", zone_id: "academic-block", zone_name: "Academic Block", concern_level: "warning", reports_count: 5, last_report_at: new Date(Date.now() - 3600000 * 12).toISOString() },
-        { id: "6", zone_id: "sports-complex", zone_name: "Sports Complex", concern_level: "safe", reports_count: 0, last_report_at: null },
-        { id: "7", zone_id: "admin-block", zone_name: "Admin Building", concern_level: "critical", reports_count: 12, last_report_at: new Date(Date.now() - 3600000 * 2).toISOString() },
+        { id: "1", zone_id: "library", zone_name: "Chanakya Bhawan", concern_level: "safe", reports_count: 2, last_report_at: new Date(Date.now() - 86400000 * 3).toISOString() },
+        { id: "2", zone_id: "hostel-boys", zone_name: "BRS", concern_level: "warning", reports_count: 8, last_report_at: new Date(Date.now() - 3600000 * 5).toISOString() },
+        { id: "3", zone_id: "hostel-girls", zone_name: "Shailputri", concern_level: "safe", reports_count: 3, last_report_at: new Date(Date.now() - 86400000 * 2).toISOString() },
+        { id: "4", zone_id: "cafeteria", zone_name: "DD Canteen", concern_level: "safe", reports_count: 1, last_report_at: new Date(Date.now() - 86400000 * 7).toISOString() },
+        { id: "5", zone_id: "academic-block", zone_name: "DDE Building", concern_level: "warning", reports_count: 5, last_report_at: new Date(Date.now() - 3600000 * 12).toISOString() },
+        { id: "6", zone_id: "sports-complex", zone_name: "Campus Ground", concern_level: "safe", reports_count: 0, last_report_at: null },
+        { id: "7", zone_id: "admin-block", zone_name: "SPM Hostel", concern_level: "critical", reports_count: 12, last_report_at: new Date(Date.now() - 3600000 * 2).toISOString() },
         { id: "8", zone_id: "parking", zone_name: "Parking Area", concern_level: "warning", reports_count: 6, last_report_at: new Date(Date.now() - 3600000 * 8).toISOString() },
-        { id: "9", zone_id: "lab-block", zone_name: "Lab Complex", concern_level: "safe", reports_count: 2, last_report_at: new Date(Date.now() - 86400000 * 5).toISOString() },
-        { id: "10", zone_id: "auditorium", zone_name: "Auditorium", concern_level: "safe", reports_count: 1, last_report_at: new Date(Date.now() - 86400000 * 10).toISOString() },
-        { id: "11", zone_id: "medical-center", zone_name: "Medical Center", concern_level: "safe", reports_count: 0, last_report_at: null },
-        { id: "12", zone_id: "canteen", zone_name: "Food Court", concern_level: "warning", reports_count: 4, last_report_at: new Date(Date.now() - 3600000 * 6).toISOString() },
+        { id: "9", zone_id: "lab-block", zone_name: "ISRO Building", concern_level: "safe", reports_count: 2, last_report_at: new Date(Date.now() - 86400000 * 5).toISOString() },
+        { id: "10", zone_id: "auditorium", zone_name: "Aryabhatta Building", concern_level: "safe", reports_count: 1, last_report_at: new Date(Date.now() - 86400000 * 10).toISOString() },
+        { id: "11", zone_id: "medical-center", zone_name: "Health Center", concern_level: "safe", reports_count: 0, last_report_at: null },
+        { id: "12", zone_id: "canteen", zone_name: "Fabricated", concern_level: "warning", reports_count: 4, last_report_at: new Date(Date.now() - 3600000 * 6).toISOString() },
       ];
       setZones(campusAreas);
     } catch (error) {
