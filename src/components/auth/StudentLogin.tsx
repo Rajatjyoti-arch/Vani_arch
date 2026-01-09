@@ -4,14 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { toast } from 'sonner';
-import { Loader2, Mail, GraduationCap, Shield, ArrowLeft, RefreshCw } from 'lucide-react';
+import { Loader2, Mail, GraduationCap, Shield, Lock, Eye, EyeOff } from 'lucide-react';
 import { VaniLogo } from '@/components/ui/VaniLogo';
 import { useStudentSession } from '@/contexts/StudentSessionContext';
 import { supabase } from '@/integrations/supabase/client';
 
-type LoginStep = 'credentials' | 'otp';
+type LoginStep = 'credentials' | 'password';
 
 export function StudentLogin() {
   const navigate = useNavigate();
@@ -21,9 +20,11 @@ export function StudentLogin() {
   const [step, setStep] = useState<LoginStep>('credentials');
   const [enrollmentNo, setEnrollmentNo] = useState('');
   const [email, setEmail] = useState('');
-  const [otpCode, setOtpCode] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isNewUser, setIsNewUser] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [resendCooldown, setResendCooldown] = useState(0);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -33,40 +34,29 @@ export function StudentLogin() {
     }
   }, [isAuthenticated, sessionLoading, navigate, location]);
 
-  // Resend cooldown timer
-  useEffect(() => {
-    if (resendCooldown > 0) {
-      const timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [resendCooldown]);
-
-  // Validate enrollment number format (e.g., 23BEMNC42, 24BECSE15, 25BECCS61)
+  // Validate enrollment number format
   const validateEnrollmentNo = (value: string): boolean => {
-    // Format: 2-digit year (22-25) + BE + branch code (CSE/MNC/CCS etc.) + roll number
     const enrollmentRegex = /^(22|23|24|25)BE(CSE|MNC|CCS)[A-Z]?\d{1,3}$/i;
     return enrollmentRegex.test(value);
   };
 
-  // Validate email format (any valid email)
+  // Validate email format
   const validateEmail = (value: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(value);
   };
 
-  const handleSendOTP = async () => {
+  const handleCheckUser = async () => {
     if (!enrollmentNo.trim() || !email.trim()) {
       toast.error('Please enter both enrollment number and email');
       return;
     }
 
-    // Validate enrollment number format
     if (!validateEnrollmentNo(enrollmentNo)) {
       toast.error('Invalid enrollment number format. Example: 23BEMNC42');
       return;
     }
 
-    // Validate email format
     if (!validateEmail(email)) {
       toast.error('Please enter a valid email address');
       return;
@@ -75,96 +65,91 @@ export function StudentLogin() {
     setIsLoading(true);
 
     try {
-      // Use custom OTP edge function
-      const { data, error } = await supabase.functions.invoke('send-student-otp', {
+      const { data, error } = await supabase.functions.invoke('student-auth', {
         body: {
+          action: 'check',
           enrollment_no: enrollmentNo.trim().toUpperCase(),
           email: email.trim().toLowerCase(),
         },
       });
 
       if (error) {
-        console.error('OTP error:', error);
-        toast.error('Failed to send verification code');
+        console.error('Check user error:', error);
+        toast.error('Failed to check user. Please try again.');
         return;
       }
 
-      if (data?.error) {
-        toast.error(data.error);
-        return;
-      }
-
-      toast.success('Verification code sent to your email');
-      setStep('otp');
-      setResendCooldown(60);
+      setIsNewUser(!data.exists || !data.hasPassword);
+      setStep('password');
     } catch (error) {
-      console.error('Send OTP error:', error);
-      toast.error('Failed to send verification code. Please try again.');
+      console.error('Check user error:', error);
+      toast.error('Failed to check user. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleVerifyOTP = async () => {
-    if (otpCode.length !== 6) {
-      toast.error('Please enter the complete 6-digit code');
+  const handleSubmit = async () => {
+    if (!password) {
+      toast.error('Please enter a password');
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+
+    if (isNewUser && password !== confirmPassword) {
+      toast.error('Passwords do not match');
       return;
     }
 
     setIsLoading(true);
 
     try {
-      // Use custom verify OTP edge function
-      const { data, error } = await supabase.functions.invoke('verify-student-otp', {
+      const { data, error } = await supabase.functions.invoke('student-auth', {
         body: {
+          action: isNewUser ? 'register' : 'login',
           enrollment_no: enrollmentNo.trim().toUpperCase(),
           email: email.trim().toLowerCase(),
-          otp_code: otpCode,
+          password,
         },
       });
 
       if (error) {
-        console.error('Verify OTP error:', error);
-        toast.error('Verification failed. Please try again.');
-        setOtpCode('');
+        console.error('Auth error:', error);
+        toast.error('Authentication failed. Please try again.');
         return;
       }
 
       if (data?.error) {
         toast.error(data.error);
-        setOtpCode('');
         return;
       }
 
       if (data?.success && data?.profile) {
-        // Store profile in localStorage for session management
         localStorage.setItem('student_profile', JSON.stringify(data.profile));
-        toast.success('Welcome! Logging you in...');
+        toast.success(isNewUser ? 'Account created! Welcome!' : 'Welcome back!');
         const returnUrl = (location.state as { from?: string })?.from || '/student-dashboard';
         navigate(returnUrl, { replace: true });
-        // Force page reload to update session context
         window.location.href = returnUrl;
       }
     } catch (error) {
-      console.error('Verify OTP error:', error);
-      toast.error('Verification failed. Please try again.');
-      setOtpCode('');
+      console.error('Auth error:', error);
+      toast.error('Authentication failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleResendOTP = async () => {
-    if (resendCooldown > 0) return;
-    await handleSendOTP();
-  };
-
   const handleBack = () => {
     setStep('credentials');
-    setOtpCode('');
+    setPassword('');
+    setConfirmPassword('');
+    setIsNewUser(false);
   };
 
-  // Show loading while checking session
   if (sessionLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -182,7 +167,7 @@ export function StudentLogin() {
           <div className="space-y-2">
             <h1 className="text-2xl font-bold text-foreground">Student Portal</h1>
             <p className="text-muted-foreground text-sm">
-              Secure access with email verification
+              Secure anonymous reporting platform
             </p>
           </div>
         </div>
@@ -197,12 +182,12 @@ export function StudentLogin() {
         <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
           <CardHeader className="text-center pb-4">
             <CardTitle className="text-lg">
-              {step === 'credentials' ? 'Enter Your Details' : 'Verify Your Email'}
+              {step === 'credentials' ? 'Enter Your Details' : (isNewUser ? 'Create Password' : 'Enter Password')}
             </CardTitle>
             <CardDescription>
               {step === 'credentials' 
-                ? 'We\'ll send a verification code to your email'
-                : `Enter the 6-digit code sent to ${email}`
+                ? 'Enter your enrollment number and email'
+                : (isNewUser ? 'Create a password to secure your account' : 'Enter your password to login')
               }
             </CardDescription>
           </CardHeader>
@@ -252,91 +237,102 @@ export function StudentLogin() {
                 </div>
 
                 <Button 
-                  onClick={handleSendOTP}
+                  onClick={handleCheckUser}
                   disabled={isLoading || !enrollmentNo.trim() || !email.trim()}
                   className="w-full"
                 >
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Sending Code...
+                      Checking...
                     </>
                   ) : (
-                    <>
-                      <Mail className="mr-2 h-4 w-4" />
-                      Send Verification Code
-                    </>
+                    'Continue'
                   )}
                 </Button>
               </>
             ) : (
               <>
                 <div className="space-y-4">
-                  <div className="flex justify-center">
-                    <InputOTP
-                      maxLength={6}
-                      value={otpCode}
-                      onChange={setOtpCode}
-                      disabled={isLoading}
-                    >
-                      <InputOTPGroup>
-                        <InputOTPSlot index={0} />
-                        <InputOTPSlot index={1} />
-                        <InputOTPSlot index={2} />
-                        <InputOTPSlot index={3} />
-                        <InputOTPSlot index={4} />
-                        <InputOTPSlot index={5} />
-                      </InputOTPGroup>
-                    </InputOTP>
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-sm font-medium">
+                      {isNewUser ? 'Create Password' : 'Password'}
+                    </Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="password"
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder={isNewUser ? 'Create a strong password' : 'Enter your password'}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="pl-10 pr-10"
+                        disabled={isLoading}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                    {isNewUser && (
+                      <p className="text-xs text-muted-foreground">
+                        Minimum 6 characters
+                      </p>
+                    )}
                   </div>
 
-                  <p className="text-xs text-muted-foreground text-center">
-                    Code expires in 5 minutes
-                  </p>
+                  {isNewUser && (
+                    <div className="space-y-2">
+                      <Label htmlFor="confirmPassword" className="text-sm font-medium">
+                        Confirm Password
+                      </Label>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="confirmPassword"
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="Confirm your password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          className="pl-10"
+                          disabled={isLoading}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-3">
                   <Button 
-                    onClick={handleVerifyOTP}
-                    disabled={isLoading || otpCode.length !== 6}
+                    onClick={handleSubmit}
+                    disabled={isLoading || !password || (isNewUser && !confirmPassword)}
                     className="w-full"
                   >
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Verifying...
+                        {isNewUser ? 'Creating Account...' : 'Logging in...'}
                       </>
                     ) : (
                       <>
                         <Shield className="mr-2 h-4 w-4" />
-                        Verify & Login
+                        {isNewUser ? 'Create Account' : 'Login'}
                       </>
                     )}
                   </Button>
 
-                  <div className="flex items-center justify-between">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleBack}
-                      disabled={isLoading}
-                      className="text-muted-foreground"
-                    >
-                      <ArrowLeft className="mr-1.5 h-3.5 w-3.5" />
-                      Back
-                    </Button>
-
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleResendOTP}
-                      disabled={isLoading || resendCooldown > 0}
-                      className="text-muted-foreground"
-                    >
-                      <RefreshCw className="mr-1.5 h-3.5 w-3.5" />
-                      {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend Code'}
-                    </Button>
-                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleBack}
+                    disabled={isLoading}
+                    className="w-full text-muted-foreground"
+                  >
+                    ← Back to credentials
+                  </Button>
                 </div>
               </>
             )}

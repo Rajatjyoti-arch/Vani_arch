@@ -14,36 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      student_otp_codes: {
-        Row: {
-          created_at: string | null
-          email: string
-          enrollment_no: string
-          expires_at: string
-          id: string
-          is_used: boolean | null
-          otp_code: string
-        }
-        Insert: {
-          created_at?: string | null
-          email: string
-          enrollment_no: string
-          expires_at: string
-          id?: string
-          is_used?: boolean | null
-          otp_code: string
-        }
-        Update: {
-          created_at?: string | null
-          email?: string
-          enrollment_no?: string
-          expires_at?: string
-          id?: string
-          is_used?: boolean | null
-          otp_code?: string
-        }
-        Relationships: []
-      }
       student_profiles: {
         Row: {
           avatar: string
@@ -53,6 +23,7 @@ export type Database = {
           ghost_name: string
           id: string
           is_verified: boolean | null
+          password_hash: string | null
           reports_submitted: number | null
           reputation: number | null
         }
@@ -64,6 +35,7 @@ export type Database = {
           ghost_name: string
           id?: string
           is_verified?: boolean | null
+          password_hash?: string | null
           reports_submitted?: number | null
           reputation?: number | null
         }
@@ -75,6 +47,7 @@ export type Database = {
           ghost_name?: string
           id?: string
           is_verified?: boolean | null
+          password_hash?: string | null
           reports_submitted?: number | null
           reputation?: number | null
         }
