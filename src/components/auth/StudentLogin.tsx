@@ -197,13 +197,30 @@ export function StudentLogin() {
                       <Input
                         id="signin-enrollment"
                         type="text"
-                        placeholder="e.g., 23BEMNC42"
+                        placeholder="e.g., 23BECSE42"
                         value={enrollmentNo}
                         onChange={(e) => setEnrollmentNo(e.target.value.toUpperCase())}
-                        className="pl-10"
+                        className={cn(
+                          "pl-10 pr-10",
+                          enrollmentNo && (validateEnrollmentNo(enrollmentNo) 
+                            ? "border-green-500 focus-visible:ring-green-500/20" 
+                            : "border-red-500 focus-visible:ring-red-500/20")
+                        )}
                         disabled={isLoading}
                       />
+                      {enrollmentNo && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                          {validateEnrollmentNo(enrollmentNo) ? (
+                            <Check className="h-4 w-4 text-green-500" />
+                          ) : (
+                            <X className="h-4 w-4 text-red-500" />
+                          )}
+                        </div>
+                      )}
                     </div>
+                    {enrollmentNo && !validateEnrollmentNo(enrollmentNo) && (
+                      <p className="text-xs text-red-500">Format: YearBEBranch[Section]Roll (e.g., 23BECSE42)</p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -300,14 +317,35 @@ export function StudentLogin() {
                       <Input
                         id="signup-enrollment"
                         type="text"
-                        placeholder="e.g., 23BEMNC42"
+                        placeholder="e.g., 23BECSE42"
                         value={enrollmentNo}
                         onChange={(e) => setEnrollmentNo(e.target.value.toUpperCase())}
-                        className="pl-10"
+                        className={cn(
+                          "pl-10 pr-10",
+                          enrollmentNo && (validateEnrollmentNo(enrollmentNo) 
+                            ? "border-green-500 focus-visible:ring-green-500/20" 
+                            : "border-red-500 focus-visible:ring-red-500/20")
+                        )}
                         disabled={isLoading}
                       />
+                      {enrollmentNo && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                          {validateEnrollmentNo(enrollmentNo) ? (
+                            <Check className="h-4 w-4 text-green-500" />
+                          ) : (
+                            <X className="h-4 w-4 text-red-500" />
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <p className="text-xs text-muted-foreground">Format: YearBEBranchRoll</p>
+                    <p className={cn(
+                      "text-xs",
+                      enrollmentNo && !validateEnrollmentNo(enrollmentNo) ? "text-red-500" : "text-muted-foreground"
+                    )}>
+                      {enrollmentNo && !validateEnrollmentNo(enrollmentNo) 
+                        ? "Invalid format. Example: 23BECSE42, 24BEMNC15" 
+                        : "Branches: CSE, MNC, CCS, ECE, ECA"}
+                    </p>
                   </div>
 
                   <div className="space-y-2">
