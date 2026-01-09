@@ -27,6 +27,7 @@ import { useStudentSession } from "@/contexts/StudentSessionContext";
 import { NotificationPreferences } from "@/components/identity/NotificationPreferences";
 import { StudentLogin } from "@/components/auth/StudentLogin";
 import { toast } from "@/hooks/use-toast";
+import { ComplianceAssistant } from "@/components/assistant/ComplianceAssistant";
 
 const StudentDashboard = () => {
   const { isAuthenticated, studentProfile, logout, isLoading } = useStudentSession();
@@ -274,6 +275,7 @@ const StudentDashboard = () => {
           </CardContent>
         </Card>
       </div>
+      <ComplianceAssistant />
     </DashboardLayout>
   );
 };
