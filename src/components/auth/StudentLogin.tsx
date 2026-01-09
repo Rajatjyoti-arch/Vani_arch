@@ -1,17 +1,15 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { Loader2, Mail, GraduationCap, Shield, Lock, Eye, EyeOff, Check, X } from 'lucide-react';
+import { Loader2, Mail, GraduationCap, Shield, Lock, Eye, EyeOff, Check, X, ArrowRight } from 'lucide-react';
 import { VaniLogo } from '@/components/ui/VaniLogo';
 import { useStudentSession } from '@/contexts/StudentSessionContext';
 import { supabase } from '@/integrations/supabase/client';
-
-type LoginStep = 'credentials' | 'password';
+import { cn } from '@/lib/utils';
 
 interface PasswordStrength {
   score: number;
@@ -49,13 +47,12 @@ export function StudentLogin() {
   const location = useLocation();
   const { isAuthenticated, isLoading: sessionLoading } = useStudentSession();
   
-  const [step, setStep] = useState<LoginStep>('credentials');
+  const [isSignUp, setIsSignUp] = useState(false);
   const [enrollmentNo, setEnrollmentNo] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isNewUser, setIsNewUser] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const passwordStrength = useMemo(() => getPasswordStrength(password), [password]);
@@ -80,7 +77,14 @@ export function StudentLogin() {
     return emailRegex.test(value);
   };
 
-  const handleCheckUser = async () => {
+  const resetForm = () => {
+    setEnrollmentNo('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+  };
+
+  const handleSubmit = async () => {
     if (!enrollmentNo.trim() || !email.trim()) {
       toast.error('Please enter both enrollment number and email');
       return;
@@ -96,34 +100,6 @@ export function StudentLogin() {
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      const { data, error } = await supabase.functions.invoke('student-auth', {
-        body: {
-          action: 'check',
-          enrollment_no: enrollmentNo.trim().toUpperCase(),
-          email: email.trim().toLowerCase(),
-        },
-      });
-
-      if (error) {
-        console.error('Check user error:', error);
-        toast.error('Failed to check user. Please try again.');
-        return;
-      }
-
-      setIsNewUser(!data.exists || !data.hasPassword);
-      setStep('password');
-    } catch (error) {
-      console.error('Check user error:', error);
-      toast.error('Failed to check user. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSubmit = async () => {
     if (!password) {
       toast.error('Please enter a password');
       return;
@@ -134,7 +110,7 @@ export function StudentLogin() {
       return;
     }
 
-    if (isNewUser && password !== confirmPassword) {
+    if (isSignUp && password !== confirmPassword) {
       toast.error('Passwords do not match');
       return;
     }
@@ -144,7 +120,7 @@ export function StudentLogin() {
     try {
       const { data, error } = await supabase.functions.invoke('student-auth', {
         body: {
-          action: isNewUser ? 'register' : 'login',
+          action: isSignUp ? 'register' : 'login',
           enrollment_no: enrollmentNo.trim().toUpperCase(),
           email: email.trim().toLowerCase(),
           password,
@@ -164,7 +140,7 @@ export function StudentLogin() {
 
       if (data?.success && data?.profile) {
         localStorage.setItem('student_profile', JSON.stringify(data.profile));
-        toast.success(isNewUser ? 'Account created! Welcome!' : 'Welcome back!');
+        toast.success(isSignUp ? 'Account created! Welcome!' : 'Welcome back!');
         const returnUrl = (location.state as { from?: string })?.from || '/student-dashboard';
         navigate(returnUrl, { replace: true });
         window.location.href = returnUrl;
@@ -177,11 +153,10 @@ export function StudentLogin() {
     }
   };
 
-  const handleBack = () => {
-    setStep('credentials');
+  const toggleMode = () => {
+    setIsSignUp(!isSignUp);
     setPassword('');
     setConfirmPassword('');
-    setIsNewUser(false);
   };
 
   if (sessionLoading) {
@@ -193,115 +168,83 @@ export function StudentLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
-        {/* Logo and Header */}
-        <div className="text-center space-y-4">
-          <VaniLogo size="lg" className="mx-auto" />
-          <div className="space-y-2">
-            <h1 className="text-2xl font-bold text-foreground">Student Portal</h1>
-            <p className="text-muted-foreground text-sm">
-              Secure anonymous reporting platform
-            </p>
-          </div>
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="w-full max-w-4xl">
+        {/* Logo Header */}
+        <div className="text-center mb-8">
+          <VaniLogo size="lg" className="mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-foreground">Student Portal</h1>
+          <p className="text-muted-foreground text-sm mt-1">
+            Secure anonymous reporting platform
+          </p>
         </div>
 
-        {/* Security Badge */}
-        <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground bg-muted/50 rounded-lg py-2 px-4 border border-border/50">
-          <Shield className="h-3.5 w-3.5 text-primary" />
-          <span>End-to-end encrypted • Your identity remains anonymous</span>
-        </div>
+        {/* Sliding Container */}
+        <div className="relative bg-card border border-border/50 rounded-2xl shadow-2xl overflow-hidden min-h-[520px]">
+          {/* Forms Container */}
+          <div className="flex h-full">
+            {/* Sign In Form */}
+            <div className={cn(
+              "w-full md:w-1/2 p-8 transition-all duration-500 ease-in-out",
+              isSignUp ? "md:translate-x-full opacity-0 md:opacity-100 hidden md:block" : "translate-x-0 opacity-100"
+            )}>
+              <div className="space-y-6">
+                <div className="text-center md:text-left">
+                  <h2 className="text-xl font-bold text-foreground">Welcome Back</h2>
+                  <p className="text-sm text-muted-foreground mt-1">Sign in to your account</p>
+                </div>
 
-        {/* Login Card */}
-        <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-          <CardHeader className="text-center pb-4">
-            <CardTitle className="text-lg">
-              {step === 'credentials' ? 'Enter Your Details' : (isNewUser ? 'Create Password' : 'Enter Password')}
-            </CardTitle>
-            <CardDescription>
-              {step === 'credentials' 
-                ? 'Enter your enrollment number and email'
-                : (isNewUser ? 'Create a password to secure your account' : 'Enter your password to login')
-              }
-            </CardDescription>
-          </CardHeader>
-
-          <CardContent className="space-y-6">
-            {step === 'credentials' ? (
-              <>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="enrollment" className="text-sm font-medium">
+                    <Label htmlFor="signin-enrollment" className="text-sm font-medium">
                       Enrollment Number
                     </Label>
                     <div className="relative">
                       <GraduationCap className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        id="enrollment"
+                        id="signin-enrollment"
                         type="text"
                         placeholder="e.g., 23BEMNC42"
-                        value={enrollmentNo}
-                        onChange={(e) => setEnrollmentNo(e.target.value.toUpperCase())}
+                        value={!isSignUp ? enrollmentNo : ''}
+                        onChange={(e) => !isSignUp && setEnrollmentNo(e.target.value.toUpperCase())}
                         className="pl-10"
-                        disabled={isLoading}
+                        disabled={isLoading || isSignUp}
                       />
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Format: YearBEBranchRoll (e.g., 23BEMNC42, 24BECSE15)
-                    </p>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium">
+                    <Label htmlFor="signin-email" className="text-sm font-medium">
                       Email Address
                     </Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        id="email"
+                        id="signin-email"
                         type="email"
-                        placeholder="Enter your email address"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value.toLowerCase())}
+                        placeholder="Enter your email"
+                        value={!isSignUp ? email : ''}
+                        onChange={(e) => !isSignUp && setEmail(e.target.value.toLowerCase())}
                         className="pl-10"
-                        disabled={isLoading}
+                        disabled={isLoading || isSignUp}
                       />
                     </div>
                   </div>
-                </div>
 
-                <Button 
-                  onClick={handleCheckUser}
-                  disabled={isLoading || !enrollmentNo.trim() || !email.trim()}
-                  className="w-full"
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Checking...
-                    </>
-                  ) : (
-                    'Continue'
-                  )}
-                </Button>
-              </>
-            ) : (
-              <>
-                <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="password" className="text-sm font-medium">
-                      {isNewUser ? 'Create Password' : 'Password'}
+                    <Label htmlFor="signin-password" className="text-sm font-medium">
+                      Password
                     </Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        id="password"
+                        id="signin-password"
                         type={showPassword ? 'text' : 'password'}
-                        placeholder={isNewUser ? 'Create a strong password' : 'Enter your password'}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Enter your password"
+                        value={!isSignUp ? password : ''}
+                        onChange={(e) => !isSignUp && setPassword(e.target.value)}
                         className="pl-10 pr-10"
-                        disabled={isLoading}
+                        disabled={isLoading || isSignUp}
                       />
                       <button
                         type="button"
@@ -311,10 +254,116 @@ export function StudentLogin() {
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
-                    {isNewUser && password && (
+                  </div>
+                </div>
+
+                <Button 
+                  onClick={handleSubmit}
+                  disabled={isLoading || isSignUp}
+                  className="w-full"
+                >
+                  {isLoading && !isSignUp ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Signing in...
+                    </>
+                  ) : (
+                    <>
+                      <Shield className="mr-2 h-4 w-4" />
+                      Sign In
+                    </>
+                  )}
+                </Button>
+
+                {/* Mobile toggle */}
+                <div className="md:hidden text-center pt-4 border-t border-border/50">
+                  <p className="text-sm text-muted-foreground mb-2">Don't have an account?</p>
+                  <Button variant="outline" onClick={toggleMode} className="w-full">
+                    Create Account
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Sign Up Form */}
+            <div className={cn(
+              "w-full md:w-1/2 p-8 transition-all duration-500 ease-in-out",
+              isSignUp ? "translate-x-0 opacity-100" : "md:-translate-x-full opacity-0 md:opacity-100 hidden md:block"
+            )}>
+              <div className="space-y-6">
+                <div className="text-center md:text-left">
+                  <h2 className="text-xl font-bold text-foreground">Create Account</h2>
+                  <p className="text-sm text-muted-foreground mt-1">Join the secure platform</p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-enrollment" className="text-sm font-medium">
+                      Enrollment Number
+                    </Label>
+                    <div className="relative">
+                      <GraduationCap className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="signup-enrollment"
+                        type="text"
+                        placeholder="e.g., 23BEMNC42"
+                        value={isSignUp ? enrollmentNo : ''}
+                        onChange={(e) => isSignUp && setEnrollmentNo(e.target.value.toUpperCase())}
+                        className="pl-10"
+                        disabled={isLoading || !isSignUp}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Format: YearBEBranchRoll
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-email" className="text-sm font-medium">
+                      Email Address
+                    </Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="signup-email"
+                        type="email"
+                        placeholder="Enter your email"
+                        value={isSignUp ? email : ''}
+                        onChange={(e) => isSignUp && setEmail(e.target.value.toLowerCase())}
+                        className="pl-10"
+                        disabled={isLoading || !isSignUp}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-password" className="text-sm font-medium">
+                      Create Password
+                    </Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="signup-password"
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Create a strong password"
+                        value={isSignUp ? password : ''}
+                        onChange={(e) => isSignUp && setPassword(e.target.value)}
+                        className="pl-10 pr-10"
+                        disabled={isLoading || !isSignUp}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                    {isSignUp && password && (
                       <div className="space-y-2 mt-2">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="text-muted-foreground">Password strength</span>
+                          <span className="text-muted-foreground">Strength</span>
                           <span className={`font-medium ${
                             passwordStrength.score <= 40 ? 'text-red-500' : 
                             passwordStrength.score <= 60 ? 'text-yellow-500' : 
@@ -328,89 +377,95 @@ export function StudentLogin() {
                           className="h-1.5"
                           indicatorClassName={passwordStrength.color}
                         />
-                        <div className="grid grid-cols-2 gap-1 text-xs">
-                          <div className={`flex items-center gap-1 ${passwordStrength.checks.minLength ? 'text-green-500' : 'text-muted-foreground'}`}>
-                            {passwordStrength.checks.minLength ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                            6+ characters
-                          </div>
-                          <div className={`flex items-center gap-1 ${passwordStrength.checks.hasUppercase ? 'text-green-500' : 'text-muted-foreground'}`}>
-                            {passwordStrength.checks.hasUppercase ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                            Uppercase
-                          </div>
-                          <div className={`flex items-center gap-1 ${passwordStrength.checks.hasLowercase ? 'text-green-500' : 'text-muted-foreground'}`}>
-                            {passwordStrength.checks.hasLowercase ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                            Lowercase
-                          </div>
-                          <div className={`flex items-center gap-1 ${passwordStrength.checks.hasNumber ? 'text-green-500' : 'text-muted-foreground'}`}>
-                            {passwordStrength.checks.hasNumber ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                            Number
-                          </div>
-                          <div className={`flex items-center gap-1 col-span-2 ${passwordStrength.checks.hasSpecial ? 'text-green-500' : 'text-muted-foreground'}`}>
-                            {passwordStrength.checks.hasSpecial ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                            Special character (!@#$%...)
-                          </div>
-                        </div>
                       </div>
                     )}
                   </div>
 
-                  {isNewUser && (
-                    <div className="space-y-2">
-                      <Label htmlFor="confirmPassword" className="text-sm font-medium">
-                        Confirm Password
-                      </Label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="confirmPassword"
-                          type={showPassword ? 'text' : 'password'}
-                          placeholder="Confirm your password"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          className="pl-10"
-                          disabled={isLoading}
-                        />
-                      </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-confirm" className="text-sm font-medium">
+                      Confirm Password
+                    </Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="signup-confirm"
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Confirm your password"
+                        value={isSignUp ? confirmPassword : ''}
+                        onChange={(e) => isSignUp && setConfirmPassword(e.target.value)}
+                        className="pl-10"
+                        disabled={isLoading || !isSignUp}
+                      />
                     </div>
+                  </div>
+                </div>
+
+                <Button 
+                  onClick={handleSubmit}
+                  disabled={isLoading || !isSignUp}
+                  className="w-full"
+                >
+                  {isLoading && isSignUp ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating Account...
+                    </>
+                  ) : (
+                    <>
+                      <Shield className="mr-2 h-4 w-4" />
+                      Create Account
+                    </>
                   )}
-                </div>
+                </Button>
 
-                <div className="space-y-3">
-                  <Button 
-                    onClick={handleSubmit}
-                    disabled={isLoading || !password || (isNewUser && !confirmPassword)}
-                    className="w-full"
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {isNewUser ? 'Creating Account...' : 'Logging in...'}
-                      </>
-                    ) : (
-                      <>
-                        <Shield className="mr-2 h-4 w-4" />
-                        {isNewUser ? 'Create Account' : 'Login'}
-                      </>
-                    )}
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleBack}
-                    disabled={isLoading}
-                    className="w-full text-muted-foreground"
-                  >
-                    ← Back to credentials
+                {/* Mobile toggle */}
+                <div className="md:hidden text-center pt-4 border-t border-border/50">
+                  <p className="text-sm text-muted-foreground mb-2">Already have an account?</p>
+                  <Button variant="outline" onClick={toggleMode} className="w-full">
+                    Sign In
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
-              </>
-            )}
-          </CardContent>
-        </Card>
+              </div>
+            </div>
+          </div>
+
+          {/* Sliding Overlay Panel (Desktop only) */}
+          <div className={cn(
+            "hidden md:flex absolute top-0 w-1/2 h-full bg-gradient-to-br from-primary to-primary/80 transition-transform duration-500 ease-in-out z-10",
+            isSignUp ? "translate-x-0 left-0" : "translate-x-0 left-1/2"
+          )}>
+            <div className="flex flex-col items-center justify-center p-8 text-center text-primary-foreground">
+              <Shield className="w-16 h-16 mb-6 opacity-90" />
+              <h3 className="text-2xl font-bold mb-3">
+                {isSignUp ? 'Welcome Back!' : 'Hello, Student!'}
+              </h3>
+              <p className="text-sm opacity-90 mb-6 max-w-xs">
+                {isSignUp 
+                  ? 'Already have an account? Sign in to access your secure dashboard.'
+                  : 'New to VANI? Create an account to start using the anonymous reporting platform.'
+                }
+              </p>
+              <Button 
+                variant="outline" 
+                onClick={toggleMode}
+                className="border-2 border-primary-foreground/50 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+              >
+                {isSignUp ? 'Sign In' : 'Create Account'}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+
+              {/* Security Badge */}
+              <div className="mt-8 flex items-center gap-2 text-xs text-primary-foreground/70">
+                <Lock className="h-3.5 w-3.5" />
+                <span>End-to-end encrypted</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Footer Link */}
-        <div className="text-center">
+        <div className="text-center mt-6">
           <Button
             variant="link"
             onClick={() => navigate('/')}
