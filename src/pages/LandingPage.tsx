@@ -34,7 +34,7 @@ const LandingPage = () => {
     "Governance without bias"
   ];
 
-  const sectionNames = ["Problem", "Architecture", "Principles", "AI Partner", "Team"];
+  const sectionNames = ["VANI", "Problem", "Architecture", "Principles", "AI Partner"];
 
   // Auto-cycle taglines
   useEffect(() => {
@@ -280,39 +280,54 @@ const LandingPage = () => {
     </div>
   );
 
-  // Section 5: Team
-  const TeamSection = () => (
+  // Section 1: VANI Hero (formerly Team)
+  const VANIHeroSection = () => (
     <div className="h-full w-full flex items-center justify-center px-6 py-20">
       <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-2xl font-bold text-foreground mb-2">Built by Team CYNOX</h2>
-        <p className="text-muted-foreground mb-10 max-w-xl mx-auto">
-          Engineered by students committed to the future of digital governance.
-        </p>
-
-        <div className="flex flex-wrap justify-center gap-8 md:gap-12">
-          {["Rajatjyoti Biswas", "Priyanshu Gupta", "Sakshi", "Mantavya Kumar"].map((member) => (
-            <div key={member} className="flex flex-col items-center gap-3 group cursor-default">
-              <div className="w-14 h-14 rounded-full bg-background border border-border flex items-center justify-center shadow-sm group-hover:border-primary/50 group-hover:shadow-lg transition-all duration-300">
-                <Users className="w-7 h-7 text-muted-foreground/50 group-hover:text-primary/50 transition-colors duration-300" />
-              </div>
-              <span className="font-medium text-foreground text-sm group-hover:text-primary transition-colors duration-300">{member}</span>
-            </div>
-          ))}
+        {/* System Status */}
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6">
+          <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-xs font-medium text-emerald-500 tracking-wide uppercase">System Operational</span>
         </div>
 
-        {/* Institutions */}
-        <div className="mt-12 pt-8 border-t border-border/30">
-          <p className="text-xs text-muted-foreground uppercase tracking-widest mb-6">Built for Institutions</p>
-          <div className="flex justify-center gap-8">
-            {[
-              { icon: Building2, label: "Universities" },
-              { icon: Network, label: "Corporations" },
-              { icon: Scale, label: "Government" },
-              { icon: Shield, label: "Oversight" }
-            ].map((item, i) => (
-              <div key={i} className="flex flex-col items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
-                <item.icon className="w-6 h-6" />
-                <span className="text-xs font-medium">{item.label}</span>
+        {/* VANI Logo & Title */}
+        <div className="flex items-center justify-center gap-4 mb-4">
+          <VaniLogo variant="icon" size="lg" />
+          <h1
+            className="text-6xl md:text-7xl font-semibold text-foreground"
+            style={{ letterSpacing: '0.15em' }}
+          >
+            VANI
+          </h1>
+        </div>
+
+        {/* Rotating Tagline */}
+        <div className="h-8 mb-3 overflow-hidden">
+          <p className="text-xl font-light text-primary/80 transition-all duration-500">
+            {taglines[taglineIndex]}
+          </p>
+        </div>
+
+        <p className="text-base text-muted-foreground/80 mb-8">
+          Verifiable Anonymous Network Intelligence
+        </p>
+
+        {/* University Branding */}
+        <div className="flex items-center justify-center gap-3 mb-10">
+          <Building2 className="w-5 h-5 text-primary/60" />
+          <span className="text-sm font-medium text-foreground/80">Central University of Jammu</span>
+        </div>
+
+        {/* Team CYNOX */}
+        <div className="pt-8 border-t border-border/30">
+          <p className="text-xs text-muted-foreground uppercase tracking-widest mb-6">Built by Team CYNOX</p>
+          <div className="flex flex-wrap justify-center gap-8 md:gap-12">
+            {["Rajatjyoti Biswas", "Priyanshu Gupta", "Sakshi", "Mantavya Kumar"].map((member) => (
+              <div key={member} className="flex flex-col items-center gap-3 group cursor-default">
+                <div className="w-12 h-12 rounded-full bg-background border border-border flex items-center justify-center shadow-sm group-hover:border-primary/50 group-hover:shadow-lg transition-all duration-300">
+                  <Users className="w-6 h-6 text-muted-foreground/50 group-hover:text-primary/50 transition-colors duration-300" />
+                </div>
+                <span className="font-medium text-foreground text-sm group-hover:text-primary transition-colors duration-300">{member}</span>
               </div>
             ))}
           </div>
@@ -321,7 +336,7 @@ const LandingPage = () => {
     </div>
   );
 
-  const sections = [ProblemSection, ArchitectureSection, PrinciplesSection, AIPartnerSection, TeamSection];
+  const sections = [VANIHeroSection, ProblemSection, ArchitectureSection, PrinciplesSection, AIPartnerSection];
 
   return (
     <div className="h-screen w-screen overflow-hidden relative bg-background">
@@ -332,17 +347,32 @@ const LandingPage = () => {
       {/* Fixed Header */}
       <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3 cursor-pointer">
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => goToSection(0)}>
             <VaniLogo variant="icon" size="sm" />
             <div className="flex flex-col leading-tight">
               <span className="font-semibold text-foreground tracking-[0.15em] uppercase text-sm">VANI</span>
               <span className="text-[10px] text-muted-foreground/60 hidden sm:block">Central University of Jammu</span>
             </div>
           </div>
-          <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <Link to="/privacy-policy" className="hover:text-primary transition-colors hidden md:block">Privacy</Link>
-            <Link to="/gdpr-compliance" className="hover:text-primary transition-colors hidden md:block">GDPR</Link>
-            <Link to="/help" className="hover:text-primary transition-colors hidden md:block">Docs</Link>
+          
+          {/* CTA Buttons in Header */}
+          <div className="flex items-center gap-3">
+            <Button
+              onClick={() => goToSection(2)}
+              variant="ghost"
+              size="sm"
+              className="hidden md:inline-flex text-muted-foreground hover:text-foreground"
+            >
+              Learn How It Works
+            </Button>
+            <Button
+              onClick={handleEnterSystem}
+              size="sm"
+              className="group/btn shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 bg-primary hover:bg-primary/90"
+            >
+              Enter System
+              <ArrowRight className="ml-1.5 w-3.5 h-3.5 transition-transform duration-300 group-hover/btn:translate-x-0.5" />
+            </Button>
           </div>
         </div>
       </header>
@@ -364,55 +394,6 @@ const LandingPage = () => {
         ))}
       </div>
 
-      {/* Floating CTA Buttons - Always Centered */}
-      <div className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none">
-        <div className="bg-background/70 backdrop-blur-xl rounded-2xl p-8 pointer-events-auto shadow-2xl border border-border/50 text-center max-w-md">
-          {/* System Status */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-4">
-            <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs font-medium text-emerald-500 tracking-wide uppercase">System Operational</span>
-          </div>
-
-          {/* VANI Title */}
-          <h1
-            className="text-5xl md:text-6xl font-semibold text-foreground mb-3"
-            style={{ letterSpacing: '0.15em' }}
-          >
-            VANI
-          </h1>
-
-          {/* Rotating Tagline */}
-          <div className="h-7 mb-4 overflow-hidden">
-            <p className="text-lg font-light text-primary/80 transition-all duration-500">
-              {taglines[taglineIndex]}
-            </p>
-          </div>
-
-          <p className="text-sm text-muted-foreground/80 mb-6">
-            Verifiable Anonymous Network Intelligence
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Button
-              onClick={handleEnterSystem}
-              size="lg"
-              className="group/btn w-full sm:w-auto text-base px-6 py-5 h-auto shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300 bg-primary hover:bg-primary/90"
-            >
-              Enter System
-              <ArrowRight className="ml-2 w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
-            </Button>
-            <Button
-              onClick={() => goToSection(1)}
-              variant="outline"
-              size="lg"
-              className="w-full sm:w-auto text-base px-6 py-5 h-auto bg-secondary hover:bg-secondary/80 border-border/50 transition-all duration-300"
-            >
-              Learn How It Works
-            </Button>
-          </div>
-        </div>
-      </div>
 
       {/* Section Indicators */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-background/60 backdrop-blur-md px-4 py-2 rounded-full border border-border/50">
