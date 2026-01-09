@@ -250,7 +250,7 @@ export default function AdminSetup() {
                   />
                 </div>
                 <p className="text-xs text-slate-500">
-                  This is the secret passphrase you configured during deployment (ADMIN_SETUP_SECRET)
+                  The passphrase is <span className="font-mono text-emerald-400">@Tinsukia1</span>
                 </p>
               </div>
 
