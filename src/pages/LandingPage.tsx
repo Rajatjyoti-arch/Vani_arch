@@ -451,11 +451,29 @@ const LandingPage = () => {
       {/* Slideshow Container - Full Screen with Touch Support */}
       <div 
         className="absolute inset-0 z-0 pt-16"
-        onMouseEnter={() => setIsPaused(true)}
+        onMouseMove={(e) => {
+          const containerWidth = e.currentTarget.offsetWidth;
+          const mouseX = e.clientX;
+          const centerStart = containerWidth * 0.2;
+          const centerEnd = containerWidth * 0.8;
+          // Only pause if mouse is in center 60% of the page
+          if (mouseX >= centerStart && mouseX <= centerEnd) {
+            setIsPaused(true);
+          } else {
+            setIsPaused(false);
+          }
+        }}
         onMouseLeave={() => setIsPaused(false)}
-        onTouchStart={handleTouchStart}
+        onMouseDown={() => setIsPaused(true)}
+        onTouchStart={(e) => {
+          setIsPaused(true);
+          handleTouchStart(e);
+        }}
         onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        onTouchEnd={() => {
+          handleTouchEnd();
+          setIsPaused(false);
+        }}
       >
         {sections.map((Section, index) => (
           <div
