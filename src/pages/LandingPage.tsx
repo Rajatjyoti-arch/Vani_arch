@@ -15,7 +15,8 @@ import {
   AlertTriangle,
   FileCheck,
   Network,
-  Building2
+  Building2,
+  Pause
 } from "lucide-react";
 import { VaniLogo } from "@/components/ui/VaniLogo";
 import { Button } from "@/components/ui/button";
@@ -490,6 +491,15 @@ const LandingPage = () => {
         ))}
       </div>
 
+
+      {/* Pause Indicator */}
+      <div className={cn(
+        "fixed bottom-20 md:bottom-8 right-6 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/80 backdrop-blur-md border border-border/50 transition-all duration-300",
+        isPaused ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
+      )}>
+        <Pause className="w-3 h-3 text-primary" />
+        <span className="text-xs font-medium text-muted-foreground">Paused</span>
+      </div>
 
       {/* Section Indicators */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-background/60 backdrop-blur-md px-4 py-2 rounded-full border border-border/50">
