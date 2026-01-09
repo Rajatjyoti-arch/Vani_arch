@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      campus_zones: {
+        Row: {
+          concern_level: string
+          created_at: string
+          id: string
+          last_report_at: string | null
+          reports_count: number
+          zone_id: string
+          zone_name: string
+        }
+        Insert: {
+          concern_level?: string
+          created_at?: string
+          id?: string
+          last_report_at?: string | null
+          reports_count?: number
+          zone_id: string
+          zone_name: string
+        }
+        Update: {
+          concern_level?: string
+          created_at?: string
+          id?: string
+          last_report_at?: string | null
+          reports_count?: number
+          zone_id?: string
+          zone_name?: string
+        }
+        Relationships: []
+      }
       student_profiles: {
         Row: {
           avatar: string
@@ -52,6 +82,54 @@ export type Database = {
           reputation?: number | null
         }
         Relationships: []
+      }
+      zone_reports: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          report_type: string
+          severity: string
+          status: string
+          student_id: string | null
+          zone_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          report_type: string
+          severity?: string
+          status?: string
+          student_id?: string | null
+          zone_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          report_type?: string
+          severity?: string
+          status?: string
+          student_id?: string | null
+          zone_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zone_reports_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "student_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "zone_reports_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "campus_zones"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
