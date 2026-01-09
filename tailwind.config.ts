@@ -142,6 +142,26 @@ export default {
             transform: "scale(1.05)",
           },
         },
+        "section-fade-in": {
+          "0%": { 
+            opacity: "0",
+            transform: "scale(0.95) translateY(10px)",
+          },
+          "100%": { 
+            opacity: "1",
+            transform: "scale(1) translateY(0)",
+          },
+        },
+        "section-fade-out": {
+          "0%": { 
+            opacity: "1",
+            transform: "scale(1) translateY(0)",
+          },
+          "100%": { 
+            opacity: "0",
+            transform: "scale(0.95) translateY(-10px)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -154,6 +174,8 @@ export default {
         "gemini-sparkle": "gemini-sparkle 1.5s ease-in-out infinite",
         "gemini-rotate": "gemini-rotate 3s linear infinite",
         "gemini-pulse": "gemini-pulse 2s ease-in-out infinite",
+        "section-fade-in": "section-fade-in 0.7s ease-out",
+        "section-fade-out": "section-fade-out 0.7s ease-out",
       },
     },
   },
