@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-interface SentimentLog {
+interface CampusZone {
   id: string;
   zone_id: string;
   zone_name: string;
   concern_level: string;
   reports_count: number;
+  last_report_at: string | null;
 }
 
 const CONCERN_COLORS = {
@@ -16,24 +17,54 @@ const CONCERN_COLORS = {
 };
 
 export function SentimentHeatMap() {
-  const [sentimentData, setSentimentData] = useState<SentimentLog[]>([]);
+  const [zones, setZones] = useState<CampusZone[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchSentimentData();
-  }, []);
-
-  const fetchSentimentData = async () => {
+  const fetchZones = async () => {
     try {
-      // Mock data - sentiment_logs table doesn't exist yet
-      // Return empty array to show placeholder zones
-      setSentimentData([]);
+      const { data, error } = await supabase
+        .from('campus_zones')
+        .select('*')
+        .order('zone_name');
+
+      if (error) {
+        console.error("Error fetching zones:", error);
+        setZones([]);
+        return;
+      }
+
+      setZones(data || []);
     } catch (err) {
-      console.error("Error fetching sentiment data:", err);
+      console.error("Error fetching zones:", err);
+      setZones([]);
     } finally {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchZones();
+
+    // Subscribe to real-time updates
+    const channel = supabase
+      .channel('admin_campus_zones_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'campus_zones'
+        },
+        () => {
+          fetchZones();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const getColorScheme = (level: string) => {
     return CONCERN_COLORS[level as keyof typeof CONCERN_COLORS] || CONCERN_COLORS.safe;
@@ -49,47 +80,17 @@ export function SentimentHeatMap() {
     );
   }
 
-  if (sentimentData.length === 0) {
-    // Show placeholder zones
-    const placeholderZones = [
-      { zone_name: "Chanakya Building", concern_level: "safe", reports_count: 2 },
-      { zone_name: "Rhya-Bus Stand", concern_level: "warning", reports_count: 5 },
-      { zone_name: "DDE Building", concern_level: "safe", reports_count: 1 },
-      { zone_name: "Shailputri Bhawan", concern_level: "safe", reports_count: 0 },
-      { zone_name: "Aryabhatta Building", concern_level: "safe", reports_count: 1 },
-      { zone_name: "SPM", concern_level: "safe", reports_count: 0 },
-      { zone_name: "BRS Hostel", concern_level: "warning", reports_count: 3 },
-      { zone_name: "Health Center", concern_level: "critical", reports_count: 7 },
-    ];
-
+  if (zones.length === 0) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-        {placeholderZones.map((zone, i) => {
-          const colors = getColorScheme(zone.concern_level);
-          return (
-            <div
-              key={i}
-              className={`p-3 rounded-lg border ${colors.bg} ${colors.border} transition-all hover:scale-[1.02]`}
-            >
-              <p className="text-xs text-slate-400 truncate">{zone.zone_name}</p>
-              <div className="flex items-center justify-between mt-1">
-                <span className={`text-lg font-bold ${colors.text}`}>
-                  {zone.reports_count}
-                </span>
-                <span className={`text-[10px] uppercase ${colors.text}`}>
-                  {zone.concern_level}
-                </span>
-              </div>
-            </div>
-          );
-        })}
+      <div className="text-center py-8 text-slate-400">
+        No zone data available
       </div>
     );
   }
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-      {sentimentData.map((zone) => {
+      {zones.map((zone) => {
         const colors = getColorScheme(zone.concern_level);
         return (
           <div
