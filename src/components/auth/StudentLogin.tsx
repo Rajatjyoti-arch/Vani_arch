@@ -77,13 +77,6 @@ export function StudentLogin() {
     return emailRegex.test(value);
   };
 
-  const resetForm = () => {
-    setEnrollmentNo('');
-    setEmail('');
-    setPassword('');
-    setConfirmPassword('');
-  };
-
   const handleSubmit = async () => {
     if (!enrollmentNo.trim() || !email.trim()) {
       toast.error('Please enter both enrollment number and email');
@@ -180,13 +173,13 @@ export function StudentLogin() {
         </div>
 
         {/* Sliding Container */}
-        <div className="relative bg-card border border-border/50 rounded-2xl shadow-2xl overflow-hidden min-h-[520px]">
-          {/* Forms Container */}
-          <div className="flex h-full">
-            {/* Sign In Form */}
+        <div className="relative bg-card border border-border/50 rounded-2xl shadow-2xl overflow-hidden">
+          <div className="flex flex-col md:flex-row min-h-[520px]">
+            
+            {/* Left Panel - Sign In (visible when !isSignUp on desktop, always accessible) */}
             <div className={cn(
-              "w-full md:w-1/2 p-8 transition-all duration-500 ease-in-out",
-              isSignUp ? "md:translate-x-full opacity-0 md:opacity-100 hidden md:block" : "translate-x-0 opacity-100"
+              "w-full md:w-1/2 p-8 flex flex-col justify-center transition-all duration-500",
+              isSignUp ? "hidden md:flex" : "flex"
             )}>
               <div className="space-y-6">
                 <div className="text-center md:text-left">
@@ -205,10 +198,10 @@ export function StudentLogin() {
                         id="signin-enrollment"
                         type="text"
                         placeholder="e.g., 23BEMNC42"
-                        value={!isSignUp ? enrollmentNo : ''}
-                        onChange={(e) => !isSignUp && setEnrollmentNo(e.target.value.toUpperCase())}
+                        value={enrollmentNo}
+                        onChange={(e) => setEnrollmentNo(e.target.value.toUpperCase())}
                         className="pl-10"
-                        disabled={isLoading || isSignUp}
+                        disabled={isLoading}
                       />
                     </div>
                   </div>
@@ -223,10 +216,10 @@ export function StudentLogin() {
                         id="signin-email"
                         type="email"
                         placeholder="Enter your email"
-                        value={!isSignUp ? email : ''}
-                        onChange={(e) => !isSignUp && setEmail(e.target.value.toLowerCase())}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value.toLowerCase())}
                         className="pl-10"
-                        disabled={isLoading || isSignUp}
+                        disabled={isLoading}
                       />
                     </div>
                   </div>
@@ -241,10 +234,10 @@ export function StudentLogin() {
                         id="signin-password"
                         type={showPassword ? 'text' : 'password'}
                         placeholder="Enter your password"
-                        value={!isSignUp ? password : ''}
-                        onChange={(e) => !isSignUp && setPassword(e.target.value)}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         className="pl-10 pr-10"
-                        disabled={isLoading || isSignUp}
+                        disabled={isLoading}
                       />
                       <button
                         type="button"
@@ -259,7 +252,7 @@ export function StudentLogin() {
 
                 <Button 
                   onClick={handleSubmit}
-                  disabled={isLoading || isSignUp}
+                  disabled={isLoading}
                   className="w-full"
                 >
                   {isLoading && !isSignUp ? (
@@ -286,10 +279,10 @@ export function StudentLogin() {
               </div>
             </div>
 
-            {/* Sign Up Form */}
+            {/* Right Panel - Sign Up (visible when isSignUp on desktop) */}
             <div className={cn(
-              "w-full md:w-1/2 p-8 transition-all duration-500 ease-in-out",
-              isSignUp ? "translate-x-0 opacity-100" : "md:-translate-x-full opacity-0 md:opacity-100 hidden md:block"
+              "w-full md:w-1/2 p-8 flex flex-col justify-center transition-all duration-500",
+              isSignUp ? "flex" : "hidden md:flex"
             )}>
               <div className="space-y-6">
                 <div className="text-center md:text-left">
@@ -308,15 +301,13 @@ export function StudentLogin() {
                         id="signup-enrollment"
                         type="text"
                         placeholder="e.g., 23BEMNC42"
-                        value={isSignUp ? enrollmentNo : ''}
-                        onChange={(e) => isSignUp && setEnrollmentNo(e.target.value.toUpperCase())}
+                        value={enrollmentNo}
+                        onChange={(e) => setEnrollmentNo(e.target.value.toUpperCase())}
                         className="pl-10"
-                        disabled={isLoading || !isSignUp}
+                        disabled={isLoading}
                       />
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Format: YearBEBranchRoll
-                    </p>
+                    <p className="text-xs text-muted-foreground">Format: YearBEBranchRoll</p>
                   </div>
 
                   <div className="space-y-2">
@@ -329,10 +320,10 @@ export function StudentLogin() {
                         id="signup-email"
                         type="email"
                         placeholder="Enter your email"
-                        value={isSignUp ? email : ''}
-                        onChange={(e) => isSignUp && setEmail(e.target.value.toLowerCase())}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value.toLowerCase())}
                         className="pl-10"
-                        disabled={isLoading || !isSignUp}
+                        disabled={isLoading}
                       />
                     </div>
                   </div>
@@ -347,10 +338,10 @@ export function StudentLogin() {
                         id="signup-password"
                         type={showPassword ? 'text' : 'password'}
                         placeholder="Create a strong password"
-                        value={isSignUp ? password : ''}
-                        onChange={(e) => isSignUp && setPassword(e.target.value)}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         className="pl-10 pr-10"
-                        disabled={isLoading || !isSignUp}
+                        disabled={isLoading}
                       />
                       <button
                         type="button"
@@ -375,7 +366,6 @@ export function StudentLogin() {
                         <Progress 
                           value={passwordStrength.score} 
                           className="h-1.5"
-                          indicatorClassName={passwordStrength.color}
                         />
                       </div>
                     )}
@@ -391,10 +381,10 @@ export function StudentLogin() {
                         id="signup-confirm"
                         type={showPassword ? 'text' : 'password'}
                         placeholder="Confirm your password"
-                        value={isSignUp ? confirmPassword : ''}
-                        onChange={(e) => isSignUp && setConfirmPassword(e.target.value)}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
                         className="pl-10"
-                        disabled={isLoading || !isSignUp}
+                        disabled={isLoading}
                       />
                     </div>
                   </div>
@@ -402,7 +392,7 @@ export function StudentLogin() {
 
                 <Button 
                   onClick={handleSubmit}
-                  disabled={isLoading || !isSignUp}
+                  disabled={isLoading}
                   className="w-full"
                 >
                   {isLoading && isSignUp ? (
@@ -428,37 +418,37 @@ export function StudentLogin() {
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Sliding Overlay Panel (Desktop only) */}
-          <div className={cn(
-            "hidden md:flex absolute top-0 w-1/2 h-full bg-gradient-to-br from-primary to-primary/80 transition-transform duration-500 ease-in-out z-10",
-            isSignUp ? "translate-x-0 left-0" : "translate-x-0 left-1/2"
-          )}>
-            <div className="flex flex-col items-center justify-center p-8 text-center text-primary-foreground">
-              <Shield className="w-16 h-16 mb-6 opacity-90" />
-              <h3 className="text-2xl font-bold mb-3">
-                {isSignUp ? 'Welcome Back!' : 'Hello, Student!'}
-              </h3>
-              <p className="text-sm opacity-90 mb-6 max-w-xs">
-                {isSignUp 
-                  ? 'Already have an account? Sign in to access your secure dashboard.'
-                  : 'New to VANI? Create an account to start using the anonymous reporting platform.'
-                }
-              </p>
-              <Button 
-                variant="outline" 
-                onClick={toggleMode}
-                className="border-2 border-primary-foreground/50 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
-              >
-                {isSignUp ? 'Sign In' : 'Create Account'}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+            {/* Sliding Overlay Panel (Desktop only) */}
+            <div className={cn(
+              "hidden md:flex absolute top-0 h-full w-1/2 bg-primary transition-all duration-500 ease-in-out z-20",
+              isSignUp ? "left-0" : "left-1/2"
+            )}>
+              <div className="flex flex-col items-center justify-center p-8 text-center text-primary-foreground w-full">
+                <Shield className="w-16 h-16 mb-6 opacity-90" />
+                <h3 className="text-2xl font-bold mb-3">
+                  {isSignUp ? 'Welcome Back!' : 'Hello, Student!'}
+                </h3>
+                <p className="text-sm opacity-90 mb-6 max-w-xs">
+                  {isSignUp 
+                    ? 'Already have an account? Sign in to access your secure dashboard.'
+                    : 'New to VANI? Create an account to start using the anonymous reporting platform.'
+                  }
+                </p>
+                <Button 
+                  variant="outline" 
+                  onClick={toggleMode}
+                  className="border-2 border-primary-foreground/50 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                >
+                  {isSignUp ? 'Sign In' : 'Create Account'}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
 
-              {/* Security Badge */}
-              <div className="mt-8 flex items-center gap-2 text-xs text-primary-foreground/70">
-                <Lock className="h-3.5 w-3.5" />
-                <span>End-to-end encrypted</span>
+                {/* Security Badge */}
+                <div className="mt-8 flex items-center gap-2 text-xs text-primary-foreground/70">
+                  <Lock className="h-3.5 w-3.5" />
+                  <span>End-to-end encrypted</span>
+                </div>
               </div>
             </div>
           </div>
