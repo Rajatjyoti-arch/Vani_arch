@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { Menu, Activity, Clock } from "lucide-react";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Activity, Clock } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 export function AppHeader() {
@@ -50,9 +49,7 @@ export function AppHeader() {
   return (
     <header className="h-14 border-b border-border/50 bg-card/50 backdrop-blur-sm flex items-center justify-between px-4">
       <div className="flex items-center gap-4">
-        <SidebarTrigger className="h-9 w-9 bg-secondary/20 hover:bg-primary/20 text-foreground hover:text-primary transition-all duration-300 hover:scale-105 shadow-sm hover:shadow-primary/20">
-          <Menu className="h-5 w-5" />
-        </SidebarTrigger>
+
 
         <div className="hidden md:flex items-center gap-2 text-xs text-muted-foreground">
           <Activity className="w-3 h-3 text-primary animate-pulse" />
