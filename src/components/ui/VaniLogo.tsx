@@ -32,17 +32,19 @@ export function VaniLogo({
             aria-label="VANI - Verifiable Anonymous Network Intelligence"
         >
             {/* Official VANI Logo Image */}
-            <img
-                src="/vani-logo-final.png"
-                alt="VANI Logo"
-                width={dimensions.icon}
-                height={dimensions.icon}
-                className="shrink-0 object-contain"
+            <div
+                className="relative shrink-0"
                 style={{
                     width: dimensions.icon,
-                    height: dimensions.icon,
+                    height: dimensions.icon
                 }}
-            />
+            >
+                <img
+                    src="/vani-logo-final.png"
+                    alt="VANI Logo"
+                    className="object-contain w-full h-full"
+                />
+            </div>
 
             {/* Text and University branding */}
             {variant === "full" && (
