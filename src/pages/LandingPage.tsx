@@ -98,10 +98,10 @@ const SlideIdentity = () => {
   }, []);
 
   return (
-    <div className="h-full w-full flex flex-col relative z-20 pt-32 pb-32 px-8 max-[1023px]:pt-24 max-[1023px]:pb-24 max-[1023px]:px-4 overflow-hidden">
+    <div className="h-full w-full flex flex-col relative z-20 pt-32 pb-32 px-8 max-[767px]:pt-24 max-[767px]:pb-24 max-[767px]:px-4 overflow-hidden">
 
       {/* HERO ZONE: Centered content */}
-      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-7xl mx-auto relative z-20 gap-10 max-[1023px]:gap-6">
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-7xl mx-auto relative z-20 gap-10 max-[767px]:gap-6">
 
         {/* 1. System Badge */}
         <div className="relative z-30">
@@ -109,7 +109,7 @@ const SlideIdentity = () => {
         </div>
 
         {/* 2. Title & Tagline Group */}
-        <div className="flex flex-col items-center gap-8 max-[1023px]:gap-4 relative z-20 w-full">
+        <div className="flex flex-col items-center gap-8 max-[767px]:gap-4 relative z-20 w-full">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -127,7 +127,7 @@ const SlideIdentity = () => {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -20, opacity: 0 }}
                 transition={{ duration: 0.5 }}
-                className="absolute text-2xl max-[1023px]:text-xl max-[767px]:text-sm text-cyan-400 font-light tracking-[0.2em] max-[767px]:tracking-[0.15em] uppercase whitespace-nowrap text-center px-4"
+                className="absolute text-2xl max-[767px]:text-sm text-cyan-400 font-light tracking-[0.2em] max-[767px]:tracking-[0.15em] uppercase whitespace-nowrap text-center px-4"
               >
                 {taglines[index]}
               </motion.p>
@@ -186,7 +186,7 @@ const SlideIdentity = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.0, duration: 0.8, ease: "easeOut" }}
-        className="w-full max-w-7xl mx-auto flex flex-row items-end justify-between gap-6 z-30 shrink-0 border-t border-slate-800/30 pt-6 pb-0 max-[1023px]:flex-col max-[1023px]:items-center max-[1023px]:pt-4 max-[1023px]:pb-16 max-[1023px]:gap-4"
+        className="w-full max-w-7xl mx-auto flex flex-row items-end justify-between gap-6 z-30 shrink-0 border-t border-slate-800/30 pt-6 pb-0 max-[767px]:flex-col max-[767px]:items-center max-[767px]:pt-4 max-[767px]:pb-16 max-[767px]:gap-4"
       >
         <div className="flex items-center gap-3 md:gap-4">
           <img src={cynoxLogo} alt="CYNOX" className="h-10 max-[767px]:h-8 transition-all duration-500 opacity-90 hover:opacity-100" />
@@ -196,7 +196,7 @@ const SlideIdentity = () => {
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-end gap-x-4 gap-y-2 md:gap-8 text-xs max-[767px]:text-[10px] text-slate-400 font-mono uppercase tracking-wider text-right max-[1023px]:justify-center max-[1023px]:text-center">
+        <div className="flex flex-wrap justify-end gap-x-4 gap-y-2 md:gap-8 text-xs max-[767px]:text-[10px] text-slate-400 font-mono uppercase tracking-wider text-right max-[767px]:justify-center max-[767px]:text-center">
           {["Rajatjyoti Biswas", "Priyanshu Gupta", "Sakshi", "Mantavya Kumar"].map((name) => (
             <span key={name} className="hover:text-cyan-400 transition-colors cursor-default whitespace-nowrap">
               {name}
@@ -210,20 +210,20 @@ const SlideIdentity = () => {
 
 // --- Slide 2: Problem ---
 const SlideProblem = () => (
-  <div className="h-full w-full flex items-center justify-center relative z-10 px-8 max-[767px]:px-4 max-w-7xl mx-auto py-0 max-[1023px]:pt-20 max-[1023px]:pb-24">
-    <div className="grid grid-cols-2 max-[1023px]:grid-cols-1 gap-16 max-[1023px]:gap-8 items-center w-full overflow-visible max-[1023px]:overflow-y-auto max-h-full no-scrollbar">
+  <div className="h-full w-full flex items-center justify-center relative z-10 px-8 max-[767px]:px-4 max-w-7xl mx-auto py-0 max-[767px]:pt-20 max-[767px]:pb-24">
+    <div className="grid grid-cols-2 max-[767px]:grid-cols-1 gap-16 max-[767px]:gap-8 items-center w-full overflow-visible max-[767px]:overflow-y-auto max-h-full no-scrollbar">
       <div className="space-y-8 max-[767px]:space-y-6">
         <motion.div
           custom={0.2}
           variants={TEXT_VARIANTS}
           initial="hidden"
           animate="visible"
-          className="text-left max-[1023px]:text-center"
+          className="text-left max-[767px]:text-center"
         >
-          <h2 className="text-6xl max-[1023px]:text-5xl max-[767px]:text-3xl font-bold text-white mb-4 max-[767px]:mb-3 leading-tight">
+          <h2 className="text-6xl max-[767px]:text-3xl font-bold text-white mb-4 max-[767px]:mb-3 leading-tight">
             Institutional <span className="text-red-500/80">Silence</span>
           </h2>
-          <p className="text-lg max-[767px]:text-sm text-slate-400 max-w-md mx-0 max-[1023px]:mx-auto leading-relaxed">
+          <p className="text-lg max-[767px]:text-sm text-slate-400 max-w-md mx-0 max-[767px]:mx-auto leading-relaxed">
             The gap between grievance and resolution is widened by fear and bureaucracy.
           </p>
         </motion.div>
@@ -257,7 +257,7 @@ const SlideProblem = () => (
         variants={TEXT_VARIANTS}
         initial="hidden"
         animate="visible"
-        className="relative block max-[1023px]:hidden"
+        className="relative block max-[767px]:hidden"
       >
         <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 blur-3xl" />
         <div className="relative bg-slate-900/50 border border-slate-800 backdrop-blur-xl p-8 max-[767px]:p-6 rounded-2xl">
@@ -300,7 +300,7 @@ const SlideProblem = () => (
 
 // --- Slide 3: Architecture ---
 const SlideArchitecture = () => (
-  <div className="h-full w-full flex flex-col items-center justify-center relative z-10 px-8 max-[767px]:px-4 py-0 max-[1023px]:pt-20 max-[1023px]:pb-24 overflow-hidden max-[1023px]:overflow-y-auto no-scrollbar">
+  <div className="h-full w-full flex flex-col items-center justify-center relative z-10 px-8 max-[767px]:px-4 py-0 max-[767px]:pt-20 max-[767px]:pb-24 overflow-hidden max-[767px]:overflow-y-auto no-scrollbar">
     <motion.div
       custom={0.2}
       variants={TEXT_VARIANTS}
@@ -312,9 +312,9 @@ const SlideArchitecture = () => (
       <p className="text-base max-[767px]:text-sm text-slate-400 font-light tracking-wide max-w-lg mx-auto">End-to-end verifiable governance pipeline</p>
     </motion.div>
 
-    <div className="grid grid-cols-4 max-[1023px]:grid-cols-2 max-[639px]:grid-cols-1 gap-6 max-[767px]:gap-4 max-w-7xl w-full relative">
+    <div className="grid grid-cols-4 max-[767px]:grid-cols-2 max-[639px]:grid-cols-1 gap-6 max-[767px]:gap-4 max-w-7xl w-full relative">
       {/* Connecting Line - Desktop Only */}
-      <div className="block max-[1023px]:hidden absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-900 to-transparent -translate-y-1/2 z-0" />
+      <div className="block max-[767px]:hidden absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-900 to-transparent -translate-y-1/2 z-0" />
 
       {[
         { icon: Lock, title: "Secure Entry", desc: "Zero-knowledge proofs verify credentials." },
@@ -328,7 +328,7 @@ const SlideArchitecture = () => (
           variants={TEXT_VARIANTS}
           initial="hidden"
           animate="visible"
-          className="relative z-10 bg-slate-950 border border-slate-800 p-6 max-[767px]:p-4 rounded-xl hover:border-cyan-500/30 transition-colors duration-500 group flex flex-col items-start text-left max-[1023px]:items-center max-[1023px]:text-center"
+          className="relative z-10 bg-slate-950 border border-slate-800 p-6 max-[767px]:p-4 rounded-xl hover:border-cyan-500/30 transition-colors duration-500 group flex flex-col items-start text-left max-[767px]:items-center max-[767px]:text-center"
         >
           <div className="w-12 h-12 max-[767px]:w-10 max-[767px]:h-10 bg-slate-900 rounded-lg flex items-center justify-center mb-4 max-[767px]:mb-3 text-cyan-500 group-hover:text-cyan-400 group-hover:scale-110 transition-all duration-300 shadow-[0_0_20px_rgba(6,182,212,0.1)] shrink-0">
             <step.icon className="w-5 h-5 md:w-6 md:h-6" />
@@ -344,7 +344,7 @@ const SlideArchitecture = () => (
 
 // --- Slide 4: Principles / AI ---
 const SlidePrinciples = () => (
-  <div className="h-full w-full flex flex-col items-center justify-center relative z-10 px-8 max-[767px]:px-4 max-w-6xl mx-auto py-0 max-[1023px]:pt-20 max-[1023px]:pb-24 overflow-hidden max-[1023px]:overflow-y-auto no-scrollbar">
+  <div className="h-full w-full flex flex-col items-center justify-center relative z-10 px-8 max-[767px]:px-4 max-w-6xl mx-auto py-0 max-[767px]:pt-20 max-[767px]:pb-24 overflow-hidden max-[767px]:overflow-y-auto no-scrollbar">
     <motion.div
       custom={0.2}
       variants={TEXT_VARIANTS}
@@ -359,7 +359,7 @@ const SlidePrinciples = () => (
       <h2 className="text-5xl max-[767px]:text-3xl font-bold text-white mb-6 max-[767px]:mb-4">Core Intelligence</h2>
     </motion.div>
 
-    <div className="grid grid-cols-3 max-[1023px]:grid-cols-2 max-[639px]:grid-cols-1 gap-8 max-[767px]:gap-4 w-full mb-16 max-[767px]:mb-8">
+    <div className="grid grid-cols-3 max-[767px]:grid-cols-2 max-[639px]:grid-cols-1 gap-8 max-[767px]:gap-4 w-full mb-16 max-[767px]:mb-8">
       {[
         { icon: Users, title: "Anonymous Identity", desc: "SHA-256 hashing creates irreversible identity tokens." },
         { icon: Server, title: "Secure Evidence", desc: "Military-grade encryption protects all documentation." },
@@ -371,7 +371,7 @@ const SlidePrinciples = () => (
           variants={TEXT_VARIANTS}
           initial="hidden"
           animate="visible"
-          className="bg-slate-900/40 border border-slate-800/60 p-8 max-[767px]:p-5 rounded-2xl hover:bg-slate-900/60 transition-colors flex flex-col items-start text-left max-[1023px]:items-center max-[1023px]:text-center"
+          className="bg-slate-900/40 border border-slate-800/60 p-8 max-[767px]:p-5 rounded-2xl hover:bg-slate-900/60 transition-colors flex flex-col items-start text-left max-[767px]:items-center max-[767px]:text-center"
         >
           <item.icon className="w-8 h-8 max-[767px]:w-6 max-[767px]:h-6 text-slate-400 mb-4 max-[767px]:mb-3 shrink-0" />
           <h3 className="text-xl max-[767px]:text-lg font-semibold text-slate-200 mb-3 max-[767px]:mb-2">{item.title}</h3>
@@ -547,7 +547,7 @@ const LandingPage = () => {
       </div>
 
       {/* Footer Info */}
-      <div className="fixed bottom-6 right-6 z-40 text-[10px] text-slate-600 font-mono block max-[1023px]:hidden">
+      <div className="fixed bottom-6 right-6 z-40 text-[10px] text-slate-600 font-mono block max-[767px]:hidden">
         SECURE CONNECTION // TLS 1.3 // 256-BIT ENCRYPTION
       </div>
     </div>
