@@ -37,7 +37,7 @@ export function VaniLogo({
                 alt="VANI Logo"
                 width={dimensions.icon}
                 height={dimensions.icon}
-                className="shrink-0 object-contain rounded-full"
+                className="shrink-0 object-contain"
                 style={{
                     width: dimensions.icon,
                     height: dimensions.icon,

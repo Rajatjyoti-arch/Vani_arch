@@ -1,543 +1,524 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect, useCallback, useRef } from "react";
-import { HowItWorksModal } from "@/components/landing/HowItWorksModal";
-import cynoxLogo from "@/assets/cynox-logo.png";
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  Shield,
-  Lock,
-  Scale,
-  ArrowRight,
-  Users,
-  Eye,
-  FileText,
-  Server,
-  Activity,
-  CheckCircle,
-  AlertTriangle,
-  FileCheck,
-  Network,
-  Building2,
-  Pause
+  Shield, Lock, Scale, ArrowRight, Users, Eye, FileText,
+  Server, Activity, Network, Building2, ChevronRight, Terminal, Play, Pause
 } from "lucide-react";
 import { VaniLogo } from "@/components/ui/VaniLogo";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { useStudentSession } from "@/contexts/StudentSessionContext";
+import cynoxLogo from "@/assets/cynox-logo.png";
 
-const LandingPage = () => {
-  const navigate = useNavigate();
-  const { isAuthenticated } = useStudentSession();
-  const [activeSection, setActiveSection] = useState(0);
-  const [taglineIndex, setTaglineIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const [showHowItWorks, setShowHowItWorks] = useState(false);
+// --- Types & Constants ---
+
+const VARIANTS = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 1000 : -1000,
+    opacity: 0,
+    scale: 0.95,
+    filter: "blur(10px)",
+  }),
+  center: {
+    zIndex: 1,
+    x: 0,
+    opacity: 1,
+    scale: 1,
+    filter: "blur(0px)",
+  },
+  exit: (direction: number) => ({
+    zIndex: 0,
+    x: direction < 0 ? 1000 : -1000,
+    opacity: 0,
+    scale: 1.05,
+    filter: "blur(10px)",
+  }),
+};
+
+const TEXT_VARIANTS = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (delay: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay, duration: 0.8, ease: "easeOut" }
+  })
+};
+
+// --- Components ---
+
+const BackgroundGrid = () => (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div className="absolute inset-0 bg-[#020617]" />
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(6,182,212,0.05),transparent_70%)]" />
+    <div className="absolute w-full h-full bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-20" />
+    <motion.div
+      animate={{ opacity: [0.1, 0.3, 0.1] }}
+      transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"
+    />
+  </div>
+);
+
+const OperationalBadge = () => (
+  <motion.div
+    initial={{ opacity: 0, scale: 0.8 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ delay: 0.5 }}
+    className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/30 border border-emerald-500/20 backdrop-blur-md"
+  >
+    <span className="relative flex h-2 w-2">
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+    </span>
+    <span className="text-[10px] font-medium text-emerald-400 tracking-widest uppercase font-mono">
+      System Operational
+    </span>
+  </motion.div>
+);
+
+// --- Slide 1: System / Identity ---
+const SlideIdentity = () => {
+  const [index, setIndex] = useState(0);
   const taglines = [
-    "Anonymous, yet accountable",
     "Truth without fear",
+    "Anonymous, yet accountable",
     "Governance without bias"
   ];
 
-  const sectionNames = ["VANI", "Problem", "Architecture", "Principles", "AI Partner"];
-
-  // Auto-cycle taglines
   useEffect(() => {
     const interval = setInterval(() => {
-      setTaglineIndex((prev) => (prev + 1) % taglines.length);
+      setIndex((prev) => (prev + 1) % taglines.length);
     }, 3000);
     return () => clearInterval(interval);
   }, []);
 
-  const totalSections = 5;
-  const touchStartX = useRef<number | null>(null);
-  const touchEndX = useRef<number | null>(null);
+  return (
+    <div className="h-full w-full flex flex-col relative z-20 pt-24 pb-28 px-6 overflow-hidden">
 
-  const goToSection = useCallback((index: number) => {
-    setActiveSection(index);
-  }, []);
+      {/* HERO ZONE: Centered content */}
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-7xl mx-auto relative z-20 gap-8">
 
-  const goToNextSection = useCallback(() => {
-    setActiveSection((prev) => (prev + 1) % totalSections);
-  }, []);
+        {/* 1. System Badge */}
+        <div className="relative z-30">
+          <OperationalBadge />
+        </div>
 
-  const goToPrevSection = useCallback(() => {
-    setActiveSection((prev) => (prev - 1 + totalSections) % totalSections);
-  }, []);
+        {/* 2. Title & Tagline Group */}
+        <div className="flex flex-col items-center gap-6 relative z-20">
+          <motion.h1
+            custom={0.4}
+            variants={TEXT_VARIANTS}
+            initial="hidden"
+            animate="visible"
+            className="text-7xl md:text-9xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-200 to-slate-500 leading-none m-0"
+          >
+            VANI
+          </motion.h1>
 
-  // Auto-cycle sections (pauses on hover)
-  useEffect(() => {
-    if (isPaused) return;
-    
-    const interval = setInterval(() => {
-      setActiveSection((prev) => (prev + 1) % totalSections);
-    }, 4500);
-    return () => clearInterval(interval);
-  }, [isPaused]);
+          <div className="h-8 w-full flex justify-center items-center relative">
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={index}
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -20, opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="absolute text-xl md:text-2xl text-cyan-400 font-light tracking-[0.2em] uppercase whitespace-nowrap"
+              >
+                {taglines[index]}
+              </motion.p>
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* 3. University Line */}
+        <motion.div
+          custom={0.8}
+          variants={TEXT_VARIANTS}
+          initial="hidden"
+          animate="visible"
+          className="flex items-center gap-3 text-slate-400 relative z-20"
+        >
+          <Building2 className="w-4 h-4" />
+          <span className="text-sm tracking-wider uppercase border-l border-slate-700 pl-3">
+            Central University of Jammu
+          </span>
+        </motion.div>
+
+      </div>
+
+      {/* AMBIENT ZONE: Pulse Visualization */}
+      <motion.div
+        custom={0.9}
+        variants={TEXT_VARIANTS}
+        initial="hidden"
+        animate="visible"
+        className="h-24 w-full flex flex-col items-center justify-center shrink-0 z-10 opacity-60 mb-4"
+      >
+        <div className="flex items-end justify-center gap-1 h-12 w-full">
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              animate={{
+                height: ["20%", "60%", "20%"],
+                opacity: [0.3, 0.8, 0.3],
+              }}
+              transition={{
+                duration: 1 + Math.random(),
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: i * 0.1,
+              }}
+              className="w-1 bg-cyan-500/50 rounded-full"
+            />
+          ))}
+        </div>
+        <div className="flex items-center gap-2 text-[10px] font-mono tracking-[0.2em] text-cyan-500/60 uppercase mt-2">
+          <Activity className="w-3 h-3" />
+          <span>System_Pulse // Active</span>
+        </div>
+      </motion.div>
+
+      {/* FOOTER ZONE: Team Info */}
+      <motion.div
+        custom={1.0}
+        variants={TEXT_VARIANTS}
+        initial="hidden"
+        animate="visible"
+        className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-end justify-between gap-6 z-30 shrink-0 border-t border-slate-800/30 pt-6"
+      >
+        <div className="flex items-center gap-4">
+          <img src={cynoxLogo} alt="CYNOX" className="h-10 transition-all duration-500 opacity-90 hover:opacity-100" />
+          <div className="text-xs text-slate-500 font-mono">
+            <div>ENGINEERED BY</div>
+            <div className="text-slate-300 tracking-widest">TEAM CYNOX</div>
+          </div>
+        </div>
+
+        <div className="flex gap-8 text-xs text-slate-400 font-mono uppercase tracking-wider">
+          {["Rajatjyoti Biswas", "Priyanshu Gupta", "Sakshi", "Mantavya Kumar"].map((name) => (
+            <span key={name} className="hover:text-cyan-400 transition-colors cursor-default">
+              {name}
+            </span>
+          ))}
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+// --- Slide 2: Problem ---
+const SlideProblem = () => (
+  <div className="h-full w-full flex items-center justify-center relative z-10 px-6 max-w-7xl mx-auto">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center w-full">
+      <div className="space-y-8">
+        <motion.div
+          custom={0.2}
+          variants={TEXT_VARIANTS}
+          initial="hidden"
+          animate="visible"
+        >
+          <h2 className="text-4xl md:text-6xl font-bold text-white mb-2">
+            Institutional <span className="text-red-500/80">Silence</span>
+          </h2>
+          <p className="text-lg text-slate-400 max-w-md">
+            The gap between grievance and resolution is widened by fear and bureaucracy.
+          </p>
+        </motion.div>
+
+        <div className="space-y-6">
+          {[
+            { icon: Shield, title: "Fear of Retaliation", desc: "Whistleblowers stay silent to protect their careers." },
+            { icon: Network, title: "Broken Feedback Loops", desc: "Reports vanish into administrative voids." },
+            { icon: Eye, title: "Lack of Transparency", desc: "Decisions made in the dark breed distrust." }
+          ].map((item, i) => (
+            <motion.div
+              key={i}
+              custom={0.4 + (i * 0.1)}
+              variants={TEXT_VARIANTS}
+              initial="hidden"
+              animate="visible"
+              className="flex items-start gap-4 p-4 border-l-2 border-slate-800 hover:border-red-500/50 hover:bg-red-950/10 transition-all duration-300 group"
+            >
+              <item.icon className="w-6 h-6 text-slate-600 group-hover:text-red-400 transition-colors" />
+              <div>
+                <h3 className="text-slate-200 font-medium mb-1">{item.title}</h3>
+                <p className="text-sm text-slate-500">{item.desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      <motion.div
+        custom={0.6}
+        variants={TEXT_VARIANTS}
+        initial="hidden"
+        animate="visible"
+        className="relative"
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 blur-3xl" />
+        <div className="relative bg-slate-900/50 border border-slate-800 backdrop-blur-xl p-8 rounded-2xl">
+          <div className="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
+            <Terminal className="w-5 h-5 text-cyan-400" />
+            <span className="text-sm font-mono text-cyan-400">VANI_PROTOCOL_INIT</span>
+          </div>
+
+          <div className="space-y-6">
+            <div className="group">
+              <h4 className="text-white font-medium mb-2 flex items-center gap-2">
+                <Lock className="w-4 h-4 text-emerald-400" /> Cryptographic Anonymity
+              </h4>
+              <p className="text-sm text-slate-400 pl-6 border-l border-slate-800">
+                Identity is hashed (SHA-256). We verify <em>who</em> you are without knowing <em>which</em> one you are.
+              </p>
+            </div>
+            <div className="group">
+              <h4 className="text-white font-medium mb-2 flex items-center gap-2">
+                <Server className="w-4 h-4 text-emerald-400" /> Immutable Evidence
+              </h4>
+              <p className="text-sm text-slate-400 pl-6 border-l border-slate-800">
+                AES-256 encrypted submissions. Time-stamped. Tamper-proof.
+              </p>
+            </div>
+            <div className="group">
+              <h4 className="text-white font-medium mb-2 flex items-center gap-2">
+                <Scale className="w-4 h-4 text-emerald-400" /> AI-Assisted Resolution
+              </h4>
+              <p className="text-sm text-slate-400 pl-6 border-l border-slate-800">
+                Unbiased algorithms categorize issues and mediate disputes.
+              </p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  </div>
+);
+
+// --- Slide 3: Architecture ---
+const SlideArchitecture = () => (
+  <div className="h-full w-full flex flex-col items-center justify-center relative z-10 px-6">
+    <motion.div
+      custom={0.2}
+      variants={TEXT_VARIANTS}
+      initial="hidden"
+      animate="visible"
+      className="text-center mb-16"
+    >
+      <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Architecture of Trust</h2>
+      <p className="text-slate-400 font-light tracking-wide">End-to-end verifiable governance pipeline</p>
+    </motion.div>
+
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-7xl w-full relative">
+      {/* Connecting Line */}
+      <div className="hidden md:block absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-900 to-transparent -translate-y-1/2 z-0" />
+
+      {[
+        { icon: Lock, title: "Secure Entry", desc: "Zero-knowledge proofs verify credentials." },
+        { icon: FileText, title: "Submission", desc: "Grievance encrypted & metadata stripped." },
+        { icon: Activity, title: "AI Processing", desc: "VANI AI analyzes & routes urgency." },
+        { icon: Scale, title: "Resolution", desc: "Admins resolve. Outcome on public ledger." }
+      ].map((step, i) => (
+        <motion.div
+          key={i}
+          custom={0.4 + (i * 0.15)}
+          variants={TEXT_VARIANTS}
+          initial="hidden"
+          animate="visible"
+          className="relative z-10 bg-slate-950 border border-slate-800 p-6 rounded-xl hover:border-cyan-500/30 transition-colors duration-500 group"
+        >
+          <div className="w-12 h-12 bg-slate-900 rounded-lg flex items-center justify-center mb-4 text-cyan-500 group-hover:text-cyan-400 group-hover:scale-110 transition-all duration-300 shadow-[0_0_20px_rgba(6,182,212,0.1)]">
+            <step.icon className="w-6 h-6" />
+          </div>
+          <div className="text-xs font-mono text-cyan-700 mb-2">STEP 0{i + 1}</div>
+          <h3 className="text-lg font-bold text-slate-200 mb-2">{step.title}</h3>
+          <p className="text-sm text-slate-500 leading-relaxed">{step.desc}</p>
+        </motion.div>
+      ))}
+    </div>
+  </div>
+);
+
+// --- Slide 4: Principles / AI ---
+const SlidePrinciples = () => (
+  <div className="h-full w-full flex flex-col items-center justify-center relative z-10 px-6 max-w-6xl mx-auto">
+    <motion.div
+      custom={0.2}
+      variants={TEXT_VARIANTS}
+      initial="hidden"
+      animate="visible"
+      className="text-center mb-12"
+    >
+      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 mb-6">
+        <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+        <span className="text-xs font-medium text-blue-300 tracking-wide uppercase">Powered by Google Gemini</span>
+      </div>
+      <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Core Intelligence</h2>
+    </motion.div>
+
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mb-16">
+      {[
+        { icon: Users, title: "Anonymous Identity", desc: "SHA-256 hashing creates irreversible identity tokens." },
+        { icon: Server, title: "Secure Evidence", desc: "Military-grade encryption protects all documentation." },
+        { icon: Activity, title: "Real-time Analytics", desc: "Live dashboards track institutional health & sentiment." }
+      ].map((item, i) => (
+        <motion.div
+          key={i}
+          custom={0.4 + (i * 0.1)}
+          variants={TEXT_VARIANTS}
+          initial="hidden"
+          animate="visible"
+          className="bg-slate-900/40 border border-slate-800/60 p-8 rounded-2xl hover:bg-slate-900/60 transition-colors"
+        >
+          <item.icon className="w-8 h-8 text-slate-400 mb-4" />
+          <h3 className="text-xl font-semibold text-slate-200 mb-3">{item.title}</h3>
+          <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
+        </motion.div>
+      ))}
+    </div>
+
+    <motion.div
+      custom={0.8}
+      variants={TEXT_VARIANTS}
+      initial="hidden"
+      animate="visible"
+      className="flex items-center gap-4 opacity-60 hover:opacity-100 transition-opacity"
+    >
+      <span className="text-xs text-slate-500 uppercase tracking-widest">Official Technology Partner</span>
+      <div className="h-4 w-px bg-slate-700" />
+      <span className="text-sm font-semibold bg-gradient-to-r from-blue-400 via-purple-400 to-red-400 bg-clip-text text-transparent">
+        Google Cloud AI
+      </span>
+    </motion.div>
+  </div>
+);
+
+// --- Main Landing Page Component ---
+
+const LandingPage = () => {
+  const navigate = useNavigate();
+  const [page, setPage] = useState(0);
+  const [direction, setDirection] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const slides = [
+    <SlideIdentity />,
+    <SlideProblem />,
+    <SlideArchitecture />,
+    <SlidePrinciples />
+  ];
+
+  const paginate = useCallback((newDirection: number) => {
+    setPage((prev) => {
+      const nextPage = prev + newDirection;
+      if (nextPage < 0) return slides.length - 1;
+      if (nextPage >= slides.length) return 0;
+      return nextPage;
+    });
+    setDirection(newDirection);
+  }, [slides.length]);
 
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-        e.preventDefault();
-        goToNextSection();
-      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-        e.preventDefault();
-        goToPrevSection();
-      }
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") paginate(1);
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") paginate(-1);
+      if (e.key === " ") setIsPaused(prev => !prev);
     };
-
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [goToNextSection, goToPrevSection]);
+  }, [paginate]);
 
-  // Touch/Swipe handlers
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    if (touchStartX.current === null || touchEndX.current === null) return;
-    
-    const swipeDistance = touchStartX.current - touchEndX.current;
-    const minSwipeDistance = 50;
-
-    if (Math.abs(swipeDistance) > minSwipeDistance) {
-      if (swipeDistance > 0) {
-        // Swiped left - go to next
-        goToNextSection();
-      } else {
-        // Swiped right - go to previous
-        goToPrevSection();
-      }
-    }
-
-    touchStartX.current = null;
-    touchEndX.current = null;
-  };
-
-  const handleEnterSystem = () => {
-    navigate("/portal");
-  };
-
-  // Section 1: The Problem
-  const ProblemSection = () => (
-    <div className="h-full w-full flex items-center justify-center px-6 py-20">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-              The Problem: <span className="text-destructive/80">Institutional Silence</span>
-            </h2>
-            <div className="space-y-4">
-              <div className="flex items-start gap-4 p-4 rounded-lg bg-background/50 border border-border/50">
-                <AlertTriangle className="w-6 h-6 text-destructive shrink-0 mt-1" />
-                <div>
-                  <h3 className="font-semibold text-foreground mb-1">Fear of Retaliation</h3>
-                  <p className="text-sm text-muted-foreground">Valid grievances go unreported because whistleblowers fear academic or professional backlash.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4 p-4 rounded-lg bg-background/50 border border-border/50">
-                <Network className="w-6 h-6 text-orange-500 shrink-0 mt-1" />
-                <div>
-                  <h3 className="font-semibold text-foreground mb-1">Broken Feedback Loops</h3>
-                  <p className="text-sm text-muted-foreground">Reports get lost in bureaucracy with no way to track progress or ensure accountability.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4 p-4 rounded-lg bg-background/50 border border-border/50">
-                <Eye className="w-6 h-6 text-slate-500 shrink-0 mt-1" />
-                <div>
-                  <h3 className="font-semibold text-foreground mb-1">Lack of Transparency</h3>
-                  <p className="text-sm text-muted-foreground">Decisions are made behind closed doors without data-driven justification.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 blur-3xl opacity-30" />
-            <Card className="relative border-primary/20 bg-card/80 backdrop-blur-sm shadow-2xl">
-              <CardContent className="p-6 space-y-6">
-                <h3 className="text-xl font-bold text-foreground mb-4">How VANI Fixes This</h3>
-                <div className="relative pl-6 border-l-2 border-primary/20 space-y-6">
-                  <div className="relative">
-                    <div className="absolute -left-[29px] top-0 w-4 h-4 rounded-full bg-primary border-4 border-background" />
-                    <h4 className="font-semibold text-primary mb-1 text-sm">Cryptographic Anonymity</h4>
-                    <p className="text-xs text-muted-foreground">Identity is hashed (SHA-256). We verify *who* you are without knowing *which* one you are.</p>
-                  </div>
-                  <div className="relative">
-                    <div className="absolute -left-[29px] top-0 w-4 h-4 rounded-full bg-accent border-4 border-background" />
-                    <h4 className="font-semibold text-accent mb-1 text-sm">Immutable Evidence</h4>
-                    <p className="text-xs text-muted-foreground">All submissions are encrypted and time-stamped. Nothing gets "lost".</p>
-                  </div>
-                  <div className="relative">
-                    <div className="absolute -left-[29px] top-0 w-4 h-4 rounded-full bg-foreground border-4 border-background" />
-                    <h4 className="font-semibold text-foreground mb-1 text-sm">AI-Assisted Resolution</h4>
-                    <p className="text-xs text-muted-foreground">Unbiased algorithms categorize issues and suggest fair resolutions.</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  // Section 2: How It Works
-  const ArchitectureSection = () => (
-    <div className="h-full w-full flex items-center justify-center px-6 py-20">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Architecture of Trust</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            From submission to resolution, every step is designed for security and accountability.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
-          <div className="hidden md:block absolute top-12 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-border to-transparent -z-10" />
-
-          {[
-            { icon: Lock, title: "1. Secure Entry", desc: "Zero-knowledge proofs verify credentials without revealing identity.", color: "text-primary" },
-            { icon: FileCheck, title: "2. Submission", desc: "Grievance is encrypted; metadata is stripped.", color: "text-accent" },
-            { icon: Server, title: "3. AI Processing", desc: "VANI AI analyzes, categorizes urgency, and routes.", color: "text-status-info" },
-            { icon: Scale, title: "4. Resolution", desc: "Admins resolve. Outcome recorded on public ledger.", color: "text-status-warning" }
-          ].map((step, i) => (
-            <div key={i} className="group relative bg-background/50 rounded-xl p-4 cursor-default">
-              <div className="w-14 h-14 mx-auto bg-card border border-border rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 group-hover:border-primary/30 transition-all duration-300">
-                <step.icon className={cn("w-7 h-7", step.color)} />
-              </div>
-              <h3 className="text-base font-bold text-center mb-2">{step.title}</h3>
-              <p className="text-xs text-muted-foreground text-center">{step.desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
-  // Section 3: Core Principles
-  const PrinciplesSection = () => (
-    <div className="h-full w-full flex items-center justify-center px-6 py-20">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-foreground mb-4">Core Principles</h2>
-          <p className="text-muted-foreground">The pillars of our secure governance architecture</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="group border-border/50 bg-card/50 hover:bg-card hover:border-primary/30 transition-all duration-300">
-            <CardContent className="p-6">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-all duration-300">
-                <Users className="w-5 h-5 text-primary" />
-              </div>
-              <h3 className="text-lg font-bold mb-2">Anonymous Identity</h3>
-              <p className="text-sm text-muted-foreground">
-                SHA-256 hashing creates irreversible identity tokens. Your right to speak is verified, your identity remains private.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="group border-border/50 bg-card/50 hover:bg-card hover:border-accent/30 transition-all duration-300">
-            <CardContent className="p-6">
-              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-all duration-300">
-                <FileText className="w-5 h-5 text-accent" />
-              </div>
-              <h3 className="text-lg font-bold mb-2">Secure Evidence</h3>
-              <p className="text-sm text-muted-foreground">
-                Military-grade encryption protects all documentation. Tamper-proof vault accessible only to authorized committees.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="group border-border/50 bg-card/50 hover:bg-card hover:border-status-info/30 transition-all duration-300">
-            <CardContent className="p-6">
-              <div className="w-10 h-10 rounded-lg bg-status-info/10 flex items-center justify-center mb-4 group-hover:bg-status-info/20 transition-all duration-300">
-                <Activity className="w-5 h-5 text-status-info" />
-              </div>
-              <h3 className="text-lg font-bold mb-2">Real-time Analytics</h3>
-              <p className="text-sm text-muted-foreground">
-                Live dashboards track institutional health. Sentiment analysis provides early warnings for systemic issues.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
-  );
-
-  // Section 4: AI Partnership
-  const AIPartnerSection = () => (
-    <div className="h-full w-full flex items-center justify-center px-6 py-20">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#4285F4]/10 border border-[#4285F4]/20 mb-4">
-            <span className="flex h-2 w-2 rounded-full bg-[#4285F4] animate-pulse" />
-            <span className="text-xs font-medium bg-gradient-to-r from-[#4285F4] via-[#9B72CB] to-[#D96570] bg-clip-text text-transparent tracking-wide uppercase">AI-Powered Governance</span>
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            Powered by{" "}
-            <span className="bg-gradient-to-r from-[#4285F4] via-[#9B72CB] to-[#D96570] bg-clip-text text-transparent">
-              Google Gemini
-            </span>
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="group border-[#4285F4]/20 bg-card/50 hover:bg-card hover:border-[#4285F4]/40 transition-all duration-300">
-            <CardContent className="p-5 flex items-start gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[#4285F4]/10 flex items-center justify-center shrink-0">
-                <Scale className="w-5 h-5 text-[#4285F4]" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-foreground mb-1 text-sm">AI-Powered Resolution</h3>
-                <p className="text-xs text-muted-foreground">Three specialized AI agents collaborate for fair, unbiased resolutions.</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="group border-[#9B72CB]/20 bg-card/50 hover:bg-card hover:border-[#9B72CB]/40 transition-all duration-300">
-            <CardContent className="p-5 flex items-start gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[#9B72CB]/10 flex items-center justify-center shrink-0">
-                <Users className="w-5 h-5 text-[#9B72CB]" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-foreground mb-1 text-sm">Irene - Compliance Guide</h3>
-                <p className="text-xs text-muted-foreground">AI assistant powered by Gemini for real-time policy guidance.</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="group border-[#D96570]/20 bg-card/50 hover:bg-card hover:border-[#D96570]/40 transition-all duration-300">
-            <CardContent className="p-5 flex items-start gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[#D96570]/10 flex items-center justify-center shrink-0">
-                <Activity className="w-5 h-5 text-[#D96570]" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-foreground mb-1 text-sm">Intelligent Analytics</h3>
-                <p className="text-xs text-muted-foreground">Pattern recognition identifies systemic issues proactively.</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="flex items-center justify-center gap-4 mt-8">
-          <svg viewBox="0 0 24 24" className="w-8 h-8">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-          </svg>
-          <div className="text-left">
-            <p className="text-xs text-muted-foreground">Official Technology Partner</p>
-            <p className="font-semibold bg-gradient-to-r from-[#4285F4] via-[#9B72CB] to-[#D96570] bg-clip-text text-transparent">
-              Google Cloud AI
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  // Section 1: VANI Hero (formerly Team)
-  const VANIHeroSection = () => (
-    <div className="h-full w-full flex items-center justify-center px-6 py-20">
-      <div className="max-w-4xl mx-auto text-center">
-        {/* System Status */}
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 mb-6">
-          <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs font-medium text-emerald-500 tracking-wide uppercase">System Operational</span>
-        </div>
-
-        {/* VANI Logo & Title */}
-        <div className="flex items-center justify-center gap-4 mb-4">
-          <VaniLogo variant="icon" size="lg" />
-          <h1
-            className="text-6xl md:text-7xl font-semibold text-foreground"
-            style={{ letterSpacing: '0.15em' }}
-          >
-            VANI
-          </h1>
-        </div>
-
-        {/* Rotating Tagline */}
-        <div className="h-8 mb-3 overflow-hidden">
-          <p className="text-xl font-light text-primary/80 transition-all duration-500">
-            {taglines[taglineIndex]}
-          </p>
-        </div>
-
-        <p className="text-base text-muted-foreground/80 mb-8">
-          Verifiable Anonymous Network Intelligence
-        </p>
-
-        {/* University Branding */}
-        <div className="flex items-center justify-center gap-3 mb-10">
-          <Building2 className="w-6 h-6 text-primary/60" />
-          <span className="text-lg font-semibold text-foreground/90">Central University of Jammu</span>
-        </div>
-
-        {/* Team CYNOX */}
-        <div className="pt-8 border-t border-border/30">
-          <div className="flex flex-col items-center gap-4 mb-8">
-            <div className="relative">
-              <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full scale-125" />
-              <img 
-                src={cynoxLogo} 
-                alt="Team CYNOX Logo" 
-                className="relative w-14 h-14 md:w-16 md:h-16 object-contain drop-shadow-lg" 
-              />
-            </div>
-            <p className="text-base font-semibold text-foreground uppercase tracking-widest">Team CYNOX</p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-8 md:gap-12">
-            {["Rajatjyoti Biswas", "Priyanshu Gupta", "Sakshi", "Mantavya Kumar"].map((member) => (
-              <div key={member} className="flex flex-col items-center gap-3 group cursor-default">
-                <div className="w-12 h-12 rounded-full bg-background border border-border flex items-center justify-center shadow-sm group-hover:border-primary/50 group-hover:shadow-lg transition-all duration-300">
-                  <Users className="w-6 h-6 text-muted-foreground/50 group-hover:text-primary/50 transition-colors duration-300" />
-                </div>
-                <span className="font-medium text-foreground text-sm group-hover:text-primary transition-colors duration-300">{member}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const sections = [VANIHeroSection, ProblemSection, ArchitectureSection, PrinciplesSection, AIPartnerSection];
+  // Auto-play
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => {
+      paginate(1);
+    }, 5000); // 5 seconds per slide
+    return () => clearInterval(timer);
+  }, [paginate, isPaused]);
 
   return (
-    <div className="h-screen w-screen overflow-hidden relative bg-background">
-      {/* Background Effects */}
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background" />
-      <div className="absolute inset-0 -z-20 institutional-grid opacity-[0.03]" />
+    <div className="h-screen w-screen overflow-hidden bg-[#020617] text-slate-200 font-sans selection:bg-cyan-500/30">
+      <BackgroundGrid />
 
-      {/* Fixed Header */}
-      <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => goToSection(0)}>
-            <VaniLogo variant="icon" size="sm" />
-            <div className="flex flex-col leading-tight">
-              <span className="font-semibold text-foreground tracking-[0.15em] uppercase text-sm">VANI</span>
-              <span className="text-[10px] text-muted-foreground/60 hidden sm:block">Central University of Jammu</span>
-            </div>
+      {/* Header */}
+      <header className="fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center bg-gradient-to-b from-[#020617] to-transparent">
+        <div className="flex items-center gap-4 cursor-pointer group" onClick={() => setPage(0)}>
+          <div className="relative flex items-center justify-center w-14 h-14 rounded-full bg-slate-900/50 border border-slate-800 group-hover:border-cyan-500/50 transition-colors">
+            <VaniLogo variant="icon" size="md" />
           </div>
-          
-          {/* CTA Buttons in Header */}
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={() => setShowHowItWorks(true)}
-              size="sm"
-              className="hidden md:inline-flex group/btn shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 bg-primary hover:bg-primary/90"
-            >
-              Learn How It Works
-              <ArrowRight className="ml-1.5 w-3.5 h-3.5 transition-transform duration-300 group-hover/btn:translate-x-0.5" />
-            </Button>
-            <Button
-              onClick={handleEnterSystem}
-              size="sm"
-              className="group/btn shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 bg-primary hover:bg-primary/90"
-            >
-              Enter System
-              <ArrowRight className="ml-1.5 w-3.5 h-3.5 transition-transform duration-300 group-hover/btn:translate-x-0.5" />
-            </Button>
+          <div className="flex flex-col">
+            <span className="font-bold text-lg text-slate-100 tracking-wide leading-none">VANI</span>
+            <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider group-hover:text-cyan-400/70 transition-colors">Central University of Jammu</span>
           </div>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setIsPaused(!isPaused)}
+            className="p-2 rounded-full hover:bg-slate-800/50 text-slate-400 hover:text-cyan-400 transition-colors"
+            title={isPaused ? "Resume Slideshow" : "Pause Slideshow"}
+          >
+            {isPaused ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
+          </button>
+
+          <Button
+            onClick={() => navigate("/portal")}
+            className="bg-cyan-950/50 hover:bg-cyan-900/50 text-cyan-400 border border-cyan-800/50 backdrop-blur-sm transition-all duration-300 group"
+          >
+            ENTER SYSTEM
+            <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+          </Button>
         </div>
       </header>
 
-      {/* Slideshow Container - Full Screen with Touch Support */}
-      <div 
-        className="absolute inset-0 z-0 pt-16"
-        onMouseMove={(e) => {
-          const containerWidth = e.currentTarget.offsetWidth;
-          const mouseX = e.clientX;
-          const centerStart = containerWidth * 0.2;
-          const centerEnd = containerWidth * 0.8;
-          // Only pause if mouse is in center 60% of the page
-          if (mouseX >= centerStart && mouseX <= centerEnd) {
-            setIsPaused(true);
-          } else {
-            setIsPaused(false);
-          }
-        }}
-        onMouseLeave={() => setIsPaused(false)}
-        onMouseDown={() => setIsPaused(true)}
-        onTouchStart={(e) => {
-          setIsPaused(true);
-          handleTouchStart(e);
-        }}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={() => {
-          handleTouchEnd();
-          setIsPaused(false);
-        }}
-      >
-        {sections.map((Section, index) => (
-          <div
-            key={index}
-            className={cn(
-              "absolute inset-0 transition-all duration-1000 ease-in-out",
-              index === activeSection
-                ? "opacity-100 scale-100"
-                : "opacity-0 scale-105 pointer-events-none"
-            )}
+      {/* Main Slide Area */}
+      <div className="relative w-full h-full flex items-center justify-center">
+        <AnimatePresence initial={false} custom={direction} mode="wait">
+          <motion.div
+            key={page}
+            custom={direction}
+            variants={VARIANTS}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              x: { type: "spring", stiffness: 300, damping: 30 },
+              opacity: { duration: 0.4 },
+              filter: { duration: 0.4 }
+            }}
+            className="absolute w-full h-full"
           >
-            <Section />
-          </div>
-        ))}
+            {slides[page]}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
-
-      {/* Pause Indicator */}
-      <div className={cn(
-        "fixed bottom-20 md:bottom-8 right-6 z-50 flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/80 backdrop-blur-md border border-border/50 transition-all duration-300",
-        isPaused ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
-      )}>
-        <Pause className="w-3 h-3 text-primary" />
-        <span className="text-xs font-medium text-muted-foreground">Paused</span>
-      </div>
-
-      {/* Section Indicators */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-background/60 backdrop-blur-md px-4 py-2 rounded-full border border-border/50">
-        {sectionNames.map((name, i) => (
+      {/* Navigation Pills */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex gap-3">
+        {slides.map((_, index) => (
           <button
-            key={i}
-            onClick={() => goToSection(i)}
+            key={index}
+            onClick={() => {
+              setDirection(index > page ? 1 : -1);
+              setPage(index);
+            }}
             className={cn(
-              "flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300",
-              i === activeSection
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+              "w-12 h-1 rounded-full transition-all duration-300 backdrop-blur-sm",
+              index === page
+                ? "bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.5)]"
+                : "bg-slate-800 hover:bg-slate-700"
             )}
-          >
-            <span className={cn(
-              "w-2 h-2 rounded-full transition-all",
-              i === activeSection ? "bg-primary-foreground" : "bg-current"
-            )} />
-            <span className="text-xs font-medium hidden md:block">{name}</span>
-          </button>
+          />
         ))}
       </div>
 
-      {/* Footer Links (Mobile) */}
-      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-40 flex gap-4 text-xs text-muted-foreground md:hidden">
-        <Link to="/privacy-policy" className="hover:text-primary transition-colors">Privacy</Link>
-        <Link to="/gdpr-compliance" className="hover:text-primary transition-colors">GDPR</Link>
-        <Link to="/help" className="hover:text-primary transition-colors">Docs</Link>
+      {/* Footer Info */}
+      <div className="fixed bottom-6 right-6 z-40 text-[10px] text-slate-600 font-mono hidden md:block">
+        SECURE CONNECTION // TLS 1.3 // 256-BIT ENCRYPTION
       </div>
-
-      {/* Copyright */}
-      <div className="fixed bottom-2 left-1/2 -translate-x-1/2 z-40 text-[10px] text-muted-foreground/50">
-        © {new Date().getFullYear()} Team CYNOX • Central University of Jammu
-      </div>
-
-      {/* How It Works Modal */}
-      <HowItWorksModal open={showHowItWorks} onOpenChange={setShowHowItWorks} />
     </div>
   );
 };

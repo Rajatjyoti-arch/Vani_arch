@@ -1,60 +1,139 @@
 # VANI (Verifiable Anonymous Network Intelligence)
-### *Next-Generation Institutional Governance & Risk Management*
+
+## 🧠 Project Context for LLMs
+**Use this document to understand the VANI architecture, codebase, and business logic.**
 
 ---
 
-## 📝 Executive Summary
-**VANI** is a high-fidelity governance platform engineered to bridge the gap between student anonymity and administrative accountability. By utilizing **Zero-Knowledge Architecture** and **Multi-Agent AI Simulation**, VANI provides a secure, mathematical framework for conflict resolution while eliminating the fear of retaliation.
+## 1. 📝 Executive Summary
+**VANI** is a high-fidelity governance platform designed for educational institutions. It bridges the gap between **student anonymity** and **administrative accountability**. 
+- **Core Problem:** Students fear retaliation when reporting issues; Administrations lack verifiable data to act.
+- **Solution:** A Zero-Knowledge Architecture where students report anonymously but verifiably, and AI agents negotiate resolutions based on bylaws.
 
 ---
 
-## 🏛️ System Architecture
+## 2. 🏛️ System Architecture
+The system is divided into two distinct portals with separate authentication flows:
 
-VANI is built on a **Dual-Portal Infrastructure** to ensure a clear separation of concerns between stakeholders:
+### A. Student Portal (Anonymous)
+- **Authentication:** **Zero-Knowledge Proof (ZKP)** style.
+  - No email/password for students.
+  - Identity is hashed locally (SHA-256) in the browser.
+  - Access via a **12-word Private Governance Key (Mnemonic)**.
+  - The server *never* sees the raw student ID, only the hash.
+- **Key Features:**
+  - **Anonymous Credentialing:** Generate/Login with mnemonic.
+  - **Student Dashboard:** View campus sentiment, active reports.
+  - **Stealth Vault (Evidence Repository):** Upload encrypted evidence (AES-256).
+  - **Governance Matrix (The Arena):** AI-mediated dispute resolution.
+  - **Resolution Ledger:** View outcomes of past disputes.
 
-### 1. **Anonymous Credentialing (Student Portal)**
-* **Local Hashing:** Student identities are hashed using **SHA-256** locally in the browser; original credentials never reach the server.
-* **Zero-Knowledge Entry:** Access is granted via a **Private Governance Key** (12-word mnemonic), ensuring the system cannot track individual users.
-* **Encrypted Repository:** Evidence is stored in an **Encrypted Evidence Repository** with strict Row-Level Security (RLS) policies.
-
-### 2. **Institutional Oversight Dashboard (Administrative Portal)**
-* **Authenticated Access:** Authorities access the dashboard via secure **Multi-Factor Authentication (MFA)**.
-* **Welfare Analytics:** A geospatial heat map provides real-time data on campus sentiment and high-risk areas.
-* **Governance Matrix:** A collaborative AI environment where synthetic proxies negotiate equitable resolutions based on university bylaws.
+### B. Admin Portal (Institutional Oversight)
+- **Authentication:** Standard Email/Password with MFA (via Supabase Auth).
+- **Key Features:**
+  - **Admin Dashboard:** Geospatial heat maps of campus sentiment (Safe/Warning/Critical).
+  - **Resolution Management:** Review and act on reports.
+  - **System Setup:** Configure academic blocks, hostels, and categories.
+  - **Audit Logs:** Read-only logs of all system activities.
 
 ---
 
-## 🚀 Technical "Force Multipliers"
+## 3. 🛠️ Tech Stack
 
-| Feature | Description | Strategic Benefit |
+| Component | Technology | Details |
 | :--- | :--- | :--- |
-| **Negotiation Matrix** | Powered by **Gemini 1.5 Pro**. | Reaches automated, unbiased consensus between parties. |
-| **Disclosure Protocol** | Automated disclosure of unaddressed safety data. | Guarantees institutional accountability to safety standards. |
-| **VANI Assistant** | Real-time guidance via **Gemini 1.5 Flash**. | Ensures all users comply with ethical and data protocols. |
-| **Compliance Log** | A read-only, verifiable ledger of all resolutions. | Provides a transparent audit trail for institutional review. |
+| **Frontend** | **React (Vite)** | TypeScript, Tailwind CSS, Shadcn UI, Framer Motion. |
+| **Backend** | **Supabase** | PostgreSQL Database, Realtime subscriptions, Edge Functions. |
+| **AI Engine** | **Google Gemini** | `gemini-1.5-pro` (Complex reasoning/Negotiation), `gemini-1.5-flash` (Chat/Guidance). |
+| **Security** | **Client-Side Crypto** | `crypto-js` for SHA-256 hashing and AES-256 encryption. |
+| **Routing** | **React Router** | Client-side routing with protected route wrappers. |
+| **State** | **React Context** | `StudentSessionContext`, `AdminAuthContext`, `SettingsContext`. |
 
 ---
 
-## 🛠️ Tech Stack & Security
+## 4. 📂 Directory Structure & Key Files
 
-* **Frontend:** React.js / Tailwind CSS (Architected via Lovable).
-* **Backend:** Supabase (PostgreSQL) with integrated RLS.
-* **Intelligence:** Google Gemini 1.5 Pro & Flash.
-* **Cryptography:** Client-side SHA-256 Hashing & AES-256 Evidence Encryption.
-
-
+```bash
+/src
+├── /components         # Shared UI components (Shadcn UI)
+│   ├── /admin          # Admin-specific components (Sidebar, Auth forms)
+│   ├── /dashboard      # Student dashboard widgets (Stats, Activity Feed)
+│   └── /ui             # Primitive UI elements (Buttons, Cards, Inputs)
+├── /contexts           # Global State
+│   ├── StudentSessionContext.tsx # Manages anonymous session & mnemonic
+│   └── AdminAuthContext.tsx      # Manages admin login state
+├── /pages              # Main Application Routes
+│   ├── LandingPage.tsx           # Public entry point
+│   ├── PortalSelection.tsx       # Choose Student vs Admin path
+│   ├── AnonymousCredentialing.tsx # Student Login/Signup (Mnemonic generation)
+│   ├── StudentDashboard.tsx      # Main Student View
+│   ├── EvidenceRepository.tsx    # File upload & encryption interface
+│   ├── GovernanceMatrix.tsx      # AI Negotiation Chat Interface
+│   └── /admin                    # All Admin pages (Dashboard, Resolutions, etc.)
+├── /lib                # Utilities
+│   ├── supabase.ts     # Supabase client initialization
+│   └── utils.ts        # Helper functions (CN, formatting)
+└── App.tsx             # Main Router configuration
+```
 
 ---
 
-## ⚙️ Deployment Instructions
+## 5. 🗄️ Database Schema (Supabase/PostgreSQL)
 
-1. **Clone & Install:**
-   ```bash
-   git clone [https://github.com/your-username/vani-governance.git](https://github.com/your-username/vani-governance.git)
-   npm install
-   ### **How to verify the output:**
-1. Go to your GitHub repository.
-2. Click on the **README.md** file.
-3. Click the **Edit (pencil icon)**.
-4. Paste the code above.
-5. Click **Preview** — you will see the navy headings, the table, and the bold highlights properly rendered.
+### Core Tables
+- **`locations`**: Campus zones (e.g., "Mess", "Boys Hostel").
+- **`reports`**: Issues filed by students.
+  - `status`: 'open', 'in_review', 'resolved'.
+  - `severity`: 'low', 'medium', 'high', 'critical'.
+- **`campus_sentiment_stats`**: Aggregated stats per location (Trigger-updated).
+  - `concern_level`: 'safe', 'warning', 'critical'.
+- **`ghost_identities`**: Anonymous student profiles (linked via hash, not raw ID).
+  - `reputation`: Score based on truthful reporting.
+- **`stealth_vault`**: Encrypted file metadata (Evidence).
+- **`arena_negotiations`**: Records of AI-mediated dispute resolutions.
+- **`activity_logs`**: System-wide audit trail (Immutable).
+
+### Key Triggers
+- **`update_campus_stats`**: Automatically recalculates a zone's safety level when reports are added/resolved.
+- **`log_activity`**: Automatically inserts into `activity_logs` for every major action (Report, Resolution, Negotiation).
+
+---
+
+## 6. 🔑 Key Workflows
+
+### 1. The "Ghost" Login (Student)
+1. User enters Student ID (e.g., "2023CS01").
+2. App hashes it: `SHA256("2023CS01")` -> `hash_123`.
+3. App generates a 12-word mnemonic.
+4. **ONLY** the hash is sent to the DB to check existence/create record.
+5. Mnemonic is stored in `sessionStorage` (never DB).
+
+### 2. Filing a Report
+1. Student selects location & category.
+2. Writes description.
+3. (Optional) Uploads evidence to **Stealth Vault**.
+4. Report is saved to `reports` table.
+5. DB Trigger updates `campus_sentiment_stats` for that location.
+
+### 3. The Governance Matrix (AI Negotiation)
+1. Student initiates a dispute in `/arena`.
+2. **Gemini AI** acts as the mediator.
+3. AI analyzes the report + university bylaws (context).
+4. AI proposes a resolution.
+5. If accepted, it's logged in `arena_negotiations` and the `ResolutionLedger`.
+
+---
+
+## 7. ⚙️ Environment Variables required
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_GEMINI_API_KEY=your_google_gemini_api_key
+```
+
+---
+
+## 8. 🚀 Deployment
+1. **Install Dependencies:** `npm install`
+2. **Dev Server:** `npm run dev`
+3. **Build:** `npm run build`
