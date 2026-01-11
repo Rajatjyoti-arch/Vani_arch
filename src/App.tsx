@@ -33,6 +33,8 @@ import AdminResolutionDetail from "@/pages/admin/AdminResolutionDetail";
 import AdminPasswordReset from "@/pages/admin/AdminPasswordReset";
 import AdminUpdatePassword from "@/pages/admin/AdminUpdatePassword";
 import AcceptInvite from "@/pages/admin/AcceptInvite";
+import AdminPersonnel from "@/pages/admin/AdminPersonnel";
+import AdminSettings from "@/pages/admin/AdminSettings";
 
 const queryClient = new QueryClient();
 
@@ -110,6 +112,22 @@ const App = () => (
                   element={
                     <AdminProtectedRoute>
                       <AdminResolutionDetail />
+                    </AdminProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/personnel"
+                  element={
+                    <AdminProtectedRoute>
+                      <AdminPersonnel />
+                    </AdminProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin/settings"
+                  element={
+                    <AdminProtectedRoute>
+                      <AdminSettings />
                     </AdminProtectedRoute>
                   }
                 />
