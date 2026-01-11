@@ -235,7 +235,29 @@ export default function AdminLogin() {
             </Button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-slate-700 space-y-3">
+          {/* Admin Info Notice */}
+          <div className="mt-6 pt-6 border-t border-slate-700 space-y-4">
+            <div className="bg-blue-900/20 border border-blue-700/40 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <Shield className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
+                <div className="text-xs text-slate-300 space-y-2">
+                  <p className="font-medium text-blue-300">First Admin Already Configured</p>
+                  <p className="text-slate-400">
+                    The initial administrator account has been set up. Only existing administrators can invite new admins via the Personnel Management section.
+                  </p>
+                  <div className="mt-3 p-3 bg-slate-900/60 rounded-md border border-slate-700">
+                    <p className="text-slate-500 mb-2">Admin Credentials:</p>
+                    <p className="text-slate-300">
+                      <span className="text-slate-500">Email:</span> turbobiswas@gmail.com
+                    </p>
+                    <p className="text-slate-300">
+                      <span className="text-slate-500">Password:</span> @Tinsukia1
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <p className="text-xs text-slate-500 text-center">
               Access restricted to authorized institutional personnel only.
             </p>
@@ -245,12 +267,6 @@ export default function AdminLogin() {
                 className="text-xs text-slate-400 hover:text-slate-300 transition-colors"
               >
                 Forgot your password?
-              </a>
-              <a
-                href="/admin/setup"
-                className="text-xs text-emerald-400 hover:text-emerald-300 transition-colors"
-              >
-                First time? Set up admin account →
               </a>
             </div>
           </div>
