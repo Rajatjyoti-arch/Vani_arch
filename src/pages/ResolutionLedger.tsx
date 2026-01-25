@@ -21,7 +21,6 @@ interface Report {
   severity: "low" | "medium" | "high" | "critical";
   created_at: string;
   updated_at: string;
-  ghost_identity_id: string | null;
 }
 
 const statusConfig = {
@@ -48,14 +47,65 @@ const ResolutionLedger = () => {
 
   const fetchReports = useCallback(async () => {
     setIsLoading(true);
-    // Mock data - reports table doesn't exist yet
-    if (demoMode) {
-      setReports(mockReports as Report[]);
-    } else {
-      setReports([]);
+    try {
+      // Fetch real data from zone_reports with zone names
+      const { data, error } = await supabase
+        .from("zone_reports")
+        .select(`
+          id,
+          report_type,
+          description,
+          severity,
+          status,
+          created_at,
+          zone_id,
+          campus_zones!inner(zone_name)
+        `)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching reports:", error);
+        if (demoMode) {
+          setReports(mockReports as Report[]);
+        } else {
+          setReports([]);
+        }
+      } else {
+        // Transform zone_reports to match our Report interface
+        const transformed: Report[] = (data || []).map((item: any) => ({
+          id: item.id,
+          report_id: `RPT-${item.id.slice(0, 8).toUpperCase()}`,
+          title: item.description || item.report_type,
+          zone: item.campus_zones?.zone_name || "Unknown Zone",
+          status: mapStatus(item.status),
+          severity: item.severity as Report["severity"],
+          created_at: item.created_at,
+          updated_at: item.created_at, // zone_reports doesn't have updated_at
+        }));
+        setReports(transformed);
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      if (demoMode) {
+        setReports(mockReports as Report[]);
+      } else {
+        setReports([]);
+      }
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, [demoMode]);
+
+  // Map zone_reports status to our status type
+  const mapStatus = (status: string): Report["status"] => {
+    switch (status) {
+      case "pending": return "submitted";
+      case "in_progress": return "investigating";
+      case "resolved": return "resolved";
+      case "under_review": return "under_review";
+      default: return "submitted";
+    }
+  };
 
   useEffect(() => {
     fetchReports();
