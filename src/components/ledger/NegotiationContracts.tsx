@@ -32,9 +32,30 @@ export function NegotiationContracts() {
 
   useEffect(() => {
     const fetchNegotiations = async () => {
-      // Mock data - arena_negotiations table doesn't exist yet
-      setNegotiations([]);
-      setIsLoading(false);
+      try {
+        const { data, error } = await supabase
+          .from("arena_negotiations")
+          .select("*")
+          .eq("status", "completed")
+          .order("updated_at", { ascending: false });
+
+        if (error) {
+          console.error("Error fetching negotiations:", error);
+          setNegotiations([]);
+        } else {
+          // Transform the data to match our interface
+          const transformed = (data || []).map((item) => ({
+            ...item,
+            negotiation_log: (item.negotiation_log as unknown as NegotiationRound[]) || [],
+          }));
+          setNegotiations(transformed);
+        }
+      } catch (err) {
+        console.error("Error:", err);
+        setNegotiations([]);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchNegotiations();
