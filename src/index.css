@@ -11,45 +11,45 @@
     /* Achromatic base with Royal Navy accent */
     --background: 220 16% 4%;
     --foreground: 60 9% 94%;
-    --card: 220 14% 6%;
+    --card: 220 14% 8%;
     --card-foreground: 60 9% 94%;
     --popover: 220 14% 7%;
     --popover-foreground: 60 9% 94%;
     /* Royal Navy accent */
-    --primary: 213 100% 14%;
+    --primary: 213 80% 35%;
     --primary-foreground: 60 9% 94%;
     --secondary: 220 12% 10%;
     --secondary-foreground: 60 9% 90%;
     --muted: 220 10% 10%;
-    --muted-foreground: 220 10% 45%;
-    --accent: 160 50% 30%;
+    --muted-foreground: 220 10% 55%;
+    --accent: 160 60% 40%;
     --accent-foreground: 60 9% 94%;
     --destructive: 0 60% 45%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 10% 12%;
-    --input: 220 10% 12%;
-    --ring: 213 100% 14%;
+    --border: 220 10% 15%;
+    --input: 220 10% 15%;
+    --ring: 213 80% 35%;
     --radius: 0.375rem;
 
     /* Sidebar */
     --sidebar-background: 220 16% 3%;
     --sidebar-foreground: 60 9% 94%;
-    --sidebar-primary: 160 50% 30%;
+    --sidebar-primary: 160 60% 40%;
     --sidebar-primary-foreground: 60 9% 94%;
-    --sidebar-accent: 220 10% 8%;
+    --sidebar-accent: 220 10% 10%;
     --sidebar-accent-foreground: 60 9% 94%;
-    --sidebar-border: 220 10% 8%;
-    --sidebar-ring: 160 50% 30%;
+    --sidebar-border: 220 10% 10%;
+    --sidebar-ring: 160 60% 40%;
 
     /* Status — institutional tones */
-    --status-safe: 160 50% 30%;
+    --status-safe: 160 60% 42%;
     --status-warning: 38 70% 45%;
     --status-critical: 0 60% 45%;
-    --status-info: 213 60% 45%;
+    --status-info: 213 70% 50%;
 
     /* Sovereign theme accents */
-    --sovereign-navy: 213 100% 14%;
-    --sovereign-emerald: 160 50% 30%;
+    --sovereign-navy: 213 80% 35%;
+    --sovereign-emerald: 160 60% 40%;
     --sovereign-gold: 43 60% 50%;
   }
 }
