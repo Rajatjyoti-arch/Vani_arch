@@ -32,41 +32,32 @@ export function AppHeader() {
     });
 
   return (
-    <header className="h-12 border-b border-border/30 bg-[hsl(220,20%,4%)/0.8] backdrop-blur-xl flex items-center justify-between px-4">
+    <header className="h-11 border-b bg-background/80 backdrop-blur-2xl flex items-center justify-between px-5" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
       <div className="flex items-center gap-4">
-        <div className="hidden md:flex items-center gap-2 text-xs text-muted-foreground font-mono">
-          <div className="relative flex items-center gap-1.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            <Shield className="w-3 h-3 text-primary/60" strokeWidth={1.5} />
-            <span className="text-primary/70 tracking-widest">VANI://SECURE_CHANNEL</span>
-          </div>
+        <div className="hidden md:flex items-center gap-2.5 text-xs text-muted-foreground font-mono">
+          <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse-subtle" />
+          <span className="tracking-[0.15em] uppercase text-[10px]">Secure Channel Active</span>
         </div>
       </div>
 
       <div className="flex items-center gap-6">
         <div className="hidden sm:flex items-center gap-3">
-          <span className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] font-mono">
-            SYS_INTEGRITY
+          <span className="text-[10px] text-muted-foreground/60 uppercase tracking-[0.2em] font-mono">
+            Integrity
           </span>
           <div className="flex items-center gap-2">
-            <Progress value={integrity} className="w-20 h-1 bg-secondary" />
-            <span
-              className={`
-                font-mono text-xs font-bold transition-all duration-500
-                ${integrity >= 97 ? "text-status-safe text-glow-cyan" : integrity >= 95 ? "text-status-warning" : "text-status-critical"}
-              `}
-            >
+            <Progress value={integrity} className="w-16 h-0.5 bg-secondary" />
+            <span className="font-mono text-[11px] font-medium text-foreground/60 tabular-nums">
               {integrity}%
             </span>
           </div>
         </div>
 
-        <div className="h-4 w-px bg-border/30 hidden sm:block" />
+        <div className="h-3 w-px bg-border/30 hidden sm:block" />
 
-        <div className="flex items-center gap-2 text-xs font-mono">
-          <Clock className="w-3 h-3 text-muted-foreground/50" strokeWidth={1.5} />
-          <span className="text-primary/80 tabular-nums">{formatTime(currentTime)}</span>
-          <span className="text-muted-foreground/40 hidden lg:inline">
+        <div className="flex items-center gap-2 text-[11px] font-mono text-foreground/50 tabular-nums">
+          <span>{formatTime(currentTime)}</span>
+          <span className="text-muted-foreground/30 hidden lg:inline">
             {formatDate(currentTime)}
           </span>
         </div>
