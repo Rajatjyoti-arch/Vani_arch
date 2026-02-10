@@ -161,19 +161,28 @@ export function StudentLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-4xl">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Void grid background */}
+      <div className="absolute inset-0 void-grid" />
+      {/* Radial glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_30%,hsl(187_100%_50%/0.06),transparent_60%)]" />
+      {/* Scan line */}
+      <div className="scan-line opacity-20" />
+      
+      <div className="w-full max-w-4xl relative z-10">
         {/* Logo Header */}
         <div className="text-center mb-8">
           <VaniLogo size="lg" className="mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-foreground">Student Portal</h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            Secure anonymous reporting platform
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">
+            <span className="text-glow-cyan">DECRYPTION</span> GATE
+          </h1>
+          <p className="text-muted-foreground text-xs mt-2 font-mono tracking-[0.2em] uppercase">
+            Secure Anonymous Authentication Protocol
           </p>
         </div>
 
         {/* Sliding Container */}
-        <div className="relative bg-card border border-border/50 rounded-2xl shadow-2xl overflow-hidden">
+        <div className="relative glass-card rounded-2xl shadow-[0_0_60px_rgba(0,242,255,0.05)] overflow-hidden">
           <div className="flex flex-col md:flex-row min-h-[520px]">
             
             {/* Left Panel - Sign In (visible when !isSignUp on desktop, always accessible) */}
@@ -459,33 +468,38 @@ export function StudentLogin() {
 
             {/* Sliding Overlay Panel (Desktop only) */}
             <div className={cn(
-              "hidden md:flex absolute top-0 h-full w-1/2 bg-primary transition-all duration-500 ease-in-out z-20",
+              "hidden md:flex absolute top-0 h-full w-1/2 transition-all duration-700 ease-in-out z-20",
+              "bg-gradient-to-br from-[hsl(187,100%,50%)] via-[hsl(187,80%,35%)] to-[hsl(220,50%,15%)]",
               isSignUp ? "left-0" : "left-1/2"
             )}>
-              <div className="flex flex-col items-center justify-center p-8 text-center text-primary-foreground w-full">
-                <Shield className="w-16 h-16 mb-6 opacity-90" />
-                <h3 className="text-2xl font-bold mb-3">
-                  {isSignUp ? 'Welcome Back!' : 'Hello, Student!'}
+              {/* Internal grid pattern */}
+              <div className="absolute inset-0 opacity-10 bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:30px_30px]" />
+              
+              <div className="flex flex-col items-center justify-center p-8 text-center text-primary-foreground w-full relative z-10">
+                <div className="w-20 h-20 rounded-full border-2 border-primary-foreground/30 flex items-center justify-center mb-6">
+                  <Shield className="w-10 h-10 opacity-90" strokeWidth={1.5} />
+                </div>
+                <h3 className="text-2xl font-bold mb-3 tracking-tight">
+                  {isSignUp ? 'Welcome Back' : 'Initialize Identity'}
                 </h3>
-                <p className="text-sm opacity-90 mb-6 max-w-xs">
+                <p className="text-sm opacity-80 mb-6 max-w-xs font-light leading-relaxed">
                   {isSignUp 
-                    ? 'Already have an account? Sign in to access your secure dashboard.'
-                    : 'New to VANI? Create an account to start using the anonymous reporting platform.'
+                    ? 'Your encrypted session awaits. Sign in to access your secure dashboard.'
+                    : 'Create a zero-knowledge identity to access the anonymous reporting network.'
                   }
                 </p>
                 <Button 
                   variant="outline" 
                   onClick={toggleMode}
-                  className="border-2 border-primary-foreground/50 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                  className="border border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground shimmer-button"
                 >
-                  {isSignUp ? 'Sign In' : 'Create Account'}
+                  {isSignUp ? 'Sign In' : 'Create Identity'}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
 
-                {/* Security Badge */}
-                <div className="mt-8 flex items-center gap-2 text-xs text-primary-foreground/70">
-                  <Lock className="h-3.5 w-3.5" />
-                  <span>End-to-end encrypted</span>
+                <div className="mt-8 flex items-center gap-2 text-xs text-primary-foreground/50 font-mono tracking-wider">
+                  <Lock className="h-3 w-3" strokeWidth={1.5} />
+                  <span>AES-256 // ZERO-KNOWLEDGE</span>
                 </div>
               </div>
             </div>
