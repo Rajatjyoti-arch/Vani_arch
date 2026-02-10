@@ -17,12 +17,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <AppHeader />
           <main className="flex-1 overflow-auto smooth-scroll no-scrollbar">
             <div className="p-6 relative min-h-full">
-              {/* The Void background */}
-              <div className="absolute inset-0 pointer-events-none bg-[hsl(220,20%,4%)]" />
-              {/* Radial grid glow */}
-              <div className="absolute inset-0 pointer-events-none void-grid animate-grid-flow" />
-              {/* Center radial glow */}
-              <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_50%_30%,hsl(187_100%_50%/0.04),transparent_70%)]" />
+              {/* Deep achromatic background */}
+              <div className="absolute inset-0 pointer-events-none bg-background" />
+              {/* Subtle institutional grid */}
+              <div className="absolute inset-0 pointer-events-none void-grid opacity-60" />
               <div className="relative z-10">
                 {children}
               </div>
