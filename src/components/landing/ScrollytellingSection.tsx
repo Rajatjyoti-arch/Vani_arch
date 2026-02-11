@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import cynoxLogo from "@/assets/cynox-logo.png";
 
-// Section definitions for dot nav
 const SECTIONS = [
   { label: "Origin", start: 0, end: 0.14 },
   { label: "Problem", start: 0.16, end: 0.38 },
@@ -24,31 +23,90 @@ const SECTIONS = [
   { label: "Enter", start: 0.85, end: 0.98 },
 ];
 
-// Helper: fade in/out within a scroll range
-const useFadeRange = (progress: MotionValue<number>, start: number, end: number) => ({
-  opacity: useTransform(progress, [start - 0.03, start, end, end + 0.03], [0, 1, 1, 0]),
-  y: useTransform(progress, [start - 0.03, start, end, end + 0.03], [40, 0, 0, -40]),
+// Enhanced fade: opacity + y + scale + blur
+const useCinematicFade = (progress: MotionValue<number>, start: number, end: number) => ({
+  opacity: useTransform(progress, [start - 0.04, start, end, end + 0.04], [0, 1, 1, 0]),
+  y: useTransform(progress, [start - 0.04, start, end, end + 0.04], [60, 0, 0, -60]),
+  scale: useTransform(progress, [start - 0.04, start, start + 0.05, end - 0.05, end, end + 0.04], [0.92, 0.96, 1, 1, 0.96, 0.92]),
+  filter: useTransform(progress, [start - 0.04, start, start + 0.03, end - 0.03, end, end + 0.04], [
+    "blur(12px)", "blur(4px)", "blur(0px)", "blur(0px)", "blur(4px)", "blur(12px)"
+  ]),
 });
 
-// Dot Nav component
+// Horizontal reveal line between sections
+const RevealLine = ({ progress, at }: { progress: MotionValue<number>; at: number }) => {
+  const width = useTransform(progress, [at - 0.02, at, at + 0.02], ["0%", "60%", "0%"]);
+  const opacity = useTransform(progress, [at - 0.03, at, at + 0.03], [0, 1, 0]);
+  return (
+    <motion.div
+      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-px z-[8] bg-gradient-to-r from-transparent via-sovereign-violet/40 to-transparent"
+      style={{ width, opacity }}
+    />
+  );
+};
+
+// Rotating geometric orbiter
+const Orbiter = ({
+  progress,
+  size,
+  color,
+  orbitRadius,
+  speedMultiplier = 1,
+  startOffset = 0,
+}: {
+  progress: MotionValue<number>;
+  size: number;
+  color: string;
+  orbitRadius: number;
+  speedMultiplier?: number;
+  startOffset?: number;
+}) => {
+  const angle = useTransform(progress, [0, 1], [startOffset, startOffset + 360 * speedMultiplier]);
+  const x = useTransform(angle, (a) => Math.cos((a * Math.PI) / 180) * orbitRadius);
+  const y = useTransform(angle, (a) => Math.sin((a * Math.PI) / 180) * orbitRadius);
+  const rotate = useTransform(progress, [0, 1], [0, 720 * speedMultiplier]);
+  const opacity = useTransform(progress, [0, 0.1, 0.9, 1], [0, 0.15, 0.15, 0]);
+
+  return (
+    <motion.div
+      className="absolute left-1/2 top-1/2 pointer-events-none z-[3]"
+      style={{ x, y, rotate, opacity }}
+    >
+      <div
+        className={cn("border", color)}
+        style={{
+          width: size,
+          height: size,
+          borderRadius: size > 20 ? 4 : "50%",
+        }}
+      />
+    </motion.div>
+  );
+};
+
+// Dot nav
 const DotNav = ({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) => (
   <div className="fixed right-6 top-1/2 -translate-y-1/2 z-[60] hidden md:flex flex-col items-end gap-4">
     {SECTIONS.map((section, i) => {
-      const mid = (section.start + section.end) / 2;
       const dotOpacity = useTransform(
         scrollYProgress,
         [section.start - 0.02, section.start, section.end, section.end + 0.02],
-        [0.2, 1, 1, 0.2]
+        [0.15, 1, 1, 0.15]
       );
       const dotScale = useTransform(
         scrollYProgress,
         [section.start - 0.02, section.start, section.end, section.end + 0.02],
-        [0.6, 1, 1, 0.6]
+        [0.5, 1.2, 1.2, 0.5]
       );
       const labelOpacity = useTransform(
         scrollYProgress,
         [section.start - 0.02, section.start, section.end, section.end + 0.02],
         [0, 1, 1, 0]
+      );
+      const lineWidth = useTransform(
+        scrollYProgress,
+        [section.start - 0.02, section.start, section.end, section.end + 0.02],
+        [0, 16, 16, 0]
       );
       return (
         <div key={i} className="flex items-center gap-3 group">
@@ -58,6 +116,10 @@ const DotNav = ({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) =
           >
             {section.label}
           </motion.span>
+          <motion.div
+            className="h-px bg-gradient-to-r from-sovereign-violet/60 to-transparent"
+            style={{ width: lineWidth, opacity: labelOpacity }}
+          />
           <motion.div
             className="w-2 h-2 rounded-full bg-gradient-to-br from-sovereign-violet to-sovereign-cyan"
             style={{ opacity: dotOpacity, scale: dotScale }}
@@ -76,70 +138,130 @@ export const ScrollytellingSection = () => {
     offset: ["start start", "end end"],
   });
 
-  // Background: deep black → navy → violet-tinged
+  // Background
   const bgColor = useTransform(
     scrollYProgress,
-    [0, 0.3, 0.6, 1],
+    [0, 0.25, 0.5, 0.75, 1],
     [
       "hsl(220, 16%, 4%)",
-      "hsl(220, 16%, 4%)",
-      "hsl(220, 25%, 6%)",
-      "hsl(225, 30%, 8%)",
+      "hsl(225, 20%, 5%)",
+      "hsl(230, 25%, 6%)",
+      "hsl(240, 28%, 7%)",
+      "hsl(250, 30%, 8%)",
     ]
   );
 
+  // Parallax
+  const gridParallaxY = useTransform(scrollYProgress, [0, 1], [0, -50]);
+  const glowParallaxY = useTransform(scrollYProgress, [0, 1], [0, -140]);
+  const bgParallaxY = useTransform(scrollYProgress, [0, 1], [0, -90]);
+  const glow2ParallaxX = useTransform(scrollYProgress, [0, 1], [0, 80]);
 
-  // Parallax layers — background elements move slower than foreground
-  const bgParallaxY = useTransform(scrollYProgress, [0, 1], [0, -80]);   // slow
-  const gridParallaxY = useTransform(scrollYProgress, [0, 1], [0, -40]); // medium-slow
-  const glowParallaxY = useTransform(scrollYProgress, [0, 1], [0, -120]); // slightly faster
-  const glow2ParallaxX = useTransform(scrollYProgress, [0, 1], [0, 60]);  // lateral drift
+  // Glow pulses per section
+  const glowOpacity = useTransform(scrollYProgress, [0, 0.15, 0.3, 0.5, 0.7, 0.85, 1], [0.1, 0.6, 0.3, 0.7, 0.4, 0.8, 0.5]);
+  // Glow hue shift
+  const glowHue = useTransform(scrollYProgress, [0, 0.25, 0.5, 0.75, 1], [262, 262, 192, 45, 160]);
 
-  // Glow intensity
-  const glowOpacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 0.5, 0.8, 0.3]);
+  // Film grain opacity
+  const grainOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.03, 0.05, 0.03]);
 
   // Progress bar
   const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const progressGlow = useTransform(scrollYProgress, [0, 1], [
+    "0 0 10px hsl(262 60% 55% / 0.3)",
+    "0 0 20px hsl(192 80% 55% / 0.5)",
+  ]);
 
-  // Section fade ranges
-  const hero = useFadeRange(scrollYProgress, 0, 0.14);
-  const problem = useFadeRange(scrollYProgress, 0.16, 0.38);
-  const arch = useFadeRange(scrollYProgress, 0.40, 0.62);
-  const intel = useFadeRange(scrollYProgress, 0.64, 0.82);
-  const cta = useFadeRange(scrollYProgress, 0.85, 0.98);
+  // Cinematic section fades
+  const hero = useCinematicFade(scrollYProgress, 0, 0.14);
+  const problem = useCinematicFade(scrollYProgress, 0.16, 0.38);
+  const arch = useCinematicFade(scrollYProgress, 0.40, 0.62);
+  const intel = useCinematicFade(scrollYProgress, 0.64, 0.82);
+  const cta = useCinematicFade(scrollYProgress, 0.85, 0.98);
+
+  // Vignette intensity
+  const vignetteOpacity = useTransform(scrollYProgress, [0, 0.15, 0.5, 0.85, 1], [0.4, 0.7, 0.5, 0.7, 0.9]);
 
   return (
     <div ref={containerRef} className="relative" style={{ height: "800vh" }}>
-      {/* Dot navigation */}
       <DotNav scrollYProgress={scrollYProgress} />
 
-      {/* Sticky viewport */}
       <div className="sticky top-0 h-screen overflow-hidden">
         {/* Animated background */}
         <motion.div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
 
-        {/* Grid overlay — parallax (slower) */}
-        <motion.div className="absolute inset-0 opacity-[0.03]" style={{ y: gridParallaxY }}>
-          <div className="w-full h-full bg-[linear-gradient(rgba(255,255,255,0.4)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.4)_1px,transparent_1px)] bg-[size:80px_80px]" />
+        {/* Grid — parallax */}
+        <motion.div className="absolute inset-0 opacity-[0.025]" style={{ y: gridParallaxY }}>
+          <div className="w-full h-full bg-[linear-gradient(rgba(255,255,255,0.3)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.3)_1px,transparent_1px)] bg-[size:80px_80px]" />
         </motion.div>
 
-        {/* Ambient glows — parallax (different speeds for depth) */}
+        {/* Dynamic glow — color shifts with scroll */}
         <motion.div className="absolute inset-0 pointer-events-none" style={{ opacity: glowOpacity }}>
           <motion.div
-            className="absolute top-[-10%] right-[-5%] w-[50%] h-[50%] bg-[radial-gradient(ellipse_at_center,hsl(262,60%,55%,0.08),transparent_70%)]"
-            style={{ y: glowParallaxY }}
+            className="absolute top-[-15%] right-[-10%] w-[55%] h-[55%]"
+            style={{
+              y: glowParallaxY,
+              background: useTransform(glowHue, (h) =>
+                `radial-gradient(ellipse at center, hsl(${h}, 60%, 55%, 0.1), transparent 70%)`
+              ),
+            }}
           />
           <motion.div
-            className="absolute bottom-[-10%] left-[-5%] w-[50%] h-[50%] bg-[radial-gradient(ellipse_at_center,hsl(192,80%,55%,0.06),transparent_70%)]"
-            style={{ y: bgParallaxY, x: glow2ParallaxX }}
+            className="absolute bottom-[-15%] left-[-10%] w-[55%] h-[55%]"
+            style={{
+              y: bgParallaxY,
+              x: glow2ParallaxX,
+              background: useTransform(glowHue, (h) =>
+                `radial-gradient(ellipse at center, hsl(${(h + 120) % 360}, 70%, 50%, 0.07), transparent 70%)`
+              ),
+            }}
           />
+          {/* Center pulse */}
           <motion.div
-            className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,hsl(160,60%,40%,0.03),transparent_60%)]"
-            style={{ y: gridParallaxY }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] h-[40%]"
+            style={{
+              background: useTransform(glowHue, (h) =>
+                `radial-gradient(ellipse at center, hsl(${(h + 60) % 360}, 50%, 45%, 0.04), transparent 60%)`
+              ),
+            }}
           />
         </motion.div>
 
-        {/* Fixed header */}
+        {/* Film grain overlay */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none z-[45] mix-blend-overlay"
+          style={{ opacity: grainOpacity }}
+        >
+          <div className="w-full h-full" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E")`,
+            backgroundRepeat: "repeat",
+            backgroundSize: "128px 128px",
+          }} />
+        </motion.div>
+
+        {/* Cinematic vignette */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none z-[44]"
+          style={{
+            opacity: vignetteOpacity,
+            background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%)",
+          }}
+        />
+
+        {/* Floating geometric orbiters */}
+        <Orbiter progress={scrollYProgress} size={40} color="border-sovereign-violet/20" orbitRadius={280} speedMultiplier={1.2} startOffset={0} />
+        <Orbiter progress={scrollYProgress} size={16} color="border-sovereign-cyan/15" orbitRadius={200} speedMultiplier={0.8} startOffset={90} />
+        <Orbiter progress={scrollYProgress} size={28} color="border-sovereign-gold/10" orbitRadius={340} speedMultiplier={1.5} startOffset={180} />
+        <Orbiter progress={scrollYProgress} size={12} color="border-sovereign-emerald/15" orbitRadius={160} speedMultiplier={0.6} startOffset={270} />
+        <Orbiter progress={scrollYProgress} size={50} color="border-sovereign-rose/8" orbitRadius={400} speedMultiplier={0.4} startOffset={45} />
+
+        {/* Reveal lines between sections */}
+        <RevealLine progress={scrollYProgress} at={0.15} />
+        <RevealLine progress={scrollYProgress} at={0.39} />
+        <RevealLine progress={scrollYProgress} at={0.63} />
+        <RevealLine progress={scrollYProgress} at={0.83} />
+
+        {/* Header */}
         <header className="absolute top-0 w-full z-50 px-8 max-[767px]:px-5 py-6 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <div className="relative flex items-center justify-center w-10 h-10 rounded-full" style={{ background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(255,255,255,0.08)' }}>
@@ -158,7 +280,6 @@ export const ScrollytellingSection = () => {
             Enter <ArrowRight className="w-3 h-3 ml-1.5" strokeWidth={1} />
           </Button>
         </header>
-
 
         {/* === SECTION 1: Hero === */}
         <motion.div
@@ -344,10 +465,10 @@ export const ScrollytellingSection = () => {
           </div>
         </motion.div>
 
-        {/* Progress bar */}
+        {/* Progress bar — glowing */}
         <motion.div
-          className="absolute bottom-0 left-0 h-px bg-gradient-to-r from-sovereign-violet via-sovereign-cyan to-sovereign-emerald z-50"
-          style={{ width: progressWidth }}
+          className="absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-sovereign-violet via-sovereign-cyan to-sovereign-emerald z-50"
+          style={{ width: progressWidth, boxShadow: progressGlow }}
         />
 
         <div className="absolute bottom-4 right-8 z-40 text-[9px] text-foreground/10 font-mono tracking-[0.15em] hidden md:block">
