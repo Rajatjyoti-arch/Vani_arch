@@ -14,6 +14,8 @@ import { VaniLogo } from "@/components/ui/VaniLogo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import cynoxLogo from "@/assets/cynox-logo.png";
+import { ParticleField } from "./ParticleField";
+import { ScrollBackgrounds } from "./ScrollBackgrounds";
 
 const SECTIONS = [
   { label: "Origin", start: 0, end: 0.14 },
@@ -199,6 +201,12 @@ export const ScrollytellingSection = () => {
       <div className="sticky top-0 h-screen overflow-hidden">
         {/* Animated background */}
         <motion.div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
+
+        {/* Cinematic background images */}
+        <ScrollBackgrounds scrollYProgress={scrollYProgress} />
+
+        {/* Particle field */}
+        <ParticleField />
 
         {/* Grid — parallax */}
         <motion.div className="absolute inset-0 opacity-[0.025]" style={{ y: gridParallaxY }}>
