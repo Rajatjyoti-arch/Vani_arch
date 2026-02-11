@@ -472,15 +472,15 @@ export const ScrollytellingSection = () => {
 
           <div className="absolute bottom-12 w-full max-w-4xl mx-auto flex flex-row items-end justify-between gap-6 px-8 max-[767px]:flex-col max-[767px]:items-center max-[767px]:gap-4">
             <div className="flex items-center gap-3">
-              <img src={cynoxLogo} alt="CYNOX" className="h-7 opacity-70" />
-              <div className="text-[10px] text-white/60 font-mono leading-relaxed font-semibold">
+              <img src={cynoxLogo} alt="CYNOX" className="h-9 opacity-90 drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]" />
+              <div className="text-xs text-white/80 font-mono leading-relaxed font-bold">
                 <div className="tracking-[0.2em]">ENGINEERED BY</div>
-                <div className="text-white/70 tracking-[0.15em]">TEAM CYNOX</div>
+                <div className="text-white tracking-[0.15em] text-sm">TEAM CYNOX</div>
               </div>
             </div>
-            <div className="flex flex-wrap justify-end gap-x-5 gap-y-1 text-[10px] text-white/60 font-mono tracking-[0.1em] font-semibold max-[767px]:justify-center">
+            <div className="flex flex-wrap justify-end gap-x-6 gap-y-1 text-xs text-white/80 font-mono tracking-[0.1em] font-bold max-[767px]:justify-center">
               {["Rajatjyoti Biswas", "Priyanshu Gupta", "Sakshi", "Mantavya Kumar"].map((name) => (
-                <span key={name}>{name}</span>
+                <span key={name} className="drop-shadow-[0_0_4px_rgba(255,255,255,0.2)]">{name}</span>
               ))}
             </div>
           </div>
