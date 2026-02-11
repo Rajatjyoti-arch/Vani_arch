@@ -297,9 +297,9 @@ export const ScrollytellingSection = () => {
           style={hero}
         >
           <div className="text-center space-y-6">
-            <div className="flex flex-col items-center gap-3">
+            <div className="flex flex-col items-center gap-3 -mt-4">
               <img src="/cuj-logo.png" alt="Central University of Jammu" className="w-14 h-14 object-contain opacity-90" />
-              <span className="text-[11px] font-mono text-white/50 tracking-[0.25em] uppercase font-medium">An initiative by Central University of Jammu</span>
+              <span className="text-[11px] font-mono text-white/70 tracking-[0.25em] uppercase font-bold">An initiative by Central University of Jammu</span>
             </div>
 
             <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(255,255,255,0.08)' }}>
