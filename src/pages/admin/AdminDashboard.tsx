@@ -179,11 +179,11 @@ export default function AdminDashboard() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="bg-slate-800 border-slate-700">
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-slate-400 uppercase tracking-wider">Total Cases</p>
+                  <p className="text-xs text-white/50 uppercase tracking-wider">Total Cases</p>
                   <p className="text-2xl font-bold text-white mt-1">{stats.total}</p>
                 </div>
                 <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
@@ -193,11 +193,11 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-800 border-slate-700">
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-slate-400 uppercase tracking-wider">Awaiting Review</p>
+                  <p className="text-xs text-white/50 uppercase tracking-wider">Awaiting Review</p>
                   <p className="text-2xl font-bold text-amber-400 mt-1">{stats.pending}</p>
                 </div>
                 <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center">
@@ -207,11 +207,11 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-800 border-slate-700">
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-slate-400 uppercase tracking-wider">Approved</p>
+                  <p className="text-xs text-white/50 uppercase tracking-wider">Approved</p>
                   <p className="text-2xl font-bold text-emerald-400 mt-1">{stats.approved}</p>
                 </div>
                 <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
@@ -221,11 +221,11 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="bg-slate-800 border-slate-700">
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-slate-400 uppercase tracking-wider">In Deliberation</p>
+                  <p className="text-xs text-white/50 uppercase tracking-wider">In Deliberation</p>
                   <p className="text-2xl font-bold text-blue-400 mt-1">{stats.inProgress}</p>
                 </div>
                 <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
@@ -237,7 +237,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Sentiment Heat Map */}
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-white/10 backdrop-blur-xl border-white/20">
           <CardHeader className="pb-2">
             <CardTitle className="text-white text-base flex items-center gap-2">
               <MapPin className="w-4 h-4 text-emerald-400" />
@@ -252,23 +252,24 @@ export default function AdminDashboard() {
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Resolution Progress Chart */}
-          <Card className="bg-slate-800 border-slate-700 lg:col-span-2">
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20 lg:col-span-2">
             <CardHeader className="pb-2">
               <CardTitle className="text-white text-base">Resolution Progress (Weekly)</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={250}>
                 <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                  <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
-                  <YAxis stroke="#64748b" fontSize={12} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                  <XAxis dataKey="name" stroke="rgba(255,255,255,0.4)" fontSize={12} />
+                  <YAxis stroke="rgba(255,255,255,0.4)" fontSize={12} />
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: "#1e293b", 
-                      border: "1px solid #334155",
-                      borderRadius: "8px"
+                      backgroundColor: "rgba(0,0,0,0.6)", 
+                      border: "1px solid rgba(255,255,255,0.2)",
+                      borderRadius: "8px",
+                      backdropFilter: "blur(12px)"
                     }}
-                    labelStyle={{ color: "#94a3b8" }}
+                    labelStyle={{ color: "rgba(255,255,255,0.7)" }}
                   />
                   <Bar dataKey="resolutions" fill="#10b981" radius={[4, 4, 0, 0]} />
                 </BarChart>
@@ -277,7 +278,7 @@ export default function AdminDashboard() {
           </Card>
 
           {/* Status Distribution */}
-          <Card className="bg-slate-800 border-slate-700">
+          <Card className="bg-white/10 backdrop-blur-xl border-white/20">
             <CardHeader className="pb-2">
               <CardTitle className="text-white text-base">Case Distribution</CardTitle>
             </CardHeader>
@@ -299,9 +300,10 @@ export default function AdminDashboard() {
                   </Pie>
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: "#1e293b", 
-                      border: "1px solid #334155",
-                      borderRadius: "8px"
+                      backgroundColor: "rgba(0,0,0,0.6)", 
+                      border: "1px solid rgba(255,255,255,0.2)",
+                      borderRadius: "8px",
+                      backdropFilter: "blur(12px)"
                     }}
                   />
                 </PieChart>
@@ -313,7 +315,7 @@ export default function AdminDashboard() {
                       className="w-2.5 h-2.5 rounded-full" 
                       style={{ backgroundColor: item.color }}
                     />
-                    <span className="text-xs text-slate-400">{item.name}</span>
+                    <span className="text-xs text-white/50">{item.name}</span>
                   </div>
                 ))}
               </div>
@@ -322,7 +324,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Priority Queue */}
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-white/10 backdrop-blur-xl border-white/20">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-white text-base">Priority Queue</CardTitle>
             <Button 
@@ -342,26 +344,26 @@ export default function AdminDashboard() {
               </div>
             ) : pendingQueue.length === 0 ? (
               <div className="text-center py-8">
-                <FileCheck className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                <p className="text-slate-400">No pending resolutions</p>
+                <FileCheck className="w-12 h-12 text-white/20 mx-auto mb-3" />
+                <p className="text-white/50">No pending resolutions</p>
               </div>
             ) : (
               <div className="space-y-2">
                 {pendingQueue.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg hover:bg-slate-700 transition-colors cursor-pointer"
+                    className="flex items-center justify-between p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
                     onClick={() => navigate(`/admin/resolutions/${item.id}`)}
                   >
                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-slate-600 flex items-center justify-center">
-                        <Building2 className="w-4 h-4 text-slate-300" />
+                      <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                        <Building2 className="w-4 h-4 text-white/70" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-white truncate">
                           {item.grievance_text.slice(0, 60)}...
                         </p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-white/40">
                           {item.department || "General"} • {new Date(item.created_at).toLocaleDateString()}
                         </p>
                       </div>
@@ -379,7 +381,7 @@ export default function AdminDashboard() {
                       >
                         Awaiting Approval
                       </Badge>
-                      <ChevronRight className="w-4 h-4 text-slate-500" />
+                      <ChevronRight className="w-4 h-4 text-white/30" />
                     </div>
                   </div>
                 ))}
