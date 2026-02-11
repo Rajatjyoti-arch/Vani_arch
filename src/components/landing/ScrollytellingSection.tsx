@@ -24,14 +24,24 @@ const SECTIONS = [
 ];
 
 // Enhanced fade: opacity + y + scale + blur
-const useCinematicFade = (progress: MotionValue<number>, start: number, end: number) => ({
-  opacity: useTransform(progress, [start - 0.04, start, end, end + 0.04], [0, 1, 1, 0]),
-  y: useTransform(progress, [start - 0.04, start, end, end + 0.04], [60, 0, 0, -60]),
-  scale: useTransform(progress, [start - 0.04, start, start + 0.05, end - 0.05, end, end + 0.04], [0.92, 0.96, 1, 1, 0.96, 0.92]),
-  filter: useTransform(progress, [start - 0.04, start, start + 0.03, end - 0.03, end, end + 0.04], [
-    "blur(12px)", "blur(4px)", "blur(0px)", "blur(0px)", "blur(4px)", "blur(12px)"
-  ]),
-});
+const useCinematicFade = (progress: MotionValue<number>, start: number, end: number) => {
+  const s0 = Math.max(0, start - 0.04);
+  const s1 = Math.max(s0, start);
+  const s2 = Math.max(s1, start + 0.03);
+  const s3 = Math.max(s2, start + 0.05);
+  const e3 = Math.max(s3, end - 0.05);
+  const e2 = Math.max(e3, end - 0.03);
+  const e1 = Math.max(e2, end);
+  const e0 = Math.max(e1, Math.min(1, end + 0.04));
+  return {
+    opacity: useTransform(progress, [s0, s1, e1, e0], [0, 1, 1, 0]),
+    y: useTransform(progress, [s0, s1, e1, e0], [60, 0, 0, -60]),
+    scale: useTransform(progress, [s0, s1, s3, e3, e1, e0], [0.92, 0.96, 1, 1, 0.96, 0.92]),
+    filter: useTransform(progress, [s0, s1, s2, e2, e1, e0], [
+      "blur(12px)", "blur(4px)", "blur(0px)", "blur(0px)", "blur(4px)", "blur(12px)"
+    ]),
+  };
+};
 
 // Horizontal reveal line between sections
 const RevealLine = ({ progress, at }: { progress: MotionValue<number>; at: number }) => {
