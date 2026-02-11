@@ -88,10 +88,6 @@ export const ScrollytellingSection = () => {
     ]
   );
 
-  // 3D card transforms
-  const cardRotate = useTransform(scrollYProgress, [0.15, 0.85], [0, 360]);
-  const cardScale = useTransform(scrollYProgress, [0, 0.15, 0.5, 0.85, 1], [0, 0.5, 1.1, 1.0, 0.8]);
-  const cardOpacity = useTransform(scrollYProgress, [0.12, 0.18, 0.82, 0.88], [0, 0.6, 0.6, 0]);
 
   // Parallax layers — background elements move slower than foreground
   const bgParallaxY = useTransform(scrollYProgress, [0, 1], [0, -80]);   // slow
@@ -163,28 +159,6 @@ export const ScrollytellingSection = () => {
           </Button>
         </header>
 
-        {/* 3D Floating Card */}
-        <motion.div
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-72 md:w-64 md:h-80 rounded-2xl z-[2] flex items-center justify-center pointer-events-none"
-          style={{
-            rotateY: cardRotate,
-            scale: cardScale,
-            opacity: cardOpacity,
-            perspective: 1200,
-            background: "linear-gradient(135deg, hsl(262 60% 55% / 0.25), hsl(192 80% 55% / 0.1), hsl(213 80% 35% / 0.25))",
-            border: "1px solid rgba(255,255,255,0.08)",
-            boxShadow: "0 25px 80px -20px hsl(262 60% 55% / 0.2), inset 0 1px 0 rgba(255,255,255,0.06)",
-            backdropFilter: "blur(24px)",
-          }}
-        >
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/[0.05] via-transparent to-transparent" />
-          <div className="relative text-center space-y-3 px-6">
-            <div className="w-10 h-10 mx-auto rounded-lg bg-sovereign-violet/20 flex items-center justify-center">
-              <div className="w-4 h-4 rounded bg-gradient-to-br from-sovereign-violet to-sovereign-cyan" />
-            </div>
-            <p className="text-[9px] font-mono text-foreground/25 tracking-[0.25em] uppercase">VANI Protocol</p>
-          </div>
-        </motion.div>
 
         {/* === SECTION 1: Hero === */}
         <motion.div
