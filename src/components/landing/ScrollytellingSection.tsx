@@ -27,12 +27,12 @@ const SECTIONS = [
 
 // Smoother cinematic fade with wider transition windows
 const useCinematicFade = (progress: MotionValue<number>, start: number, end: number) => {
-  const s0 = Math.max(0, start - 0.08);
+  const s0 = Math.max(0, start - 0.03);
   const s1 = Math.max(s0 + 0.001, start);
-  const s2 = Math.max(s1 + 0.001, start + 0.05);
-  const e2 = Math.max(s2 + 0.001, end - 0.05);
+  const s2 = Math.max(s1 + 0.001, start + 0.04);
+  const e2 = Math.max(s2 + 0.001, end - 0.04);
   const e1 = Math.max(e2 + 0.001, end);
-  const e0 = Math.max(e1 + 0.001, Math.min(1, end + 0.08));
+  const e0 = Math.max(e1 + 0.001, Math.min(1, end + 0.03));
   return {
     opacity: useTransform(progress, [s0, s1, e1, e0], [0, 1, 1, 0]),
     y: useTransform(progress, [s0, s1, e1, e0], [40, 0, 0, -40]),
@@ -200,7 +200,7 @@ export const ScrollytellingSection = () => {
     y: useTransform(scrollYProgress, [0, 0.12, 0.15], [0, 0, -40]),
     scale: useTransform(scrollYProgress, [0, 0.08, 0.12, 0.15], [1, 1, 1, 0.96]),
   };
-  const problem = useCinematicFade(scrollYProgress, 0.16, 0.38);
+  const problem = useCinematicFade(scrollYProgress, 0.20, 0.38);
   const arch = useCinematicFade(scrollYProgress, 0.40, 0.62);
   const intel = useCinematicFade(scrollYProgress, 0.64, 0.82);
   const cta = useCinematicFade(scrollYProgress, 0.85, 0.98);
