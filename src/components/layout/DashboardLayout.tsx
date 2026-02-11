@@ -3,6 +3,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { AppHeader } from "./AppHeader";
 import { UniversityFooter } from "./UniversityFooter";
+import dashboardBg from "@/assets/dashboard-bg.png";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -11,16 +12,17 @@ interface DashboardLayoutProps {
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <SidebarProvider defaultOpen={false}>
-      <div className="h-screen flex w-full bg-white overflow-hidden">
+      <div className="h-screen flex w-full overflow-hidden relative">
+        {/* Background image */}
+        <div className="absolute inset-0 z-0">
+          <img src={dashboardBg} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black/20" />
+        </div>
         <AppSidebar />
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden relative z-10">
           <AppHeader />
           <main className="flex-1 overflow-auto smooth-scroll no-scrollbar">
             <div className="p-6 relative min-h-full">
-              {/* Deep achromatic background */}
-              <div className="absolute inset-0 pointer-events-none bg-white" />
-              {/* Subtle institutional grid */}
-              <div className="absolute inset-0 pointer-events-none void-grid opacity-60" />
               <div className="relative z-10">
                 {children}
               </div>
