@@ -8,7 +8,7 @@ import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
-import authBg from "@/assets/auth-bg.jpg";
+import authBg from "@/assets/auth-bg.png";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),

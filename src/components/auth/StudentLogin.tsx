@@ -10,7 +10,7 @@ import { VaniLogo } from '@/components/ui/VaniLogo';
 import { useStudentSession } from '@/contexts/StudentSessionContext';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
-import authBg from '@/assets/auth-bg.jpg';
+import authBg from '@/assets/auth-bg.png';
 
 interface PasswordStrength {
   score: number;
