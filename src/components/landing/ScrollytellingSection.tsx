@@ -4,8 +4,6 @@ import {
   motion,
   useScroll,
   useTransform,
-  useMotionValue,
-  useSpring,
   MotionValue,
 } from "framer-motion";
 import {
@@ -17,11 +15,58 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import cynoxLogo from "@/assets/cynox-logo.png";
 
+// Section definitions for dot nav
+const SECTIONS = [
+  { label: "Origin", start: 0, end: 0.14 },
+  { label: "Problem", start: 0.16, end: 0.38 },
+  { label: "Architecture", start: 0.40, end: 0.62 },
+  { label: "Intelligence", start: 0.64, end: 0.82 },
+  { label: "Enter", start: 0.85, end: 0.98 },
+];
+
 // Helper: fade in/out within a scroll range
 const useFadeRange = (progress: MotionValue<number>, start: number, end: number) => ({
   opacity: useTransform(progress, [start - 0.03, start, end, end + 0.03], [0, 1, 1, 0]),
   y: useTransform(progress, [start - 0.03, start, end, end + 0.03], [40, 0, 0, -40]),
 });
+
+// Dot Nav component
+const DotNav = ({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) => (
+  <div className="fixed right-6 top-1/2 -translate-y-1/2 z-[60] hidden md:flex flex-col items-end gap-4">
+    {SECTIONS.map((section, i) => {
+      const mid = (section.start + section.end) / 2;
+      const dotOpacity = useTransform(
+        scrollYProgress,
+        [section.start - 0.02, section.start, section.end, section.end + 0.02],
+        [0.2, 1, 1, 0.2]
+      );
+      const dotScale = useTransform(
+        scrollYProgress,
+        [section.start - 0.02, section.start, section.end, section.end + 0.02],
+        [0.6, 1, 1, 0.6]
+      );
+      const labelOpacity = useTransform(
+        scrollYProgress,
+        [section.start - 0.02, section.start, section.end, section.end + 0.02],
+        [0, 1, 1, 0]
+      );
+      return (
+        <div key={i} className="flex items-center gap-3 group">
+          <motion.span
+            className="text-[9px] font-mono text-foreground/40 tracking-[0.15em] uppercase"
+            style={{ opacity: labelOpacity }}
+          >
+            {section.label}
+          </motion.span>
+          <motion.div
+            className="w-2 h-2 rounded-full bg-gradient-to-br from-sovereign-violet to-sovereign-cyan"
+            style={{ opacity: dotOpacity, scale: dotScale }}
+          />
+        </div>
+      );
+    })}
+  </div>
+);
 
 export const ScrollytellingSection = () => {
   const navigate = useNavigate();
@@ -43,10 +88,16 @@ export const ScrollytellingSection = () => {
     ]
   );
 
-  // 3D card transforms (visible in middle sections)
+  // 3D card transforms
   const cardRotate = useTransform(scrollYProgress, [0.15, 0.85], [0, 360]);
   const cardScale = useTransform(scrollYProgress, [0, 0.15, 0.5, 0.85, 1], [0, 0.5, 1.1, 1.0, 0.8]);
   const cardOpacity = useTransform(scrollYProgress, [0.12, 0.18, 0.82, 0.88], [0, 0.6, 0.6, 0]);
+
+  // Parallax layers — background elements move slower than foreground
+  const bgParallaxY = useTransform(scrollYProgress, [0, 1], [0, -80]);   // slow
+  const gridParallaxY = useTransform(scrollYProgress, [0, 1], [0, -40]); // medium-slow
+  const glowParallaxY = useTransform(scrollYProgress, [0, 1], [0, -120]); // slightly faster
+  const glow2ParallaxX = useTransform(scrollYProgress, [0, 1], [0, 60]);  // lateral drift
 
   // Glow intensity
   const glowOpacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 0.5, 0.8, 0.3]);
@@ -54,7 +105,7 @@ export const ScrollytellingSection = () => {
   // Progress bar
   const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
-  // Section fade ranges — each section gets a scroll band
+  // Section fade ranges
   const hero = useFadeRange(scrollYProgress, 0, 0.14);
   const problem = useFadeRange(scrollYProgress, 0.16, 0.38);
   const arch = useFadeRange(scrollYProgress, 0.40, 0.62);
@@ -63,21 +114,33 @@ export const ScrollytellingSection = () => {
 
   return (
     <div ref={containerRef} className="relative" style={{ height: "800vh" }}>
+      {/* Dot navigation */}
+      <DotNav scrollYProgress={scrollYProgress} />
+
       {/* Sticky viewport */}
       <div className="sticky top-0 h-screen overflow-hidden">
         {/* Animated background */}
         <motion.div className="absolute inset-0" style={{ backgroundColor: bgColor }} />
 
-        {/* Grid overlay */}
-        <div className="absolute inset-0 opacity-[0.03]">
+        {/* Grid overlay — parallax (slower) */}
+        <motion.div className="absolute inset-0 opacity-[0.03]" style={{ y: gridParallaxY }}>
           <div className="w-full h-full bg-[linear-gradient(rgba(255,255,255,0.4)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.4)_1px,transparent_1px)] bg-[size:80px_80px]" />
-        </div>
+        </motion.div>
 
-        {/* Ambient glows */}
+        {/* Ambient glows — parallax (different speeds for depth) */}
         <motion.div className="absolute inset-0 pointer-events-none" style={{ opacity: glowOpacity }}>
-          <div className="absolute top-[-10%] right-[-5%] w-[50%] h-[50%] bg-[radial-gradient(ellipse_at_center,hsl(262,60%,55%,0.08),transparent_70%)]" />
-          <div className="absolute bottom-[-10%] left-[-5%] w-[50%] h-[50%] bg-[radial-gradient(ellipse_at_center,hsl(192,80%,55%,0.06),transparent_70%)]" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,hsl(160,60%,40%,0.03),transparent_60%)]" />
+          <motion.div
+            className="absolute top-[-10%] right-[-5%] w-[50%] h-[50%] bg-[radial-gradient(ellipse_at_center,hsl(262,60%,55%,0.08),transparent_70%)]"
+            style={{ y: glowParallaxY }}
+          />
+          <motion.div
+            className="absolute bottom-[-10%] left-[-5%] w-[50%] h-[50%] bg-[radial-gradient(ellipse_at_center,hsl(192,80%,55%,0.06),transparent_70%)]"
+            style={{ y: bgParallaxY, x: glow2ParallaxX }}
+          />
+          <motion.div
+            className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,hsl(160,60%,40%,0.03),transparent_60%)]"
+            style={{ y: gridParallaxY }}
+          />
         </motion.div>
 
         {/* Fixed header */}
@@ -100,7 +163,7 @@ export const ScrollytellingSection = () => {
           </Button>
         </header>
 
-        {/* 3D Floating Card (persistent, behind content) */}
+        {/* 3D Floating Card */}
         <motion.div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-72 md:w-64 md:h-80 rounded-2xl z-[5] flex items-center justify-center"
           style={{
@@ -156,7 +219,6 @@ export const ScrollytellingSection = () => {
             </div>
           </div>
 
-          {/* Scroll hint */}
           <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
             <span className="text-[9px] font-mono text-foreground/20 tracking-[0.2em] uppercase">Scroll to explore</span>
             <motion.div
@@ -292,7 +354,6 @@ export const ScrollytellingSection = () => {
             </Button>
           </div>
 
-          {/* Credits */}
           <div className="absolute bottom-12 w-full max-w-4xl mx-auto flex flex-row items-end justify-between gap-6 px-8 max-[767px]:flex-col max-[767px]:items-center max-[767px]:gap-4">
             <div className="flex items-center gap-3">
               <img src={cynoxLogo} alt="CYNOX" className="h-7 opacity-40" />
@@ -315,7 +376,6 @@ export const ScrollytellingSection = () => {
           style={{ width: progressWidth }}
         />
 
-        {/* Encryption label */}
         <div className="absolute bottom-4 right-8 z-40 text-[9px] text-foreground/10 font-mono tracking-[0.15em] hidden md:block">
           TLS 1.3 · 256-BIT ENCRYPTION · ZERO-KNOWLEDGE
         </div>
