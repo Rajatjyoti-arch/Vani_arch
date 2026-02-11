@@ -273,7 +273,8 @@ export const ScrollytellingSection = () => {
         <RevealLine progress={scrollYProgress} at={0.83} />
 
         {/* Top banner */}
-        <div className="absolute top-0 w-full z-50 text-center py-2" style={{ background: 'rgba(255,255,255,0.03)', borderBottom: '0.5px solid rgba(255,255,255,0.06)' }}>
+        <div className="absolute top-0 w-full z-50 flex items-center justify-center gap-2 py-2" style={{ background: 'rgba(255,255,255,0.03)', borderBottom: '0.5px solid rgba(255,255,255,0.06)' }}>
+          <img src="/cuj-logo.png" alt="CUJ Logo" className="w-5 h-5 object-contain" />
           <span className="text-[10px] font-mono text-white/70 tracking-[0.2em] uppercase font-semibold">An initiative by Central University of Jammu</span>
         </div>
 
