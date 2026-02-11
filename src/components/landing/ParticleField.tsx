@@ -35,8 +35,8 @@ export const ParticleField = () => {
       y: Math.random() * canvas.height,
       vx: (Math.random() - 0.5) * 0.3,
       vy: (Math.random() - 0.5) * 0.2 - 0.1,
-      size: Math.random() * 2 + 0.5,
-      opacity: Math.random() * 0.3 + 0.05,
+      size: Math.random() * 2.5 + 0.8,
+      opacity: Math.random() * 0.45 + 0.1,
     }));
 
     const draw = () => {
@@ -91,7 +91,7 @@ export const ParticleField = () => {
     <canvas
       ref={canvasRef}
       className="absolute inset-0 z-[2] pointer-events-none"
-      style={{ opacity: 0.6 }}
+      style={{ opacity: 0.8 }}
     />
   );
 };

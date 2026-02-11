@@ -8,17 +8,17 @@ interface Props {
 }
 
 export const ScrollBackgrounds = ({ scrollYProgress }: Props) => {
-  // University: visible 0–0.35, fade out by 0.45
-  const uniOpacity = useTransform(scrollYProgress, [0, 0.05, 0.30, 0.45], [0.15, 0.25, 0.25, 0]);
-  const uniScale = useTransform(scrollYProgress, [0, 0.45], [1, 1.15]);
+  // University: visible 0–0.35, fade out by 0.45 — brighter & smoother
+  const uniOpacity = useTransform(scrollYProgress, [0, 0.08, 0.28, 0.42], [0.25, 0.45, 0.45, 0]);
+  const uniScale = useTransform(scrollYProgress, [0, 0.45], [1, 1.08]);
 
-  // Classroom: fade in 0.30–0.40, visible 0.40–0.65, fade out by 0.75
-  const classOpacity = useTransform(scrollYProgress, [0.30, 0.40, 0.60, 0.75], [0, 0.25, 0.25, 0]);
-  const classScale = useTransform(scrollYProgress, [0.30, 0.75], [1, 1.15]);
+  // Classroom: fade in 0.28–0.42, visible 0.42–0.62, fade out by 0.72
+  const classOpacity = useTransform(scrollYProgress, [0.28, 0.42, 0.58, 0.72], [0, 0.45, 0.45, 0]);
+  const classScale = useTransform(scrollYProgress, [0.28, 0.72], [1, 1.08]);
 
-  // Book: fade in 0.65–0.75, visible 0.75–1.0
-  const bookOpacity = useTransform(scrollYProgress, [0.65, 0.75, 0.90, 1.0], [0, 0.25, 0.25, 0.15]);
-  const bookScale = useTransform(scrollYProgress, [0.65, 1.0], [1, 1.15]);
+  // Book: fade in 0.62–0.72, visible 0.72–1.0
+  const bookOpacity = useTransform(scrollYProgress, [0.62, 0.72, 0.88, 1.0], [0, 0.45, 0.45, 0.3]);
+  const bookScale = useTransform(scrollYProgress, [0.62, 1.0], [1, 1.08]);
 
   const images = [
     { src: bgUniversity, opacity: uniOpacity, scale: uniScale },
@@ -42,7 +42,7 @@ export const ScrollBackgrounds = ({ scrollYProgress }: Props) => {
             loading="eager"
           />
           {/* Dark overlay for readability */}
-          <div className="absolute inset-0 bg-black/70" />
+          <div className="absolute inset-0 bg-black/45" />
         </motion.div>
       ))}
     </>
