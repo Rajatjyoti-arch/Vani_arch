@@ -10,6 +10,7 @@ import { VaniLogo } from '@/components/ui/VaniLogo';
 import { useStudentSession } from '@/contexts/StudentSessionContext';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
+import authBg from '@/assets/auth-bg.jpg';
 
 interface PasswordStrength {
   score: number;
@@ -161,13 +162,12 @@ export function StudentLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Void grid background */}
-      <div className="absolute inset-0 void-grid" />
-      {/* Radial glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_30%,hsl(187_100%_50%/0.06),transparent_60%)]" />
-      {/* Scan line */}
-      <div className="scan-line opacity-20" />
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <img src={authBg} alt="" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-black/20" />
+      </div>
       
       <div className="w-full max-w-4xl relative z-10">
         {/* Logo Header */}
@@ -182,7 +182,7 @@ export function StudentLogin() {
         </div>
 
         {/* Sliding Container */}
-        <div className="relative glass-card rounded-2xl shadow-[0_0_60px_rgba(0,242,255,0.05)] overflow-hidden">
+        <div className="relative rounded-2xl border border-white/20 bg-white/10 backdrop-blur-xl shadow-2xl overflow-hidden">
           <div className="flex flex-col md:flex-row min-h-[520px]">
             
             {/* Left Panel - Sign In (visible when !isSignUp on desktop, always accessible) */}
@@ -469,7 +469,7 @@ export function StudentLogin() {
             {/* Sliding Overlay Panel (Desktop only) */}
             <div className={cn(
               "hidden md:flex absolute top-0 h-full w-1/2 transition-all duration-700 ease-in-out z-20",
-              "bg-gradient-to-br from-[hsl(187,100%,50%)] via-[hsl(187,80%,35%)] to-[hsl(220,50%,15%)]",
+              "bg-gradient-to-br from-purple-600 via-pink-500 to-rose-500",
               isSignUp ? "left-0" : "left-1/2"
             )}>
               {/* Internal grid pattern */}
