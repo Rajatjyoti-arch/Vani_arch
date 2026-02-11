@@ -131,15 +131,15 @@ const StudentDashboard = () => {
               variant="ghost" 
               size="icon" 
               onClick={() => navigate(-1)}
-              className="shrink-0"
+              className="shrink-0 text-white hover:bg-white/10"
             >
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">
+              <h1 className="text-2xl font-bold text-white">
                 Welcome, {studentProfile?.ghost_name}
               </h1>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-white/60 mt-1">
                 Your session is active and secure
               </p>
             </div>
@@ -148,7 +148,7 @@ const StudentDashboard = () => {
             <ReportSubmissionForm />
             <Badge
               variant="outline"
-              className="bg-accent/10 text-accent border-accent/30 px-3 py-1.5"
+              className="bg-white/10 text-white border-white/20 px-3 py-1.5"
             >
               <Mail className="w-3 h-3 mr-1.5" />
               Verified Student
@@ -157,7 +157,7 @@ const StudentDashboard = () => {
               variant="outline"
               size="sm"
               onClick={handleLogout}
-              className="gap-2"
+              className="gap-2 border-white/20 text-white hover:bg-white/10"
             >
               <LogOut className="w-4 h-4" />
               End Session
@@ -166,33 +166,33 @@ const StudentDashboard = () => {
         </div>
 
         {/* Security Status Card */}
-        <Card className="border-accent/30 bg-gradient-to-r from-accent/5 to-transparent">
+        <Card className="border-white/20 bg-white/10 backdrop-blur-xl">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-full bg-accent/20">
-                <Fingerprint className="w-8 h-8 text-accent" />
+              <div className="p-3 rounded-full bg-white/10">
+                <Fingerprint className="w-8 h-8 text-pink-400" />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-semibold text-foreground">
+                  <h3 className="font-semibold text-white">
                     {studentProfile?.ghost_name}
                   </h3>
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge variant="secondary" className="text-xs bg-white/10 text-white/80 border-0">
                     {studentProfile?.enrollment_no}
                   </Badge>
                 </div>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-4 text-sm text-white/60">
                   <span>Trust Score: {studentProfile?.reputation}%</span>
                   <span>•</span>
                   <span>{studentProfile?.reports_submitted} submissions</span>
                 </div>
               </div>
               <div className="text-right">
-                <div className="flex items-center gap-1.5 text-xs text-accent mb-1">
+                <div className="flex items-center gap-1.5 text-xs text-pink-400 mb-1">
                   <Shield className="w-3 h-3" />
                   <span>Email Verified</span>
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-white/50">
                   {studentProfile?.email}
                 </p>
               </div>
@@ -202,24 +202,24 @@ const StudentDashboard = () => {
 
         {/* Quick Actions */}
         <div>
-          <h2 className="text-lg font-semibold text-foreground mb-4">Quick Actions</h2>
+          <h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {quickActions.map((action) => (
               <Link key={action.href} to={action.href} className="group">
-                <Card className="h-full border-border/50 hover:border-primary/30 hover:shadow-md transition-all duration-200 group-hover:scale-[1.01]">
+                <Card className="h-full border-white/20 bg-white/10 backdrop-blur-xl hover:bg-white/15 hover:border-white/30 transition-all duration-200 group-hover:scale-[1.01]">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
-                      <div className={`p-3 rounded-lg ${action.bgColor} shrink-0`}>
-                        <action.icon className={`w-6 h-6 ${action.color}`} />
+                      <div className="p-3 rounded-lg bg-white/10 shrink-0">
+                        <action.icon className="w-6 h-6 text-white" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-semibold text-foreground mb-1">
+                        <h3 className="font-semibold text-white mb-1">
                           {action.title}
                         </h3>
-                        <p className="text-sm text-muted-foreground mb-3">
+                        <p className="text-sm text-white/60 mb-3">
                           {action.description}
                         </p>
-                        <div className="flex items-center gap-1 text-primary text-sm group-hover:gap-2 transition-all">
+                        <div className="flex items-center gap-1 text-pink-400 text-sm group-hover:gap-2 transition-all">
                           <span>Open</span>
                           <ArrowRight className="w-4 h-4" />
                         </div>
@@ -244,31 +244,31 @@ const StudentDashboard = () => {
         )}
 
         {/* Activity Summary */}
-        <Card className="border-border/50">
+        <Card className="border-white/20 bg-white/10 backdrop-blur-xl">
           <CardHeader>
-            <CardTitle className="text-base">Activity Summary</CardTitle>
+            <CardTitle className="text-base text-white">Activity Summary</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-secondary/50">
-                <CheckCircle className="w-5 h-5 text-accent" />
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-white/10">
+                <CheckCircle className="w-5 h-5 text-green-400" />
                 <div>
-                  <div className="font-semibold text-foreground">{reportCounts.resolved}</div>
-                  <div className="text-xs text-muted-foreground">Resolved</div>
+                  <div className="font-semibold text-white">{reportCounts.resolved}</div>
+                  <div className="text-xs text-white/60">Resolved</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-secondary/50">
-                <Clock className="w-5 h-5 text-[hsl(var(--status-warning))]" />
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-white/10">
+                <Clock className="w-5 h-5 text-yellow-400" />
                 <div>
-                  <div className="font-semibold text-foreground">{reportCounts.pending}</div>
-                  <div className="text-xs text-muted-foreground">Pending</div>
+                  <div className="font-semibold text-white">{reportCounts.pending}</div>
+                  <div className="text-xs text-white/60">Pending</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 rounded-lg bg-secondary/50">
-                <AlertCircle className="w-5 h-5 text-primary" />
+              <div className="flex items-center gap-3 p-4 rounded-lg bg-white/10">
+                <AlertCircle className="w-5 h-5 text-blue-400" />
                 <div>
-                  <div className="font-semibold text-foreground">{reportCounts.underReview}</div>
-                  <div className="text-xs text-muted-foreground">Under Review</div>
+                  <div className="font-semibold text-white">{reportCounts.underReview}</div>
+                  <div className="text-xs text-white/60">Under Review</div>
                 </div>
               </div>
             </div>
