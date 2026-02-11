@@ -37,7 +37,7 @@ export const ScrollBackgrounds = ({ scrollYProgress }: Props) => {
           <motion.img
             src={img.src}
             alt=""
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover blur-sm"
             style={{ scale: img.scale }}
             loading="eager"
           />
