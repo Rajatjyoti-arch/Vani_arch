@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
+import adminBg from "@/assets/admin-bg.png";
 import {
   LayoutDashboard,
   FileCheck,
@@ -33,11 +34,16 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex">
+    <div className="min-h-screen flex relative">
+      {/* Background */}
+      <div className="absolute inset-0 z-0">
+        <img src={adminBg} alt="" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-black/30" />
+      </div>
       {/* Sidebar */}
-      <aside className="w-64 bg-slate-800 border-r border-slate-700 flex flex-col">
+      <aside className="w-64 bg-white/5 backdrop-blur-xl border-r border-white/10 flex flex-col relative z-10">
         {/* Header */}
-        <div className="p-4 border-b border-slate-700">
+        <div className="p-4 border-b border-white/10">
           <div className="flex items-center gap-3">
             <VaniLogo variant="full" size="md" />
           </div>
@@ -58,7 +64,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                   flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
                   ${isActive
                     ? "bg-emerald-600/20 text-emerald-400 border-l-2 border-emerald-500"
-                    : "text-slate-400 hover:text-white hover:bg-slate-700/50"
+                    : "text-slate-400 hover:text-white hover:bg-white/10"
                   }
                 `}
               >
@@ -70,7 +76,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         </nav>
 
         {/* User Info */}
-        <div className="p-4 border-t border-slate-700">
+        <div className="p-4 border-t border-white/10">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-8 h-8 rounded-full bg-emerald-600/20 flex items-center justify-center">
               <Shield className="w-4 h-4 text-emerald-400" />
@@ -86,7 +92,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             variant="ghost"
             size="sm"
             onClick={handleSignOut}
-            className="w-full justify-start text-slate-400 hover:text-white hover:bg-slate-700"
+            className="w-full justify-start text-slate-400 hover:text-white hover:bg-white/10"
           >
             <LogOut className="w-4 h-4 mr-2" />
             Sign Out
@@ -95,9 +101,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col relative z-10">
         {/* Top Bar */}
-        <header className="h-14 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-6">
+        <header className="h-14 bg-white/5 backdrop-blur-xl border-b border-white/10 flex items-center justify-between px-6">
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-500 uppercase tracking-wider">
               Administrative Oversight Dashboard
