@@ -280,10 +280,6 @@ export const ScrollytellingSection = () => {
             </div>
             <div className="flex flex-col">
               <span className="font-serif text-sm text-white font-semibold tracking-wide leading-none">VANI</span>
-              <div className="flex items-center gap-1.5 mt-1">
-                <img src="/cuj-logo.png" alt="CUJ Logo" className="w-4 h-4 object-contain" />
-                <span className="text-[9px] text-white/60 tracking-[0.12em] uppercase font-medium">An initiative by Central University of Jammu</span>
-              </div>
             </div>
           </div>
           <Button
@@ -301,7 +297,10 @@ export const ScrollytellingSection = () => {
           style={hero}
         >
           <div className="text-center space-y-8">
-            <img src="/cuj-logo.png" alt="Central University of Jammu" className="w-16 h-16 object-contain mx-auto opacity-80" />
+            <div className="flex flex-col items-center gap-2">
+              <img src="/cuj-logo.png" alt="Central University of Jammu" className="w-16 h-16 object-contain opacity-80" />
+              <span className="text-[10px] font-mono text-white/60 tracking-[0.2em] uppercase font-semibold">An initiative by Central University of Jammu</span>
+            </div>
 
             <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(255,255,255,0.08)' }}>
               <span className="relative flex h-1.5 w-1.5">
