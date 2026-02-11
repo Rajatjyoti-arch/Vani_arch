@@ -1,5 +1,5 @@
 import { motion, MotionValue, useTransform } from "framer-motion";
-import bgUniversity from "@/assets/bg-university.jpg";
+import bgUniversity from "@/assets/bg-university.png";
 import bgClassroom from "@/assets/bg-classroom.jpg";
 import bgBook from "@/assets/bg-book.jpg";
 
