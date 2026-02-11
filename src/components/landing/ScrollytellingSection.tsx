@@ -193,7 +193,13 @@ export const ScrollytellingSection = () => {
   ]);
 
   // Cinematic section fades
-  const hero = useCinematicFade(scrollYProgress, 0, 0.14);
+  const heroRaw = useCinematicFade(scrollYProgress, 0, 0.14);
+  // Override hero opacity/y/scale to be fully visible at scroll 0
+  const hero = {
+    opacity: useTransform(scrollYProgress, [0, 0.09, 0.14, 0.22], [1, 1, 1, 0]),
+    y: useTransform(scrollYProgress, [0, 0.14, 0.22], [0, 0, -40]),
+    scale: useTransform(scrollYProgress, [0, 0.09, 0.14, 0.22], [1, 1, 1, 0.96]),
+  };
   const problem = useCinematicFade(scrollYProgress, 0.16, 0.38);
   const arch = useCinematicFade(scrollYProgress, 0.40, 0.62);
   const intel = useCinematicFade(scrollYProgress, 0.64, 0.82);
