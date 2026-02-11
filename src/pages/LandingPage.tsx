@@ -82,8 +82,14 @@ const ParallaxBackground = () => {
         <div className="w-full h-full bg-[linear-gradient(rgba(255,255,255,0.4)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.4)_1px,transparent_1px)] bg-[size:80px_80px]" />
       </motion.div>
 
-      {/* Very subtle radial warmth */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,rgba(255,255,255,0.015),transparent_70%)]" />
+      {/* Violet radial glow top-right */}
+      <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-[radial-gradient(ellipse_at_center,hsl(262,60%,55%,0.06),transparent_70%)]" />
+      
+      {/* Navy radial glow bottom-left */}
+      <div className="absolute bottom-[-20%] left-[-10%] w-[60%] h-[60%] bg-[radial-gradient(ellipse_at_center,hsl(213,80%,35%,0.05),transparent_70%)]" />
+
+      {/* Subtle emerald center warmth */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_40%,hsl(160,60%,40%,0.02),transparent_60%)]" />
     </div>
   );
 };
@@ -129,8 +135,8 @@ const SlideHero = () => {
 
         {/* Title */}
         <motion.div variants={staggerItem} className="text-center space-y-6">
-          <h1 className="font-serif text-[clamp(3.5rem,12vw,8rem)] font-light tracking-[-0.02em] text-foreground leading-[0.9]">
-            VANI
+          <h1 className="font-serif text-[clamp(3.5rem,12vw,8rem)] font-light tracking-[-0.02em] leading-[0.9]">
+            <span className="bg-gradient-to-r from-foreground via-sovereign-violet to-sovereign-cyan bg-clip-text text-transparent">VANI</span>
           </h1>
           <div className="h-7 relative flex items-center justify-center">
             <AnimatePresence mode="wait">
@@ -216,9 +222,9 @@ const SlideProblem = () => (
 
         <div className="space-y-4 max-[767px]:space-y-3">
           {[
-            { icon: Shield, title: "Fear of Retaliation", desc: "Whistleblowers stay silent to protect their futures." },
-            { icon: Eye, title: "Opaque Processes", desc: "Decisions made behind closed doors erode trust." },
-            { icon: Archive, title: "Lost Records", desc: "Reports vanish into administrative voids without trace." },
+            { icon: Shield, title: "Fear of Retaliation", desc: "Whistleblowers stay silent to protect their futures.", color: "text-sovereign-rose" },
+            { icon: Eye, title: "Opaque Processes", desc: "Decisions made behind closed doors erode trust.", color: "text-sovereign-violet" },
+            { icon: Archive, title: "Lost Records", desc: "Reports vanish into administrative voids without trace.", color: "text-sovereign-gold" },
           ].map((item, i) => (
             <motion.div
               key={i}
@@ -226,7 +232,7 @@ const SlideProblem = () => (
               className="flex items-start gap-4 max-[767px]:gap-3 p-4 max-[767px]:p-3 rounded-lg transition-all duration-700 group hover:bg-white/[0.02]"
               style={{ borderLeft: '1px solid rgba(255,255,255,0.05)' }}
             >
-              <item.icon className="w-4 h-4 text-foreground/20 group-hover:text-accent transition-colors duration-700 shrink-0 mt-0.5" strokeWidth={1} />
+              <item.icon className={cn("w-4 h-4 text-foreground/20 transition-colors duration-700 shrink-0 mt-0.5", `group-hover:${item.color}`)} strokeWidth={1} />
               <div>
                 <h3 className="text-foreground/70 font-medium text-sm mb-0.5">{item.title}</h3>
                 <p className="text-xs text-foreground/25 leading-relaxed">{item.desc}</p>
@@ -246,13 +252,13 @@ const SlideProblem = () => (
 
           <div className="space-y-8">
             {[
-              { icon: Lock, title: "Cryptographic Anonymity", desc: "SHA-256 hashed identities. We verify who you are without knowing which one you are." },
-              { icon: FileText, title: "Immutable Evidence", desc: "AES-256 encrypted submissions. Time-stamped. Tamper-proof." },
-              { icon: Scale, title: "AI-Mediated Resolution", desc: "Policy-aware algorithms that categorize, route, and mediate disputes." },
+              { icon: Lock, title: "Cryptographic Anonymity", desc: "SHA-256 hashed identities. We verify who you are without knowing which one you are.", color: "text-sovereign-cyan" },
+              { icon: FileText, title: "Immutable Evidence", desc: "AES-256 encrypted submissions. Time-stamped. Tamper-proof.", color: "text-sovereign-violet" },
+              { icon: Scale, title: "AI-Mediated Resolution", desc: "Policy-aware algorithms that categorize, route, and mediate disputes.", color: "text-sovereign-emerald" },
             ].map((item, i) => (
               <div key={i} className="group">
                 <h4 className="text-foreground/60 font-medium text-sm mb-2 flex items-center gap-2.5">
-                  <item.icon className="w-3.5 h-3.5 text-accent/60" strokeWidth={1} />
+                  <item.icon className={cn("w-3.5 h-3.5", item.color)} strokeWidth={1} />
                   {item.title}
                 </h4>
                 <p className="text-xs text-foreground/25 pl-6 leading-relaxed" style={{ borderLeft: '0.5px solid rgba(255,255,255,0.04)' }}>
@@ -289,10 +295,10 @@ const SlideArchitecture = () => (
       <div className="hidden md:block absolute top-1/2 left-0 w-full h-px -translate-y-1/2 z-0" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent)' }} />
 
       {[
-        { icon: Lock, title: "Secure Entry", desc: "Zero-knowledge credential verification.", step: "01" },
-        { icon: FileText, title: "Submission", desc: "Encrypted grievance with metadata stripped.", step: "02" },
-        { icon: Activity, title: "AI Analysis", desc: "Gemini-powered urgency classification.", step: "03" },
-        { icon: Gavel, title: "Resolution", desc: "Outcome recorded on public ledger.", step: "04" },
+        { icon: Lock, title: "Secure Entry", desc: "Zero-knowledge credential verification.", step: "01", color: "bg-sovereign-violet/10 group-hover:bg-sovereign-violet/20", iconColor: "text-sovereign-violet" },
+        { icon: FileText, title: "Submission", desc: "Encrypted grievance with metadata stripped.", step: "02", color: "bg-sovereign-cyan/10 group-hover:bg-sovereign-cyan/20", iconColor: "text-sovereign-cyan" },
+        { icon: Activity, title: "AI Analysis", desc: "Gemini-powered urgency classification.", step: "03", color: "bg-sovereign-gold/10 group-hover:bg-sovereign-gold/20", iconColor: "text-sovereign-gold" },
+        { icon: Gavel, title: "Resolution", desc: "Outcome recorded on public ledger.", step: "04", color: "bg-sovereign-emerald/10 group-hover:bg-sovereign-emerald/20", iconColor: "text-sovereign-emerald" },
       ].map((step, i) => (
         <motion.div
           key={i}
@@ -300,8 +306,8 @@ const SlideArchitecture = () => (
           className="relative z-10 frosted-glass-hover p-6 max-[767px]:p-4 rounded-lg group flex flex-col"
         >
           <div className="text-[10px] font-mono text-foreground/15 tracking-[0.3em] mb-4">{step.step}</div>
-          <div className="w-10 h-10 rounded-md bg-white/[0.03] flex items-center justify-center mb-4 group-hover:bg-accent/10 transition-colors duration-700">
-            <step.icon className="w-4 h-4 text-foreground/30 group-hover:text-accent transition-colors duration-700" strokeWidth={1} />
+          <div className={cn("w-10 h-10 rounded-md flex items-center justify-center mb-4 transition-colors duration-700", step.color)}>
+            <step.icon className={cn("w-4 h-4 transition-colors duration-700", step.iconColor)} strokeWidth={1} />
           </div>
           <h3 className="text-sm font-medium text-foreground/70 mb-1.5">{step.title}</h3>
           <p className="text-xs text-foreground/25 leading-relaxed">{step.desc}</p>
@@ -331,16 +337,16 @@ const SlideIntelligence = () => (
 
     <div className="grid grid-cols-3 max-[767px]:grid-cols-1 gap-4 w-full mb-14 max-[767px]:mb-8">
       {[
-        { icon: Lock, title: "Anonymous Identity", desc: "SHA-256 hashing creates irreversible identity tokens. Your enrollment number is never stored." },
-        { icon: Shield, title: "Secure Evidence", desc: "AES-256 encrypted document storage with steganographic concealment layers." },
-        { icon: Activity, title: "Institutional Analytics", desc: "Real-time campus sentiment tracking and zone-level concern monitoring." },
+        { icon: Lock, title: "Anonymous Identity", desc: "SHA-256 hashing creates irreversible identity tokens. Your enrollment number is never stored.", iconColor: "text-sovereign-violet" },
+        { icon: Shield, title: "Secure Evidence", desc: "AES-256 encrypted document storage with steganographic concealment layers.", iconColor: "text-sovereign-cyan" },
+        { icon: Activity, title: "Institutional Analytics", desc: "Real-time campus sentiment tracking and zone-level concern monitoring.", iconColor: "text-sovereign-gold" },
       ].map((item, i) => (
         <motion.div
           key={i}
           variants={staggerItem}
           className="frosted-glass-hover p-7 max-[767px]:p-5 rounded-lg flex flex-col"
         >
-          <item.icon className="w-5 h-5 text-foreground/20 mb-5 shrink-0" strokeWidth={1} />
+          <item.icon className={cn("w-5 h-5 mb-5 shrink-0", item.iconColor)} strokeWidth={1} />
           <h3 className="text-base font-medium text-foreground/70 mb-2">{item.title}</h3>
           <p className="text-xs text-foreground/25 leading-relaxed flex-1">{item.desc}</p>
         </motion.div>
@@ -480,7 +486,7 @@ const LandingPage = () => {
               className={cn(
                 "h-px rounded-full transition-all duration-700",
                 index === page
-                  ? "w-8 bg-foreground/40"
+                  ? "w-8 bg-gradient-to-r from-sovereign-violet to-sovereign-cyan"
                   : "w-4 bg-foreground/10 hover:bg-foreground/20"
               )}
             />

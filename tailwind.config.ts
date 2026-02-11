@@ -72,6 +72,9 @@ export default {
           navy: "hsl(var(--sovereign-navy))",
           emerald: "hsl(var(--sovereign-emerald))",
           gold: "hsl(var(--sovereign-gold))",
+          violet: "hsl(var(--sovereign-violet))",
+          rose: "hsl(var(--sovereign-rose))",
+          cyan: "hsl(var(--sovereign-cyan))",
         },
       },
       borderRadius: {
