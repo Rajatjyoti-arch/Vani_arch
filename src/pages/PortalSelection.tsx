@@ -3,7 +3,7 @@ import { UserCheck, Shield, ArrowLeft, Lock } from "lucide-react";
 import { VaniLogo } from "@/components/ui/VaniLogo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import authBg from "@/assets/auth-bg.jpg";
+import authBg from "@/assets/auth-bg.png";
 
 const PortalSelection = () => {
   const navigate = useNavigate();
