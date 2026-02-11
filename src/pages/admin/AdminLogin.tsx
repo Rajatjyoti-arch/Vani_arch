@@ -8,6 +8,7 @@ import { useAdminAuth } from "@/contexts/AdminAuthContext";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+import authBg from "@/assets/auth-bg.jpg";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -102,7 +103,12 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 relative">
+      <div className="absolute inset-0 z-0">
+        <img src={authBg} alt="" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-black/30" />
+      </div>
+      <div className="relative z-10">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
@@ -166,7 +172,7 @@ export default function AdminLogin() {
         )}
 
         {/* Login Form */}
-        <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-8">
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-slate-300">
@@ -281,6 +287,7 @@ export default function AdminLogin() {
             ← Return to main platform
           </a>
         </div>
+      </div>
       </div>
     </div>
   );
