@@ -361,8 +361,8 @@ export const ScrollytellingSection = () => {
               ].map((item, i) => (
                 <div
                   key={i}
-                  className="p-5 rounded-lg group hover:bg-white/[0.02] transition-all duration-700"
-                  style={{ border: '0.5px solid rgba(255,255,255,0.05)' }}
+                  className="p-5 rounded-lg group backdrop-blur-xl bg-white/[0.06] hover:bg-white/[0.10] transition-all duration-700 shadow-lg shadow-black/10"
+                  style={{ border: '1px solid rgba(255,255,255,0.12)' }}
                 >
                   <item.icon className={cn("w-4 h-4 mb-3 shrink-0", item.color)} strokeWidth={1} />
                   <h3 className="text-white font-bold text-sm mb-1">{item.title}</h3>
