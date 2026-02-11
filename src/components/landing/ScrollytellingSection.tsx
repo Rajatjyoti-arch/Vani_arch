@@ -169,6 +169,17 @@ export const ScrollytellingSection = () => {
   // Glow hue shift
   const glowHue = useTransform(scrollYProgress, [0, 0.25, 0.5, 0.75, 1], [262, 262, 192, 45, 160]);
 
+  // Pre-compute glow backgrounds (hooks must be called at top level)
+  const glowBg1 = useTransform(glowHue, (h) =>
+    `radial-gradient(ellipse at center, hsl(${h}, 65%, 60%, 0.18), transparent 70%)`
+  );
+  const glowBg2 = useTransform(glowHue, (h) =>
+    `radial-gradient(ellipse at center, hsl(${(h + 120) % 360}, 75%, 55%, 0.12), transparent 70%)`
+  );
+  const glowBg3 = useTransform(glowHue, (h) =>
+    `radial-gradient(ellipse at center, hsl(${(h + 60) % 360}, 55%, 50%, 0.08), transparent 60%)`
+  );
+
   // Film grain — subtler
   const grainOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.015, 0.025, 0.015]);
 
@@ -212,31 +223,16 @@ export const ScrollytellingSection = () => {
         <motion.div className="absolute inset-0 pointer-events-none" style={{ opacity: glowOpacity }}>
           <motion.div
             className="absolute top-[-15%] right-[-10%] w-[55%] h-[55%]"
-            style={{
-              y: glowParallaxY,
-              background: useTransform(glowHue, (h) =>
-                `radial-gradient(ellipse at center, hsl(${h}, 65%, 60%, 0.18), transparent 70%)`
-              ),
-            }}
+            style={{ y: glowParallaxY, background: glowBg1 }}
           />
           <motion.div
             className="absolute bottom-[-15%] left-[-10%] w-[55%] h-[55%]"
-            style={{
-              y: bgParallaxY,
-              x: glow2ParallaxX,
-              background: useTransform(glowHue, (h) =>
-                `radial-gradient(ellipse at center, hsl(${(h + 120) % 360}, 75%, 55%, 0.12), transparent 70%)`
-              ),
-            }}
+            style={{ y: bgParallaxY, x: glow2ParallaxX, background: glowBg2 }}
           />
           {/* Center pulse */}
           <motion.div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] h-[40%]"
-            style={{
-              background: useTransform(glowHue, (h) =>
-                `radial-gradient(ellipse at center, hsl(${(h + 60) % 360}, 55%, 50%, 0.08), transparent 60%)`
-              ),
-            }}
+            style={{ background: glowBg3 }}
           />
         </motion.div>
 
