@@ -42,7 +42,7 @@ export const ScrollBackgrounds = ({ scrollYProgress }: Props) => {
             loading="eager"
           />
           {/* Dark overlay for readability */}
-          <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute inset-0 bg-black/70" />
         </motion.div>
       ))}
     </>
