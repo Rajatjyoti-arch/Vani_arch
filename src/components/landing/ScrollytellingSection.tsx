@@ -121,7 +121,7 @@ const DotNav = ({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) =
       return (
         <div key={i} className="flex items-center gap-3 group">
           <motion.span
-            className="text-[9px] font-mono text-foreground/40 tracking-[0.15em] uppercase"
+            className="text-[9px] font-mono text-white/60 tracking-[0.15em] uppercase font-semibold"
             style={{ opacity: labelOpacity }}
           >
             {section.label}
@@ -284,13 +284,13 @@ export const ScrollytellingSection = () => {
               <VaniLogo variant="icon" size="sm" />
             </div>
             <div className="flex flex-col">
-              <span className="font-serif text-sm text-foreground/80 tracking-wide leading-none">VANI</span>
-              <span className="text-[9px] text-foreground/20 tracking-[0.15em] uppercase mt-0.5 hidden sm:block">Central University of Jammu</span>
+              <span className="font-serif text-sm text-white font-semibold tracking-wide leading-none">VANI</span>
+              <span className="text-[9px] text-white/60 tracking-[0.15em] uppercase mt-0.5 hidden sm:block font-medium">Central University of Jammu</span>
             </div>
           </div>
           <Button
             onClick={() => navigate("/portal")}
-            className="bg-white/[0.04] hover:bg-white/[0.07] text-foreground/60 hover:text-foreground/80 backdrop-blur-2xl transition-all duration-700 text-xs tracking-[0.15em] uppercase px-5 py-2 h-auto font-mono"
+            className="bg-white/[0.04] hover:bg-white/[0.07] text-white hover:text-white backdrop-blur-2xl transition-all duration-700 text-xs tracking-[0.15em] uppercase px-5 py-2 h-auto font-mono font-semibold"
             style={{ border: '0.5px solid rgba(255,255,255,0.08)' }}
           >
             Enter <ArrowRight className="w-3 h-3 ml-1.5" strokeWidth={1} />
@@ -308,32 +308,32 @@ export const ScrollytellingSection = () => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-accent" />
               </span>
-              <span className="text-[10px] font-mono text-foreground/50 tracking-[0.25em] uppercase">System Operational</span>
+              <span className="text-[10px] font-mono text-white/80 tracking-[0.25em] uppercase font-semibold">System Operational</span>
             </div>
 
-            <h1 className="font-serif text-[clamp(3.5rem,12vw,8rem)] font-light tracking-[-0.02em] leading-[0.9]">
+            <h1 className="font-serif text-[clamp(3.5rem,12vw,8rem)] font-bold tracking-[-0.02em] leading-[0.9]">
               <span className="bg-gradient-to-r from-foreground via-sovereign-violet to-sovereign-cyan bg-clip-text text-transparent">VANI</span>
             </h1>
 
-            <p className="text-sm text-foreground/70 tracking-[0.3em] uppercase font-mono">
+            <p className="text-sm text-white tracking-[0.3em] uppercase font-mono font-bold">
               Verifiable. Anonymous. Institutional.
             </p>
 
-            <p className="text-base text-foreground/50 tracking-[0.15em] font-light">
+            <p className="text-base text-white/80 tracking-[0.15em] font-medium">
               Verifiable Anonymous Network Intelligence
             </p>
 
-            <div className="flex items-center gap-3 text-foreground/50 justify-center">
-              <Building2 className="w-3.5 h-3.5" strokeWidth={1} />
-              <div className="w-px h-3 bg-foreground/20" />
-              <span className="text-xs tracking-[0.2em] uppercase font-light">Central University of Jammu</span>
+            <div className="flex items-center gap-3 text-white/80 justify-center">
+              <Building2 className="w-3.5 h-3.5" strokeWidth={1.5} />
+              <div className="w-px h-3 bg-white/30" />
+              <span className="text-xs tracking-[0.2em] uppercase font-semibold">Central University of Jammu</span>
             </div>
           </div>
 
           <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-            <span className="text-[9px] font-mono text-foreground/20 tracking-[0.2em] uppercase">Scroll to explore</span>
+            <span className="text-[9px] font-mono text-white/60 tracking-[0.2em] uppercase font-semibold">Scroll to explore</span>
             <motion.div
-              className="w-px h-8 bg-gradient-to-b from-foreground/20 to-transparent"
+              className="w-px h-8 bg-gradient-to-b from-white/40 to-transparent"
               animate={{ opacity: [0.3, 0.8, 0.3] }}
               transition={{ duration: 2, repeat: Infinity }}
             />
@@ -347,11 +347,11 @@ export const ScrollytellingSection = () => {
         >
           <div className="max-w-4xl w-full">
             <div className="text-center mb-12">
-            <h2 className="font-serif text-5xl max-[767px]:text-3xl font-light text-foreground leading-[1.1] mb-4">
+            <h2 className="font-serif text-5xl max-[767px]:text-3xl font-bold text-white leading-[1.1] mb-4">
                 The Problem of <br />
-                <span className="text-foreground/60 italic">Institutional Silence</span>
+                <span className="text-white/80 italic">Institutional Silence</span>
               </h2>
-              <p className="text-sm text-foreground/50 max-w-lg mx-auto leading-relaxed">
+              <p className="text-sm text-white/80 max-w-lg mx-auto leading-relaxed font-medium">
                 When fear silences truth, institutions fail their duty of care.
               </p>
             </div>
@@ -368,8 +368,8 @@ export const ScrollytellingSection = () => {
                   style={{ border: '0.5px solid rgba(255,255,255,0.05)' }}
                 >
                   <item.icon className={cn("w-4 h-4 mb-3 shrink-0", item.color)} strokeWidth={1} />
-                  <h3 className="text-foreground/90 font-medium text-sm mb-1">{item.title}</h3>
-                  <p className="text-xs text-foreground/45 leading-relaxed">{item.desc}</p>
+                  <h3 className="text-white font-bold text-sm mb-1">{item.title}</h3>
+                  <p className="text-xs text-white/70 leading-relaxed font-medium">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -382,10 +382,10 @@ export const ScrollytellingSection = () => {
           style={arch}
         >
           <div className="text-center mb-14 max-[767px]:mb-8">
-            <h2 className="font-serif text-5xl max-[767px]:text-3xl font-light text-foreground mb-3">
+            <h2 className="font-serif text-5xl max-[767px]:text-3xl font-bold text-white mb-3">
               Architecture of Trust
             </h2>
-            <p className="text-sm text-foreground/50 tracking-wide font-light">End-to-end verifiable governance pipeline</p>
+            <p className="text-sm text-white/80 tracking-wide font-medium">End-to-end verifiable governance pipeline</p>
           </div>
 
           <div className="grid grid-cols-4 max-[767px]:grid-cols-2 max-[639px]:grid-cols-1 gap-4 max-w-5xl w-full relative">
@@ -397,12 +397,12 @@ export const ScrollytellingSection = () => {
               { icon: Gavel, title: "Resolution", desc: "Outcome recorded on public ledger.", step: "04", iconColor: "text-sovereign-emerald", bg: "bg-sovereign-emerald/10" },
             ].map((step, i) => (
               <div key={i} className="relative z-10 p-5 max-[767px]:p-4 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '0.5px solid rgba(255,255,255,0.05)' }}>
-                <div className="text-[10px] font-mono text-foreground/15 tracking-[0.3em] mb-3">{step.step}</div>
+                <div className="text-[10px] font-mono text-white/40 tracking-[0.3em] mb-3 font-bold">{step.step}</div>
                 <div className={cn("w-9 h-9 rounded-md flex items-center justify-center mb-3", step.bg)}>
-                  <step.icon className={cn("w-4 h-4", step.iconColor)} strokeWidth={1} />
+                  <step.icon className={cn("w-4 h-4", step.iconColor)} strokeWidth={1.5} />
                 </div>
-                <h3 className="text-sm font-medium text-foreground/90 mb-1">{step.title}</h3>
-                <p className="text-xs text-foreground/45 leading-relaxed">{step.desc}</p>
+                <h3 className="text-sm font-bold text-white mb-1">{step.title}</h3>
+                <p className="text-xs text-white/70 leading-relaxed font-medium">{step.desc}</p>
               </div>
             ))}
           </div>
@@ -415,10 +415,10 @@ export const ScrollytellingSection = () => {
         >
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-6" style={{ background: 'rgba(255,255,255,0.02)', border: '0.5px solid rgba(255,255,255,0.06)' }}>
-              <span className="w-1.5 h-1.5 rounded-full bg-foreground/20 animate-pulse" />
-              <span className="text-[10px] font-mono text-foreground/50 tracking-[0.2em] uppercase">Powered by Google Gemini</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-white/40 animate-pulse" />
+              <span className="text-[10px] font-mono text-white/80 tracking-[0.2em] uppercase font-semibold">Powered by Google Gemini</span>
             </div>
-             <h2 className="font-serif text-5xl max-[767px]:text-3xl font-light text-foreground">Core Intelligence</h2>
+             <h2 className="font-serif text-5xl max-[767px]:text-3xl font-bold text-white">Core Intelligence</h2>
           </div>
 
           <div className="grid grid-cols-3 max-[767px]:grid-cols-1 gap-4 max-w-5xl w-full mb-10">
@@ -429,16 +429,16 @@ export const ScrollytellingSection = () => {
             ].map((item, i) => (
               <div key={i} className="p-6 max-[767px]:p-4 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '0.5px solid rgba(255,255,255,0.05)' }}>
                 <item.icon className={cn("w-5 h-5 mb-4 shrink-0", item.iconColor)} strokeWidth={1} />
-                <h3 className="text-base font-medium text-foreground/90 mb-2">{item.title}</h3>
-                <p className="text-xs text-foreground/45 leading-relaxed">{item.desc}</p>
+                <h3 className="text-base font-bold text-white mb-2">{item.title}</h3>
+                <p className="text-xs text-white/70 leading-relaxed font-medium">{item.desc}</p>
               </div>
             ))}
           </div>
 
-          <div className="flex items-center gap-4 opacity-60">
-            <span className="text-[10px] text-foreground/50 tracking-[0.2em] uppercase font-mono">Technology Partner</span>
-            <div className="w-px h-3 bg-foreground/20" />
-            <span className="text-xs font-medium text-foreground/60">Google Cloud AI</span>
+          <div className="flex items-center gap-4 opacity-80">
+            <span className="text-[10px] text-white/80 tracking-[0.2em] uppercase font-mono font-semibold">Technology Partner</span>
+            <div className="w-px h-3 bg-white/30" />
+            <span className="text-xs font-bold text-white/80">Google Cloud AI</span>
           </div>
         </motion.div>
 
@@ -448,17 +448,17 @@ export const ScrollytellingSection = () => {
           style={cta}
         >
           <div className="text-center space-y-8">
-            <h2 className="font-serif text-5xl max-[767px]:text-3xl font-light">
-              <span className="bg-gradient-to-r from-sovereign-violet via-foreground to-sovereign-cyan bg-clip-text text-transparent">
+            <h2 className="font-serif text-5xl max-[767px]:text-3xl font-bold">
+              <span className="bg-gradient-to-r from-sovereign-violet via-white to-sovereign-cyan bg-clip-text text-transparent">
                 Ready to Begin?
               </span>
             </h2>
-            <p className="text-sm text-foreground/55 max-w-md mx-auto leading-relaxed">
+            <p className="text-sm text-white/80 max-w-md mx-auto leading-relaxed font-medium">
               Step into a system designed to protect your voice and ensure institutional accountability.
             </p>
             <Button
               onClick={() => navigate("/portal")}
-              className="bg-sovereign-violet/20 hover:bg-sovereign-violet/30 text-foreground/80 backdrop-blur-2xl transition-all duration-700 text-sm tracking-[0.15em] uppercase px-8 py-3 h-auto font-mono"
+              className="bg-sovereign-violet/20 hover:bg-sovereign-violet/30 text-white backdrop-blur-2xl transition-all duration-700 text-sm tracking-[0.15em] uppercase px-8 py-3 h-auto font-mono font-bold"
               style={{ border: '1px solid hsl(262 60% 55% / 0.3)' }}
             >
               Enter VANI <ArrowRight className="w-4 h-4 ml-2" strokeWidth={1.5} />
@@ -467,13 +467,13 @@ export const ScrollytellingSection = () => {
 
           <div className="absolute bottom-12 w-full max-w-4xl mx-auto flex flex-row items-end justify-between gap-6 px-8 max-[767px]:flex-col max-[767px]:items-center max-[767px]:gap-4">
             <div className="flex items-center gap-3">
-              <img src={cynoxLogo} alt="CYNOX" className="h-7 opacity-40" />
-              <div className="text-[10px] text-foreground/20 font-mono leading-relaxed">
+              <img src={cynoxLogo} alt="CYNOX" className="h-7 opacity-70" />
+              <div className="text-[10px] text-white/60 font-mono leading-relaxed font-semibold">
                 <div className="tracking-[0.2em]">ENGINEERED BY</div>
-                <div className="text-foreground/35 tracking-[0.15em]">TEAM CYNOX</div>
+                <div className="text-white/70 tracking-[0.15em]">TEAM CYNOX</div>
               </div>
             </div>
-            <div className="flex flex-wrap justify-end gap-x-5 gap-y-1 text-[10px] text-foreground/20 font-mono tracking-[0.1em] max-[767px]:justify-center">
+            <div className="flex flex-wrap justify-end gap-x-5 gap-y-1 text-[10px] text-white/60 font-mono tracking-[0.1em] font-semibold max-[767px]:justify-center">
               {["Rajatjyoti Biswas", "Priyanshu Gupta", "Sakshi", "Mantavya Kumar"].map((name) => (
                 <span key={name}>{name}</span>
               ))}
@@ -487,7 +487,7 @@ export const ScrollytellingSection = () => {
           style={{ width: progressWidth, boxShadow: progressGlow }}
         />
 
-        <div className="absolute bottom-4 right-8 z-40 text-[9px] text-foreground/10 font-mono tracking-[0.15em] hidden md:block">
+        <div className="absolute bottom-4 right-8 z-40 text-[9px] text-white/30 font-mono font-semibold tracking-[0.15em] hidden md:block">
           TLS 1.3 · 256-BIT ENCRYPTION · ZERO-KNOWLEDGE
         </div>
       </div>
