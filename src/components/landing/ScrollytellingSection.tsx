@@ -25,22 +25,20 @@ const SECTIONS = [
   { label: "Enter", start: 0.85, end: 0.98 },
 ];
 
-// Enhanced fade: opacity + y + scale + blur
+// Smoother cinematic fade with wider transition windows
 const useCinematicFade = (progress: MotionValue<number>, start: number, end: number) => {
-  const s0 = Math.max(0, start - 0.04);
-  const s1 = Math.max(s0, start);
-  const s2 = Math.max(s1, start + 0.03);
-  const s3 = Math.max(s2, start + 0.05);
-  const e3 = Math.max(s3, end - 0.05);
-  const e2 = Math.max(e3, end - 0.03);
-  const e1 = Math.max(e2, end);
-  const e0 = Math.max(e1, Math.min(1, end + 0.04));
+  const s0 = Math.max(0, start - 0.08);
+  const s1 = Math.max(s0 + 0.001, start);
+  const s2 = Math.max(s1 + 0.001, start + 0.05);
+  const e2 = Math.max(s2 + 0.001, end - 0.05);
+  const e1 = Math.max(e2 + 0.001, end);
+  const e0 = Math.max(e1 + 0.001, Math.min(1, end + 0.08));
   return {
     opacity: useTransform(progress, [s0, s1, e1, e0], [0, 1, 1, 0]),
-    y: useTransform(progress, [s0, s1, e1, e0], [60, 0, 0, -60]),
-    scale: useTransform(progress, [s0, s1, s3, e3, e1, e0], [0.92, 0.96, 1, 1, 0.96, 0.92]),
+    y: useTransform(progress, [s0, s1, e1, e0], [40, 0, 0, -40]),
+    scale: useTransform(progress, [s0, s1, s2, e2, e1, e0], [0.95, 0.98, 1, 1, 0.98, 0.95]),
     filter: useTransform(progress, [s0, s1, s2, e2, e1, e0], [
-      "blur(12px)", "blur(4px)", "blur(0px)", "blur(0px)", "blur(4px)", "blur(12px)"
+      "blur(8px)", "blur(2px)", "blur(0px)", "blur(0px)", "blur(2px)", "blur(8px)"
     ]),
   };
 };
@@ -150,16 +148,16 @@ export const ScrollytellingSection = () => {
     offset: ["start start", "end end"],
   });
 
-  // Background
+  // Background — brighter base
   const bgColor = useTransform(
     scrollYProgress,
     [0, 0.25, 0.5, 0.75, 1],
     [
-      "hsl(220, 16%, 4%)",
-      "hsl(225, 20%, 5%)",
-      "hsl(230, 25%, 6%)",
-      "hsl(240, 28%, 7%)",
-      "hsl(250, 30%, 8%)",
+      "hsl(220, 18%, 8%)",
+      "hsl(225, 20%, 10%)",
+      "hsl(230, 22%, 11%)",
+      "hsl(235, 24%, 12%)",
+      "hsl(240, 26%, 13%)",
     ]
   );
 
@@ -169,13 +167,13 @@ export const ScrollytellingSection = () => {
   const bgParallaxY = useTransform(scrollYProgress, [0, 1], [0, -90]);
   const glow2ParallaxX = useTransform(scrollYProgress, [0, 1], [0, 80]);
 
-  // Glow pulses per section
-  const glowOpacity = useTransform(scrollYProgress, [0, 0.15, 0.3, 0.5, 0.7, 0.85, 1], [0.1, 0.6, 0.3, 0.7, 0.4, 0.8, 0.5]);
+  // Glow pulses — brighter
+  const glowOpacity = useTransform(scrollYProgress, [0, 0.15, 0.3, 0.5, 0.7, 0.85, 1], [0.2, 0.7, 0.4, 0.8, 0.5, 0.9, 0.6]);
   // Glow hue shift
   const glowHue = useTransform(scrollYProgress, [0, 0.25, 0.5, 0.75, 1], [262, 262, 192, 45, 160]);
 
-  // Film grain opacity
-  const grainOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.03, 0.05, 0.03]);
+  // Film grain — subtler
+  const grainOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.015, 0.025, 0.015]);
 
   // Progress bar
   const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
@@ -191,8 +189,8 @@ export const ScrollytellingSection = () => {
   const intel = useCinematicFade(scrollYProgress, 0.64, 0.82);
   const cta = useCinematicFade(scrollYProgress, 0.85, 0.98);
 
-  // Vignette intensity
-  const vignetteOpacity = useTransform(scrollYProgress, [0, 0.15, 0.5, 0.85, 1], [0.4, 0.7, 0.5, 0.7, 0.9]);
+  // Vignette — lighter
+  const vignetteOpacity = useTransform(scrollYProgress, [0, 0.15, 0.5, 0.85, 1], [0.2, 0.4, 0.3, 0.4, 0.5]);
 
   return (
     <div ref={containerRef} className="relative" style={{ height: "800vh" }}>
@@ -209,8 +207,8 @@ export const ScrollytellingSection = () => {
         <ParticleField />
 
         {/* Grid — parallax */}
-        <motion.div className="absolute inset-0 opacity-[0.025]" style={{ y: gridParallaxY }}>
-          <div className="w-full h-full bg-[linear-gradient(rgba(255,255,255,0.3)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.3)_1px,transparent_1px)] bg-[size:80px_80px]" />
+        <motion.div className="absolute inset-0 opacity-[0.04]" style={{ y: gridParallaxY }}>
+          <div className="w-full h-full bg-[linear-gradient(rgba(255,255,255,0.4)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.4)_1px,transparent_1px)] bg-[size:80px_80px]" />
         </motion.div>
 
         {/* Dynamic glow — color shifts with scroll */}
@@ -220,7 +218,7 @@ export const ScrollytellingSection = () => {
             style={{
               y: glowParallaxY,
               background: useTransform(glowHue, (h) =>
-                `radial-gradient(ellipse at center, hsl(${h}, 60%, 55%, 0.1), transparent 70%)`
+                `radial-gradient(ellipse at center, hsl(${h}, 65%, 60%, 0.18), transparent 70%)`
               ),
             }}
           />
@@ -230,7 +228,7 @@ export const ScrollytellingSection = () => {
               y: bgParallaxY,
               x: glow2ParallaxX,
               background: useTransform(glowHue, (h) =>
-                `radial-gradient(ellipse at center, hsl(${(h + 120) % 360}, 70%, 50%, 0.07), transparent 70%)`
+                `radial-gradient(ellipse at center, hsl(${(h + 120) % 360}, 75%, 55%, 0.12), transparent 70%)`
               ),
             }}
           />
@@ -239,7 +237,7 @@ export const ScrollytellingSection = () => {
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40%] h-[40%]"
             style={{
               background: useTransform(glowHue, (h) =>
-                `radial-gradient(ellipse at center, hsl(${(h + 60) % 360}, 50%, 45%, 0.04), transparent 60%)`
+                `radial-gradient(ellipse at center, hsl(${(h + 60) % 360}, 55%, 50%, 0.08), transparent 60%)`
               ),
             }}
           />
