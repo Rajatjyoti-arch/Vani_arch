@@ -10,6 +10,7 @@ import { VaniLogo } from "@/components/ui/VaniLogo";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import cynoxLogo from "@/assets/cynox-logo.png";
+import { ScrollytellingSection } from "@/components/landing/ScrollytellingSection";
 
 // Luxury easing
 const LUXURY_EASE = [0.22, 1, 0.36, 1] as const;
@@ -418,86 +419,92 @@ const LandingPage = () => {
   };
 
   return (
-    <div
-      className="h-screen w-screen overflow-hidden bg-background text-foreground font-sans selection:bg-accent/20 touch-pan-y letterbox"
-      onTouchStart={onTouchStart}
-      onTouchMove={onTouchMove}
-      onTouchEnd={onTouchEnd}
-    >
-      <ParallaxBackground />
+    <div className="bg-background text-foreground font-sans selection:bg-accent/20">
+      {/* Slideshow Section */}
+      <div
+        className="h-screen w-screen overflow-hidden relative touch-pan-y letterbox"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
+        <ParallaxBackground />
 
-      {/* Header */}
-      <header className="fixed top-[3vh] w-full z-50 px-8 max-[767px]:px-5 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-4 cursor-pointer group" onClick={() => setPage(0)}>
-          <div className="relative flex items-center justify-center w-11 h-11 max-[767px]:w-9 max-[767px]:h-9 rounded-full backdrop-blur-2xl transition-all duration-700 shrink-0" style={{ background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(255,255,255,0.08)' }}>
-            <VaniLogo variant="icon" size="sm" />
+        {/* Header */}
+        <header className="fixed top-[3vh] w-full z-50 px-8 max-[767px]:px-5 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-4 cursor-pointer group" onClick={() => setPage(0)}>
+            <div className="relative flex items-center justify-center w-11 h-11 max-[767px]:w-9 max-[767px]:h-9 rounded-full backdrop-blur-2xl transition-all duration-700 shrink-0" style={{ background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(255,255,255,0.08)' }}>
+              <VaniLogo variant="icon" size="sm" />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-serif text-base max-[767px]:text-sm text-foreground/80 tracking-wide leading-none">VANI</span>
+              <span className="text-[9px] text-foreground/20 tracking-[0.15em] uppercase mt-0.5 hidden sm:block">
+                Central University of Jammu
+              </span>
+            </div>
           </div>
-          <div className="flex flex-col">
-            <span className="font-serif text-base max-[767px]:text-sm text-foreground/80 tracking-wide leading-none">VANI</span>
-            <span className="text-[9px] text-foreground/20 tracking-[0.15em] uppercase mt-0.5 hidden sm:block">
-              Central University of Jammu
-            </span>
-          </div>
-        </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setIsPaused(!isPaused)}
-            className="p-2 rounded-full hover:bg-white/[0.03] text-foreground/30 hover:text-foreground/50 transition-all duration-500"
-          >
-            {isPaused ? <Play className="w-3.5 h-3.5" strokeWidth={1} /> : <Pause className="w-3.5 h-3.5" strokeWidth={1} />}
-          </button>
-
-          <Button
-            onClick={() => navigate("/portal")}
-            className="bg-white/[0.04] hover:bg-white/[0.07] text-foreground/60 hover:text-foreground/80 backdrop-blur-2xl transition-all duration-700 text-xs tracking-[0.15em] uppercase px-5 py-2 h-auto font-mono"
-            style={{ border: '0.5px solid rgba(255,255,255,0.08)' }}
-          >
-            Enter
-            <ArrowRight className="w-3 h-3 ml-1.5" strokeWidth={1} />
-          </Button>
-        </div>
-      </header>
-
-      {/* Slides */}
-      <div className="relative w-full h-full flex items-center justify-center">
-        <AnimatePresence initial={true} custom={direction} mode="wait">
-          <motion.div
-            key={page}
-            custom={direction}
-            variants={SLIDE_VARIANTS}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            className="absolute w-full h-full"
-          >
-            {slides[page]}
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* Navigation Pills */}
-      <div className="fixed bottom-[3vh] left-1/2 -translate-x-1/2 z-50 flex items-center gap-6 mb-4">
-        <div className="flex gap-2">
-          {slides.map((_, index) => (
+          <div className="flex items-center gap-3">
             <button
-              key={index}
-              onClick={() => { setDirection(index > page ? 1 : -1); setPage(index); }}
-              className={cn(
-                "h-px rounded-full transition-all duration-700",
-                index === page
-                  ? "w-8 bg-gradient-to-r from-sovereign-violet to-sovereign-cyan"
-                  : "w-4 bg-foreground/10 hover:bg-foreground/20"
-              )}
-            />
-          ))}
+              onClick={() => setIsPaused(!isPaused)}
+              className="p-2 rounded-full hover:bg-white/[0.03] text-foreground/30 hover:text-foreground/50 transition-all duration-500"
+            >
+              {isPaused ? <Play className="w-3.5 h-3.5" strokeWidth={1} /> : <Pause className="w-3.5 h-3.5" strokeWidth={1} />}
+            </button>
+
+            <Button
+              onClick={() => navigate("/portal")}
+              className="bg-white/[0.04] hover:bg-white/[0.07] text-foreground/60 hover:text-foreground/80 backdrop-blur-2xl transition-all duration-700 text-xs tracking-[0.15em] uppercase px-5 py-2 h-auto font-mono"
+              style={{ border: '0.5px solid rgba(255,255,255,0.08)' }}
+            >
+              Enter
+              <ArrowRight className="w-3 h-3 ml-1.5" strokeWidth={1} />
+            </Button>
+          </div>
+        </header>
+
+        {/* Slides */}
+        <div className="relative w-full h-full flex items-center justify-center">
+          <AnimatePresence initial={true} custom={direction} mode="wait">
+            <motion.div
+              key={page}
+              custom={direction}
+              variants={SLIDE_VARIANTS}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              className="absolute w-full h-full"
+            >
+              {slides[page]}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Navigation Pills */}
+        <div className="fixed bottom-[3vh] left-1/2 -translate-x-1/2 z-50 flex items-center gap-6 mb-4">
+          <div className="flex gap-2">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => { setDirection(index > page ? 1 : -1); setPage(index); }}
+                className={cn(
+                  "h-px rounded-full transition-all duration-700",
+                  index === page
+                    ? "w-8 bg-gradient-to-r from-sovereign-violet to-sovereign-cyan"
+                    : "w-4 bg-foreground/10 hover:bg-foreground/20"
+                )}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Footer text */}
+        <div className="absolute bottom-[3vh] right-8 z-40 text-[9px] text-foreground/10 font-mono tracking-[0.15em] hidden md:block">
+          TLS 1.3 · 256-BIT ENCRYPTION · ZERO-KNOWLEDGE
         </div>
       </div>
 
-      {/* Footer text */}
-      <div className="fixed bottom-[3vh] right-8 z-40 text-[9px] text-foreground/10 font-mono tracking-[0.15em] hidden md:block">
-        TLS 1.3 · 256-BIT ENCRYPTION · ZERO-KNOWLEDGE
-      </div>
+      {/* Scrollytelling Section */}
+      <ScrollytellingSection />
     </div>
   );
 };
