@@ -95,24 +95,26 @@ const Orbiter = ({
 const DotNav = ({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) => (
   <div className="fixed right-6 top-1/2 -translate-y-1/2 z-[60] hidden md:flex flex-col items-end gap-4">
     {SECTIONS.map((section, i) => {
+      const s = Math.max(0, section.start - 0.02);
+      const e = Math.min(1, section.end + 0.02);
       const dotOpacity = useTransform(
         scrollYProgress,
-        [section.start - 0.02, section.start, section.end, section.end + 0.02],
+        [s, section.start, section.end, e],
         [0.15, 1, 1, 0.15]
       );
       const dotScale = useTransform(
         scrollYProgress,
-        [section.start - 0.02, section.start, section.end, section.end + 0.02],
+        [s, section.start, section.end, e],
         [0.5, 1.2, 1.2, 0.5]
       );
       const labelOpacity = useTransform(
         scrollYProgress,
-        [section.start - 0.02, section.start, section.end, section.end + 0.02],
+        [s, section.start, section.end, e],
         [0, 1, 1, 0]
       );
       const lineWidth = useTransform(
         scrollYProgress,
-        [section.start - 0.02, section.start, section.end, section.end + 0.02],
+        [s, section.start, section.end, e],
         [0, 16, 16, 0]
       );
       return (
