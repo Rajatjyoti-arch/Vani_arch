@@ -165,7 +165,7 @@ export const ScrollytellingSection = () => {
 
         {/* 3D Floating Card */}
         <motion.div
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-72 md:w-64 md:h-80 rounded-2xl z-[5] flex items-center justify-center"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-72 md:w-64 md:h-80 rounded-2xl z-[2] flex items-center justify-center pointer-events-none"
           style={{
             rotateY: cardRotate,
             scale: cardScale,
