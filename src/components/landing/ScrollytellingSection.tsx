@@ -36,10 +36,7 @@ const useCinematicFade = (progress: MotionValue<number>, start: number, end: num
   return {
     opacity: useTransform(progress, [s0, s1, e1, e0], [0, 1, 1, 0]),
     y: useTransform(progress, [s0, s1, e1, e0], [40, 0, 0, -40]),
-    scale: useTransform(progress, [s0, s1, s2, e2, e1, e0], [0.95, 0.98, 1, 1, 0.98, 0.95]),
-    filter: useTransform(progress, [s0, s1, s2, e2, e1, e0], [
-      "blur(8px)", "blur(2px)", "blur(0px)", "blur(0px)", "blur(2px)", "blur(8px)"
-    ]),
+    scale: useTransform(progress, [s0, s2, e2, e0], [0.96, 1, 1, 0.96]),
   };
 };
 
