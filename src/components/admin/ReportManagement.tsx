@@ -128,7 +128,7 @@ export function ReportManagement() {
   };
 
   return (
-    <Card className="bg-slate-800 border-slate-700">
+    <Card className="bg-white/10 backdrop-blur-xl border-white/20">
       <CardHeader className="flex flex-row items-center justify-between pb-4">
         <CardTitle className="text-white text-base flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-amber-400" />
@@ -136,7 +136,7 @@ export function ReportManagement() {
         </CardTitle>
         <div className="flex items-center gap-2">
           <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-[140px] bg-slate-900 border-slate-600">
+            <SelectTrigger className="w-[140px] bg-white/10 border-white/20 text-white">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -150,7 +150,7 @@ export function ReportManagement() {
             variant="outline" 
             size="icon"
             onClick={() => fetchReports()}
-            className="border-slate-600"
+            className="border-white/20 text-white hover:bg-white/10"
           >
             <RefreshCw className="h-4 w-4" />
           </Button>
@@ -162,7 +162,7 @@ export function ReportManagement() {
             <Loader2 className="h-6 w-6 animate-spin text-emerald-500" />
           </div>
         ) : reports.length === 0 ? (
-          <div className="text-center py-8 text-slate-400">
+          <div className="text-center py-8 text-white/50">
             <MapPin className="w-12 h-12 mx-auto mb-3 opacity-50" />
             <p>No reports found</p>
           </div>
@@ -176,12 +176,12 @@ export function ReportManagement() {
               return (
                 <div
                   key={report.id}
-                  className="p-4 bg-slate-700/50 rounded-lg border border-slate-600"
+                  className="p-4 bg-white/5 rounded-lg border border-white/10"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-2">
-                        <MapPin className="w-4 h-4 text-slate-400" />
+                        <MapPin className="w-4 h-4 text-white/50" />
                         <span className="text-white font-medium">
                           {report.campus_zones?.zone_name || 'Unknown Zone'}
                         </span>
@@ -193,15 +193,15 @@ export function ReportManagement() {
                           {statusConfig.label}
                         </Badge>
                       </div>
-                      <p className="text-sm text-slate-300 mb-1">
+                      <p className="text-sm text-white/70 mb-1">
                         Type: {formatReportType(report.report_type)}
                       </p>
                       {report.description && (
-                        <p className="text-sm text-slate-400 line-clamp-2">
+                        <p className="text-sm text-white/50 line-clamp-2">
                           {report.description}
                         </p>
                       )}
-                      <p className="text-xs text-slate-500 mt-2">
+                      <p className="text-xs text-white/40 mt-2">
                         Reported: {formatDate(report.created_at)}
                       </p>
                     </div>
