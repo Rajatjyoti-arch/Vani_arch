@@ -317,17 +317,17 @@ export const ScrollytellingSection = () => {
               <span className="bg-gradient-to-r from-foreground via-sovereign-violet to-sovereign-cyan bg-clip-text text-transparent">VANI</span>
             </h1>
 
-            <p className="text-sm text-foreground/40 tracking-[0.3em] uppercase font-mono">
+            <p className="text-sm text-foreground/70 tracking-[0.3em] uppercase font-mono">
               Verifiable. Anonymous. Institutional.
             </p>
 
-            <p className="text-base text-foreground/25 tracking-[0.15em] font-light">
+            <p className="text-base text-foreground/50 tracking-[0.15em] font-light">
               Verifiable Anonymous Network Intelligence
             </p>
 
-            <div className="flex items-center gap-3 text-foreground/30 justify-center">
+            <div className="flex items-center gap-3 text-foreground/50 justify-center">
               <Building2 className="w-3.5 h-3.5" strokeWidth={1} />
-              <div className="w-px h-3 bg-foreground/10" />
+              <div className="w-px h-3 bg-foreground/20" />
               <span className="text-xs tracking-[0.2em] uppercase font-light">Central University of Jammu</span>
             </div>
           </div>
@@ -349,11 +349,11 @@ export const ScrollytellingSection = () => {
         >
           <div className="max-w-4xl w-full">
             <div className="text-center mb-12">
-              <h2 className="font-serif text-5xl max-[767px]:text-3xl font-light text-foreground leading-[1.1] mb-4">
+            <h2 className="font-serif text-5xl max-[767px]:text-3xl font-light text-foreground leading-[1.1] mb-4">
                 The Problem of <br />
-                <span className="text-foreground/40 italic">Institutional Silence</span>
+                <span className="text-foreground/60 italic">Institutional Silence</span>
               </h2>
-              <p className="text-sm text-foreground/30 max-w-lg mx-auto leading-relaxed">
+              <p className="text-sm text-foreground/50 max-w-lg mx-auto leading-relaxed">
                 When fear silences truth, institutions fail their duty of care.
               </p>
             </div>
@@ -370,8 +370,8 @@ export const ScrollytellingSection = () => {
                   style={{ border: '0.5px solid rgba(255,255,255,0.05)' }}
                 >
                   <item.icon className={cn("w-4 h-4 mb-3 shrink-0", item.color)} strokeWidth={1} />
-                  <h3 className="text-foreground/70 font-medium text-sm mb-1">{item.title}</h3>
-                  <p className="text-xs text-foreground/25 leading-relaxed">{item.desc}</p>
+                  <h3 className="text-foreground/90 font-medium text-sm mb-1">{item.title}</h3>
+                  <p className="text-xs text-foreground/45 leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -387,7 +387,7 @@ export const ScrollytellingSection = () => {
             <h2 className="font-serif text-5xl max-[767px]:text-3xl font-light text-foreground mb-3">
               Architecture of Trust
             </h2>
-            <p className="text-sm text-foreground/25 tracking-wide font-light">End-to-end verifiable governance pipeline</p>
+            <p className="text-sm text-foreground/50 tracking-wide font-light">End-to-end verifiable governance pipeline</p>
           </div>
 
           <div className="grid grid-cols-4 max-[767px]:grid-cols-2 max-[639px]:grid-cols-1 gap-4 max-w-5xl w-full relative">
@@ -403,8 +403,8 @@ export const ScrollytellingSection = () => {
                 <div className={cn("w-9 h-9 rounded-md flex items-center justify-center mb-3", step.bg)}>
                   <step.icon className={cn("w-4 h-4", step.iconColor)} strokeWidth={1} />
                 </div>
-                <h3 className="text-sm font-medium text-foreground/70 mb-1">{step.title}</h3>
-                <p className="text-xs text-foreground/25 leading-relaxed">{step.desc}</p>
+                <h3 className="text-sm font-medium text-foreground/90 mb-1">{step.title}</h3>
+                <p className="text-xs text-foreground/45 leading-relaxed">{step.desc}</p>
               </div>
             ))}
           </div>
@@ -418,9 +418,9 @@ export const ScrollytellingSection = () => {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-6" style={{ background: 'rgba(255,255,255,0.02)', border: '0.5px solid rgba(255,255,255,0.06)' }}>
               <span className="w-1.5 h-1.5 rounded-full bg-foreground/20 animate-pulse" />
-              <span className="text-[10px] font-mono text-foreground/30 tracking-[0.2em] uppercase">Powered by Google Gemini</span>
+              <span className="text-[10px] font-mono text-foreground/50 tracking-[0.2em] uppercase">Powered by Google Gemini</span>
             </div>
-            <h2 className="font-serif text-5xl max-[767px]:text-3xl font-light text-foreground">Core Intelligence</h2>
+             <h2 className="font-serif text-5xl max-[767px]:text-3xl font-light text-foreground">Core Intelligence</h2>
           </div>
 
           <div className="grid grid-cols-3 max-[767px]:grid-cols-1 gap-4 max-w-5xl w-full mb-10">
@@ -431,16 +431,16 @@ export const ScrollytellingSection = () => {
             ].map((item, i) => (
               <div key={i} className="p-6 max-[767px]:p-4 rounded-lg" style={{ background: 'rgba(255,255,255,0.02)', border: '0.5px solid rgba(255,255,255,0.05)' }}>
                 <item.icon className={cn("w-5 h-5 mb-4 shrink-0", item.iconColor)} strokeWidth={1} />
-                <h3 className="text-base font-medium text-foreground/70 mb-2">{item.title}</h3>
-                <p className="text-xs text-foreground/25 leading-relaxed">{item.desc}</p>
+                <h3 className="text-base font-medium text-foreground/90 mb-2">{item.title}</h3>
+                <p className="text-xs text-foreground/45 leading-relaxed">{item.desc}</p>
               </div>
             ))}
           </div>
 
-          <div className="flex items-center gap-4 opacity-40">
-            <span className="text-[10px] text-foreground/30 tracking-[0.2em] uppercase font-mono">Technology Partner</span>
-            <div className="w-px h-3 bg-foreground/10" />
-            <span className="text-xs font-medium text-foreground/40">Google Cloud AI</span>
+          <div className="flex items-center gap-4 opacity-60">
+            <span className="text-[10px] text-foreground/50 tracking-[0.2em] uppercase font-mono">Technology Partner</span>
+            <div className="w-px h-3 bg-foreground/20" />
+            <span className="text-xs font-medium text-foreground/60">Google Cloud AI</span>
           </div>
         </motion.div>
 
@@ -455,7 +455,7 @@ export const ScrollytellingSection = () => {
                 Ready to Begin?
               </span>
             </h2>
-            <p className="text-sm text-foreground/30 max-w-md mx-auto leading-relaxed">
+            <p className="text-sm text-foreground/55 max-w-md mx-auto leading-relaxed">
               Step into a system designed to protect your voice and ensure institutional accountability.
             </p>
             <Button
