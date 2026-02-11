@@ -9,7 +9,7 @@ interface Props {
 
 export const ScrollBackgrounds = ({ scrollYProgress }: Props) => {
   // University: visible 0–0.35, fade out by 0.45 — brighter & smoother
-  const uniOpacity = useTransform(scrollYProgress, [0, 0.08, 0.28, 0.42], [0.25, 0.45, 0.45, 0]);
+  const uniOpacity = useTransform(scrollYProgress, [0, 0.05, 0.28, 0.42], [0.55, 0.65, 0.65, 0]);
   const uniScale = useTransform(scrollYProgress, [0, 0.45], [1, 1.08]);
 
   // Classroom: fade in 0.28–0.42, visible 0.42–0.62, fade out by 0.72
