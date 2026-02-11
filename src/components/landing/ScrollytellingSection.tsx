@@ -301,6 +301,8 @@ export const ScrollytellingSection = () => {
           style={hero}
         >
           <div className="text-center space-y-8">
+            <img src="/cuj-logo.png" alt="Central University of Jammu" className="w-16 h-16 object-contain mx-auto opacity-80" />
+
             <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.03)', border: '0.5px solid rgba(255,255,255,0.08)' }}>
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
