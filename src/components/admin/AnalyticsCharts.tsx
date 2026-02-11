@@ -127,7 +127,7 @@ export function AnalyticsCharts() {
   }
 
   return (
-    <Card className="bg-slate-800 border-slate-700">
+    <Card className="bg-white/10 backdrop-blur-xl border-white/20">
       <CardHeader className="pb-2">
         <CardTitle className="text-white text-base flex items-center gap-2">
           <Activity className="w-4 h-4 text-emerald-400" />
@@ -136,7 +136,7 @@ export function AnalyticsCharts() {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="trends" className="w-full">
-          <TabsList className="bg-slate-700 mb-4">
+          <TabsList className="bg-white/10 mb-4">
             <TabsTrigger value="trends" className="data-[state=active]:bg-emerald-600">
               <TrendingUp className="w-4 h-4 mr-2" />
               Resolution Trends
@@ -153,7 +153,7 @@ export function AnalyticsCharts() {
 
           <TabsContent value="trends" className="mt-0">
             <div className="space-y-4">
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-white/50">
                 Resolution activity over the past 7 days
               </p>
               <ResponsiveContainer width="100%" height={300}>
@@ -168,16 +168,17 @@ export function AnalyticsCharts() {
                       <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                  <XAxis dataKey="date" stroke="#64748b" fontSize={12} />
-                  <YAxis stroke="#64748b" fontSize={12} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                  <XAxis dataKey="date" stroke="rgba(255,255,255,0.4)" fontSize={12} />
+                  <YAxis stroke="rgba(255,255,255,0.4)" fontSize={12} />
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: "#1e293b", 
-                      border: "1px solid #334155",
-                      borderRadius: "8px"
+                      backgroundColor: "rgba(0,0,0,0.6)", 
+                      border: "1px solid rgba(255,255,255,0.2)",
+                      borderRadius: "8px",
+                      backdropFilter: "blur(12px)"
                     }}
-                    labelStyle={{ color: "#94a3b8" }}
+                    labelStyle={{ color: "rgba(255,255,255,0.7)" }}
                   />
                   <Area 
                     type="monotone" 
@@ -200,11 +201,11 @@ export function AnalyticsCharts() {
               <div className="flex justify-center gap-6">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-blue-500" />
-                  <span className="text-xs text-slate-400">Submitted</span>
+                  <span className="text-xs text-white/50">Submitted</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                  <span className="text-xs text-slate-400">Resolved</span>
+                  <span className="text-xs text-white/50">Resolved</span>
                 </div>
               </div>
             </div>
@@ -212,24 +213,25 @@ export function AnalyticsCharts() {
 
           <TabsContent value="departments" className="mt-0">
             <div className="space-y-4">
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-white/50">
                 Case distribution and resolution rates by department
               </p>
               {departmentData.length === 0 ? (
-                <div className="text-center py-8 text-slate-500">
+                <div className="text-center py-8 text-white/40">
                   No department data available
                 </div>
               ) : (
                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={departmentData} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                    <XAxis type="number" stroke="#64748b" fontSize={12} />
-                    <YAxis dataKey="department" type="category" stroke="#64748b" fontSize={11} width={100} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                    <XAxis type="number" stroke="rgba(255,255,255,0.4)" fontSize={12} />
+                    <YAxis dataKey="department" type="category" stroke="rgba(255,255,255,0.4)" fontSize={11} width={100} />
                     <Tooltip 
                       contentStyle={{ 
-                        backgroundColor: "#1e293b", 
-                        border: "1px solid #334155",
-                        borderRadius: "8px"
+                        backgroundColor: "rgba(0,0,0,0.6)", 
+                        border: "1px solid rgba(255,255,255,0.2)",
+                        borderRadius: "8px",
+                        backdropFilter: "blur(12px)"
                       }}
                     />
                     <Bar dataKey="resolved" stackId="a" fill="#10b981" name="Resolved" />
@@ -240,11 +242,11 @@ export function AnalyticsCharts() {
               <div className="flex justify-center gap-6">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                  <span className="text-xs text-slate-400">Resolved</span>
+                  <span className="text-xs text-white/50">Resolved</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-amber-500" />
-                  <span className="text-xs text-slate-400">Pending</span>
+                  <span className="text-xs text-white/50">Pending</span>
                 </div>
               </div>
             </div>
@@ -252,25 +254,26 @@ export function AnalyticsCharts() {
 
           <TabsContent value="sentiment" className="mt-0">
             <div className="space-y-4">
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-white/50">
                 Campus zone sentiment scores based on report patterns
               </p>
               {sentimentData.length === 0 ? (
-                <div className="text-center py-8 text-slate-500">
+                <div className="text-center py-8 text-white/40">
                   No sentiment data available
                 </div>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <ResponsiveContainer width="100%" height={250}>
                     <BarChart data={sentimentData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                      <XAxis dataKey="zone" stroke="#64748b" fontSize={10} angle={-45} textAnchor="end" height={60} />
-                      <YAxis stroke="#64748b" fontSize={12} domain={[0, 100]} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                      <XAxis dataKey="zone" stroke="rgba(255,255,255,0.4)" fontSize={10} angle={-45} textAnchor="end" height={60} />
+                      <YAxis stroke="rgba(255,255,255,0.4)" fontSize={12} domain={[0, 100]} />
                       <Tooltip 
                         contentStyle={{ 
-                          backgroundColor: "#1e293b", 
-                          border: "1px solid #334155",
-                          borderRadius: "8px"
+                          backgroundColor: "rgba(0,0,0,0.6)", 
+                          border: "1px solid rgba(255,255,255,0.2)",
+                          borderRadius: "8px",
+                          backdropFilter: "blur(12px)"
                         }}
                       />
                       <Bar dataKey="score" name="Sentiment Score" radius={[4, 4, 0, 0]}>
@@ -301,9 +304,10 @@ export function AnalyticsCharts() {
                       </Pie>
                       <Tooltip 
                         contentStyle={{ 
-                          backgroundColor: "#1e293b", 
-                          border: "1px solid #334155",
-                          borderRadius: "8px"
+                          backgroundColor: "rgba(0,0,0,0.6)", 
+                          border: "1px solid rgba(255,255,255,0.2)",
+                          borderRadius: "8px",
+                          backdropFilter: "blur(12px)"
                         }}
                       />
                     </PieChart>
