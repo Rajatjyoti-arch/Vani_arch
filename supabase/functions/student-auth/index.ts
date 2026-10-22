@@ -67,12 +67,11 @@ const handler = async (req: Request): Promise<Response> => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Check if user exists
+    // Check if user exists (by email or enrollment_no)
     const { data: existingProfile, error: lookupError } = await supabase
       .from("student_profiles")
       .select("*")
-      .eq("email", email.toLowerCase())
-      .eq("enrollment_no", enrollment_no.toUpperCase())
+      .or(`email.eq.${email.toLowerCase()},enrollment_no.eq.${enrollment_no.toUpperCase()}`)
       .maybeSingle();
 
     if (lookupError) {
@@ -128,12 +127,15 @@ const handler = async (req: Request): Promise<Response> => {
       }
 
       if (existingProfile) {
-        // Update existing profile with password
+        // Update existing profile with password and missing Vani identity fields
         const { data: updatedProfile, error: updateError } = await supabase
           .from("student_profiles")
           .update({ 
             password_hash: passwordHash,
-            is_verified: true 
+            is_verified: true,
+            enrollment_no: existingProfile.enrollment_no || enrollment_no.toUpperCase(),
+            ghost_name: existingProfile.ghost_name || generateGhostName(),
+            avatar: existingProfile.avatar || generateAvatar(),
           })
           .eq("id", existingProfile.id)
           .select()
@@ -228,18 +230,35 @@ const handler = async (req: Request): Promise<Response> => {
         );
       }
 
+      let profileToReturn = existingProfile;
+      if (!existingProfile.enrollment_no || !existingProfile.ghost_name) {
+        const { data: refreshedProfile } = await supabase
+          .from("student_profiles")
+          .update({
+            enrollment_no: existingProfile.enrollment_no || enrollment_no.toUpperCase(),
+            ghost_name: existingProfile.ghost_name || generateGhostName(),
+            avatar: existingProfile.avatar || generateAvatar(),
+          })
+          .eq("id", existingProfile.id)
+          .select()
+          .single();
+        if (refreshedProfile) {
+          profileToReturn = refreshedProfile;
+        }
+      }
+
       return new Response(
         JSON.stringify({ 
           success: true, 
           profile: {
-            id: existingProfile.id,
-            enrollment_no: existingProfile.enrollment_no,
-            email: existingProfile.email,
-            ghost_name: existingProfile.ghost_name,
-            avatar: existingProfile.avatar,
-            reputation: existingProfile.reputation,
-            reports_submitted: existingProfile.reports_submitted,
-            created_at: existingProfile.created_at,
+            id: profileToReturn.id,
+            enrollment_no: profileToReturn.enrollment_no,
+            email: profileToReturn.email,
+            ghost_name: profileToReturn.ghost_name,
+            avatar: profileToReturn.avatar,
+            reputation: profileToReturn.reputation,
+            reports_submitted: profileToReturn.reports_submitted,
+            created_at: profileToReturn.created_at,
           }
         }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }

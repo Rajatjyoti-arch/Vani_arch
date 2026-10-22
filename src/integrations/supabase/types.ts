@@ -255,6 +255,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      student_auth: {
+        Args: {
+          p_action: string
+          p_enrollment_no: string
+          p_email: string
+          p_password_hash?: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

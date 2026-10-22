@@ -7,7 +7,7 @@ import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { Loader2, Mail, GraduationCap, Shield, Lock, Eye, EyeOff, Check, X, ArrowRight } from 'lucide-react';
 import { VaniLogo } from '@/components/ui/VaniLogo';
-import { useStudentSession } from '@/contexts/StudentSessionContext';
+import { useStudentSession, type StudentProfile } from '@/contexts/StudentSessionContext';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import authBg from '@/assets/auth-bg.png';
@@ -109,35 +109,82 @@ export function StudentLogin() {
       return;
     }
 
+// Helper to hash password with SHA-256
+async function hashPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('student-auth', {
-        body: {
-          action: isSignUp ? 'register' : 'login',
-          enrollment_no: enrollmentNo.trim().toUpperCase(),
-          email: email.trim().toLowerCase(),
-          password,
-        },
-      });
+      let authSuccess = false;
+      let profileData: StudentProfile | null = null;
 
-      if (error) {
-        console.error('Auth error:', error);
-        toast.error('Authentication failed. Please try again.');
-        return;
+      // 1. Try student-auth edge function first
+      try {
+        const { data, error } = await supabase.functions.invoke('student-auth', {
+          body: {
+            action: isSignUp ? 'register' : 'login',
+            enrollment_no: enrollmentNo.trim().toUpperCase(),
+            email: email.trim().toLowerCase(),
+            password,
+          },
+        });
+
+        if (!error && data?.success && data?.profile) {
+          authSuccess = true;
+          profileData = data.profile;
+        } else if (!error && data?.error) {
+          toast.error(data.error);
+          setIsLoading(false);
+          return;
+        }
+      } catch (invokeErr) {
+        console.warn('Edge function invoke failed, using direct RPC:', invokeErr);
       }
 
-      if (data?.error) {
-        toast.error(data.error);
-        return;
+      // 2. Direct RPC fallback if edge function was unavailable or had an issue
+      if (!authSuccess) {
+        const passwordHash = await hashPassword(password);
+        const { data: rpcData, error: rpcError } = await supabase.rpc('student_auth', {
+          p_action: isSignUp ? 'register' : 'login',
+          p_enrollment_no: enrollmentNo.trim().toUpperCase(),
+          p_email: email.trim().toLowerCase(),
+          p_password_hash: passwordHash,
+        });
+
+        if (rpcError) {
+          console.error('RPC auth error:', rpcError);
+          toast.error('Authentication failed. Please try again.');
+          setIsLoading(false);
+          return;
+        }
+
+        const res = (typeof rpcData === 'string' ? JSON.parse(rpcData) : rpcData) as { error?: string; success?: boolean; profile?: StudentProfile } | null;
+        if (res?.error) {
+          toast.error(res.error);
+          setIsLoading(false);
+          return;
+        }
+
+        if (res?.success && res?.profile) {
+          authSuccess = true;
+          profileData = res.profile;
+        }
       }
 
-      if (data?.success && data?.profile) {
-        localStorage.setItem('student_profile', JSON.stringify(data.profile));
+      if (authSuccess && profileData) {
+        localStorage.setItem('student_profile', JSON.stringify(profileData));
         toast.success(isSignUp ? 'Account created! Welcome!' : 'Welcome back!');
         const returnUrl = (location.state as { from?: string })?.from || '/student-dashboard';
         navigate(returnUrl, { replace: true });
         window.location.href = returnUrl;
+      } else {
+        toast.error('Authentication failed. Please try again.');
       }
     } catch (error) {
       console.error('Auth error:', error);
